@@ -1,0 +1,74 @@
+#spring:
+#  datasource:
+#    data-username: root
+#    data-password: 123456
+#    url: jdbc:mysql://localhost:3306/daoyun?useUnicode=true&characterEncoding=utf8&useSSL=true
+#    sql-script-encoding: UTF-8
+#    driver-class-name: com.mysql.jdbc.Driver
+#  devtools:
+#    restart:
+#      enabled: true
+spring:
+  mvc:
+    view: # 视图相关
+      prefix: /templates/
+      suffix: .html
+  output:
+    ansi:
+      enabled: ALWAYS # 输出带颜色的日志信息
+  profiles:
+    active: dev # 设置激活的环境
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: 123456
+
+    jedis:
+      pool:
+        max-active: 50
+        max-wait: 3000
+        max-idle: 20
+        min-idle: 2
+    timeout: 5000
+
+
+
+
+
+# 开发环境配置
+server:
+  # 服务器的HTTP端口，默认为8080
+  port: 8080
+  servlet:
+    # 应用的访问路径
+    context-path: /
+  tomcat:
+    # tomcat的URI编码
+    uri-encoding: UTF-8
+    # tomcat最大线程数，默认为200
+    max-threads: 800
+    # Tomcat启动初始化的线程数，默认值25
+    min-spare-threads: 30
+  address: 0.0.0.0
+
+
+password: #shiro
+  algorithmName: md5
+  hashIterations: 2
+
+mybatis:
+  type-aliases-package: fz.cs.daoyun.domain
+  configuration:
+    map-underscore-to-camel-case: true
+
+mapper: # 通用 Mapper 配置
+  identity: MYSQL
+  mappers: fz.cs.daoyun.utils.tools.MyMapper
+  not-empty: false
+
+
+pagehelper: # 分页插件配置
+  helperDialect: mysql
+  params: count=countSql
+  reasonable: true
+  supportMethodsArguments: true
