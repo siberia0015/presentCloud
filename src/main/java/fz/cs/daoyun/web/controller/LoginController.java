@@ -68,16 +68,13 @@ public class LoginController  extends BaseController {
         return users.toString();
     }
 
-
-
-
-
     /*
      * 普通登录， 放回登录信息的map
      * */
 //    @RequiresGuest
     @RequestMapping(value = "/login")
-    public Map<String, Object> login(@RequestParam("username") String username, @RequestParam("password")String password){
+    public Map<String, Object> login(@RequestParam("account") String username, @RequestParam("password")String password){
+        System.out.println("login");
         Map<String,Object> map = new HashMap<>();
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
@@ -152,7 +149,6 @@ public class LoginController  extends BaseController {
         return map;
 
     }
-
 
     /*用户未登录时的返回信息
      * */
@@ -254,8 +250,6 @@ public class LoginController  extends BaseController {
         return true;
 
     }
-
-
 
 
     /*

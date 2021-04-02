@@ -13,14 +13,26 @@ import java.util.List;
 public class UserTest {
     @Autowired
     IUserService userService;
+
     @Test
-    public void test(){
-        System.out.println("xxx");
-        try{
-            User users = new User();
-            users = userService.findByName("admin");
+    public void findByName() {
+        System.out.println("findByName");
+        try {
+            User user = new User();
+            user = userService.findByName("admin");
+            System.out.println(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void findAll() {
+        System.out.println("findAll");
+        try {
+            List<User> users = userService.findAll();
             System.out.println(users);
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
