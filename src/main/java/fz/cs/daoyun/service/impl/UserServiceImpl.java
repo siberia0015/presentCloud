@@ -73,6 +73,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public User findByName(String name) {
         User user = userMapper.selectByName(name);
+        if (user == null) return user;
         List<Role> roles = userRoleService.findRoleByUserName(user.getName());
         List<String> rolenames = new ArrayList<String>();
         for (Role r:roles
