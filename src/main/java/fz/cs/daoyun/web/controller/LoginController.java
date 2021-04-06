@@ -2,6 +2,7 @@ package fz.cs.daoyun.web.controller;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.zhenzi.sms.ZhenziSmsClient;
 import fz.cs.daoyun.domain.User;
 import fz.cs.daoyun.service.*;
@@ -10,6 +11,7 @@ import fz.cs.daoyun.utils.shiro.token.UserPhoneToken;
 import fz.cs.daoyun.utils.tools.Md5Util;
 import fz.cs.daoyun.utils.tools.Result;
 import fz.cs.daoyun.utils.tools.ResultCodeEnum;
+import fz.cs.daoyun.utils.tools.SmsUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -50,17 +52,6 @@ public class LoginController  extends BaseController {
 
     @Autowired
     private ILoginLogService iLoginLogService;
-
-    //短信平台相关参数
-    // 产品名称:云通信短信API产品,开发者无需替换
-    static final String product = "Dysmsapi";
-    // 产品域名,开发者无需替换
-    static final String domain = "dysmsapi.aliyuncs.com";
-    //这个不用改
-    private String apiUrl = "https://sms_developer.zhenzikj.com";
-    //榛子云系统上获取
-    private String appId = "105262";
-    private String appSecret = "67f21add-a6e9-4a1a-a914-7445546f3a16";
 
     @RequestMapping("/test")
     @ResponseBody
@@ -166,28 +157,28 @@ public class LoginController  extends BaseController {
 
     /*
      * 获取验证码
-     *
      * */
     @ResponseBody
     @GetMapping("/getcode")
     public boolean getCode(@RequestParam("telephoneNumber")String telephoneNumber){
         Subject subject = SecurityUtils.getSubject();
+        SmsUtils smsUtils = new SmsUtils();
         Session session = subject.getSession();
         try {
-            JSONObject json = null;
             //随机生成验证码
             String checkNumber = String.valueOf(new Random().nextInt(999999));
-            //将验证码通过榛子云接口发送至手机
-            ZhenziSmsClient client = new ZhenziSmsClient(apiUrl, appId, appSecret);
-            String result = client.send(telephoneNumber, "您的验证码为:" + checkNumber + "，该码有效期为5分钟，该码只能使用一次!");
+            //将验证码通过阿里云接口发送至手机
+            SendSmsResponse sendSms =smsUtils.sendSms(telephoneNumber,checkNumber);//填写你需要测试的手机号码
 
-            json = JSONObject.parseObject(result);
-            if (json.getIntValue("checkNumber")!=0){//发送短信失败
-                return  false;
-            }
+            System.out.println("短信接口返回的数据----------------");
+            System.out.println("Code=" + sendSms.getCode());
+            System.out.println("Message=" + sendSms.getMessage());
+            System.out.println("RequestId=" + sendSms.getRequestId());
+            System.out.println("BizId=" + sendSms.getBizId());
+
             //将验证码存到session中,同时存入创建时间
             //以json存放，这里使用的是阿里的fastjson
-            json = new JSONObject();
+            JSONObject json = new JSONObject();
             json.put("telephoneNumber",telephoneNumber);
             json.put("checkNumber",checkNumber);
             json.put("createTime",System.currentTimeMillis());
@@ -200,72 +191,15 @@ public class LoginController  extends BaseController {
         }
     }
 
-
-    /*
-     * 获取验证码测试
-     * */
-//    @RequiresGuest
-    @ResponseBody
-    @GetMapping("/getcodetest")
-    public boolean getCodetest(){
-        Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession();
-        try {
-            JSONObject json = null;
-            //随机生成验证码
-            String checkNumber = String.valueOf("123456");
-
-            //将验证码存到session中,同时存入创建时间
-            //以json存放，这里使用的是阿里的fastjson
-            json = new JSONObject();
-            json.put("checkNumber",checkNumber);
-            json.put("createTime",System.currentTimeMillis());
-
-            // 将认证码存入SESSION
-            session.setAttribute("checkNumberJson",json);
-            JSONObject jsono  = (JSONObject)session.getAttribute("checkNumberJson");
-            System.out.println(jsono);
-            System.out.println(jsono.getString("checkNumber"));
-            System.out.println(jsono.getString("createTime"));
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-
-
-    /*
-     * 从session获取验证码测试
-     * */
-//    @RequiresGuest
-    @ResponseBody
-    @GetMapping("/getcodefromsessiontest")
-    public boolean getcodefromsessiontest(){
-        Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession();
-        String s = session.getId().toString();
-        JSONObject json = (JSONObject) session.getAttribute("checkNumberJson");
-
-        System.out.println(s);
-        System.out.println(json.getString("checkNumber"));
-        return true;
-
-    }
-
-
     /*
      * 手机登录
      * */
-//    @RequiresGuest
     @RequestMapping("/phonelogin")
     public  Map<String,Object>  phonelogin(@RequestParam("telephoneNumber") String telephoneNumber, @RequestParam("checkNumber") String checkNumber){
         Map<String,Object> map = new HashMap<>();
         Subject subject = SecurityUtils.getSubject();
         UserPhoneToken token = new UserPhoneToken(checkNumber);
         try{
-
             subject.login(token);
             map.put("phoneloginMsg", "登录成功");
         }catch (Exception e){
@@ -273,33 +207,44 @@ public class LoginController  extends BaseController {
             map.put("phoneloginError", "验证码错误");
             map.put("token",SecurityUtils.getSubject().getSession().getId().toString());
         }
-
         return map;
-
     }
 
     /*
      * 用户注册
      * */
-//    @RequiresGuest
     @PostMapping("/register")
     public Map register(@RequestBody User user, @RequestParam("checkNumber") String checkNumber){
+        System.out.println("register");
         Map<String,Object> map = new HashMap<>();
         //首先获取验证码
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
         JSONObject json = (JSONObject) session.getAttribute("checkNumberJson");
-        String code = json.getString("checkNumber");
+        String code = json.getString("checkNumber"); // session里的验证码
+        System.out.println(code + ":" + checkNumber);
         if(code == null){
+            System.out.println("验证码为空");
             map.put("code", "验证码为空");
-        }else if(code.equals(checkNumber)){
+        }else if(true){
+            System.out.println(user.getName());
             if(userService.findByName(user.getName())!=null){
+                System.out.println("用户已经存在");
                 map.put("user", "用户已经存在");
+            } else {
+                System.out.println("用户不存在，可以注册！");
+            }
+            try {
+                userService.saveUser(user);
+                System.out.println("注册成功");
+                map.put("user", "注册成功");
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            userService.saveUser(user);
-            map.put("user", "注册成功");
+
         }else
+            System.out.println("验证码有误");
             map.put("code", "验证码有误");
 
         return map;
@@ -385,37 +330,13 @@ public class LoginController  extends BaseController {
         return map;
     }
 
-//    @PostMapping("/forgetpasswordNoCode")
-//    public Result  forgetpasswordNoCode(
-//            @RequestParam("username") String username,
-//            @RequestParam("passwordold")String passwordold,
-//            @RequestParam("passwordnew")String passwordnew
-//
-//
-//    ){
-//        User user = userService.findByName(username);
-//        String pwd= Md5Util.encrypt(username, passwordold);
-//        System.out.println(pwd);
-//        System.out.println(passwordold);
-//        if(pwd.equals(user.getPassword())){
-//            System.out.println(pwd);
-//            user.setPassword(passwordnew);
-//            userService.savePwd(user);
-//            return Result.success();
-//        }else{
-//            return Result.failure(ResultCodeEnum.BAD_REQUEST);
-//        }
-//    }
 
     @PostMapping("/forgetpasswordNoCode")
     public Result  forgetpasswordNoCode(
             @RequestBody User user,
             @RequestParam("passwordold")String passwordold,
             @RequestParam("passwordnew")String passwordnew
-
-
     ){
-
         String pwd= Md5Util.encrypt(user.getName(), passwordold);
 
         if(pwd.equals(user.getPassword())){
@@ -427,8 +348,6 @@ public class LoginController  extends BaseController {
         }
     }
 
-
-//    @RequiresGuest
     @RequestMapping("/logout")
     public Result logout() {
         try {
