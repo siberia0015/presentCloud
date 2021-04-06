@@ -64,9 +64,9 @@ public class UserController {
     @RequiresPermissions("user:add")
     public Result createUser(
             @RequestParam("username")String username,
-            @RequestParam("mobile")String mobile,
             @RequestParam("password")String password,
-            String  nickname,
+            String mobile,
+            String nickname,
             String sex,
             String school,
             String classes,
@@ -77,6 +77,7 @@ public class UserController {
             return Result.failure(ResultCodeEnum.FAILED_USER_ALREADY_EXIST);
         }
         User user = new User();
+        mobile = username;
         RandomNumberGenerator randomNumberGenerator = new SecureRandomNumberGenerator();
         user.setSalt(randomNumberGenerator.nextBytes().toHex());
         user.setPassword(password);

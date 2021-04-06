@@ -20,29 +20,33 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    /**
+     * 静态资源拦截器
+     * 指的是对外暴露的访问路径
+     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
         registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
-
+    /**
+     * 跨域
+     */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/storage/**");
     }
-
-//    @Override
-//    public void addViewControllers(ViewControllerRegistry registry) {
-//        registry.addViewController("/").setViewName("index.html");
-//        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
-//    }
 
     @Bean
     public RequestContextListener requestContextListener() {
         return new RequestContextListener();
     }
 
+    /**
+     * 发送消息
+     * @param converters
+     */
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = new MappingJackson2HttpMessageConverter();
