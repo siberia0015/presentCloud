@@ -52,6 +52,10 @@ public class LoginController  extends BaseController {
     private ILoginLogService iLoginLogService;
 
     //短信平台相关参数
+    // 产品名称:云通信短信API产品,开发者无需替换
+    static final String product = "Dysmsapi";
+    // 产品域名,开发者无需替换
+    static final String domain = "dysmsapi.aliyuncs.com";
     //这个不用改
     private String apiUrl = "https://sms_developer.zhenzikj.com";
     //榛子云系统上获取
@@ -152,7 +156,6 @@ public class LoginController  extends BaseController {
 
     /*用户未登录时的返回信息
      * */
-//    @RequiresGuest
     @RequestMapping("/unauth")
     public Map<String,Object> unauth(){
         Map<String,Object> map = new HashMap<>();
@@ -163,8 +166,8 @@ public class LoginController  extends BaseController {
 
     /*
      * 获取验证码
+     *
      * */
-//    @RequiresGuest
     @ResponseBody
     @GetMapping("/getcode")
     public boolean getCode(@RequestParam("telephoneNumber")String telephoneNumber){
