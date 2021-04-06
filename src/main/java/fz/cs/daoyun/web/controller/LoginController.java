@@ -63,10 +63,12 @@ public class LoginController  extends BaseController {
         return users.toString();
     }
 
-    /*
-     * 普通登录， 放回登录信息的map
-     * */
-//    @RequiresGuest
+    /**
+     * 普通登录， 返回登录信息的map
+     * @param username
+     * @param password
+     * @return
+     */
     @RequestMapping(value = "/login")
     public Map<String, Object> login(@RequestParam("account") String username, @RequestParam("password")String password){
         System.out.println("login");
@@ -145,8 +147,10 @@ public class LoginController  extends BaseController {
 
     }
 
-    /*用户未登录时的返回信息
-     * */
+    /**
+     * 用户未登录时的返回信息
+     * @return
+     */
     @RequestMapping("/unauth")
     public Map<String,Object> unauth(){
         Map<String,Object> map = new HashMap<>();
@@ -155,11 +159,13 @@ public class LoginController  extends BaseController {
         return map;
     }
 
-    /*
+    /**
      * 获取验证码
-     * */
+     * @param telephoneNumber
+     * @return
+     */
     @ResponseBody
-    @GetMapping("/getcode")
+    @PostMapping("/getCode")
     public boolean getCode(@RequestParam("telephoneNumber")String telephoneNumber){
         Subject subject = SecurityUtils.getSubject();
         SmsUtils smsUtils = new SmsUtils();
@@ -191,28 +197,34 @@ public class LoginController  extends BaseController {
         }
     }
 
-    /*
-     * 手机登录
-     * */
-    @RequestMapping("/phonelogin")
+    /**
+     * 手机登陆
+     * @param telephoneNumber
+     * @param checkNumber
+     * @return
+     */
+    @RequestMapping("/phoneLogin")
     public  Map<String,Object>  phonelogin(@RequestParam("telephoneNumber") String telephoneNumber, @RequestParam("checkNumber") String checkNumber){
         Map<String,Object> map = new HashMap<>();
         Subject subject = SecurityUtils.getSubject();
         UserPhoneToken token = new UserPhoneToken(checkNumber);
         try{
             subject.login(token);
-            map.put("phoneloginMsg", "登录成功");
+            map.put("phoneLoginMsg", "登录成功");
         }catch (Exception e){
             System.out.println(e);
-            map.put("phoneloginError", "验证码错误");
+            map.put("phoneLoginError", "验证码错误");
             map.put("token",SecurityUtils.getSubject().getSession().getId().toString());
         }
         return map;
     }
 
-    /*
+    /**
      * 用户注册
-     * */
+     * @param user
+     * @param checkNumber
+     * @return
+     */
     @PostMapping("/register")
     public Map register(@RequestBody User user, @RequestParam("checkNumber") String checkNumber){
         System.out.println("register");
@@ -241,20 +253,26 @@ public class LoginController  extends BaseController {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-
         }else
             System.out.println("验证码有误");
             map.put("code", "验证码有误");
-
         return map;
-
     }
 
-    /*
-     * 用户注册
-     * */
-//    @RequiresGuest
+    /**
+     * 用户注册2
+     * @param username
+     * @param mobile
+     * @param password
+     * @param checkNumber
+     * @param nickname
+     * @param sex
+     * @param school
+     * @param classes
+     * @param school_number
+     * @param email
+     * @return
+     */
     @PostMapping("/register2")
     public  Map register_advance(
             @RequestParam("username") String username,
@@ -267,7 +285,6 @@ public class LoginController  extends BaseController {
             String classes,
             String school_number,
             String email
-
     ){
         Map<String,Object> map = new HashMap<>();
         User user = new User();
@@ -277,7 +294,6 @@ public class LoginController  extends BaseController {
         user.setTel(tel);
         user.setNickname(nickname);
         if(!StringUtils.isEmpty(sex)){
-
             user.setSex(sex);
         }
         user.setClasses(classes);
@@ -295,18 +311,21 @@ public class LoginController  extends BaseController {
             if(userService.findByName(user.getName())!=null){
                 map.put("user", "用户已经存在");
             }
-
             userService.saveUserAllInfo(user);
             map.put("user", "注册成功");
         }else
             map.put("code", "验证码有误");
-
         return map;
-
     }
 
-//    @RequiresGuest
-    @GetMapping("/forgetpassword")
+    /**
+     * 忘记密码
+     * @param telephoneNumber
+     * @param checkNumber
+     * @param password1
+     * @return
+     */
+    @GetMapping("/forgetPassword")
     public Map  forgetPassword(@RequestParam("telephoneNumber") String telephoneNumber, @RequestParam("checkNumber") String checkNumber,@RequestParam("password1")String password1){
         Map<String,Object> map = new HashMap<>();
         if (telephoneNumber ==  null  ){
@@ -330,8 +349,14 @@ public class LoginController  extends BaseController {
         return map;
     }
 
-
-    @PostMapping("/forgetpasswordNoCode")
+    /**
+     * 忘记密码2
+     * @param user
+     * @param passwordold
+     * @param passwordnew
+     * @return
+     */
+    @PostMapping("/forgetPasswordNoCode")
     public Result  forgetpasswordNoCode(
             @RequestBody User user,
             @RequestParam("passwordold")String passwordold,
@@ -348,6 +373,10 @@ public class LoginController  extends BaseController {
         }
     }
 
+    /**
+     * 登出
+     * @return
+     */
     @RequestMapping("/logout")
     public Result logout() {
         try {
