@@ -221,48 +221,7 @@ public class LoginController  extends BaseController {
 
     /**
      * 用户注册
-     * @param user
-     * @param checkNumber
-     * @return
-     */
-    @PostMapping("/register")
-    public Map register(@RequestBody User user, @RequestParam("checkNumber") String checkNumber){
-        System.out.println("register");
-        Map<String,Object> map = new HashMap<>();
-        //首先获取验证码
-        Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession();
-        JSONObject json = (JSONObject) session.getAttribute("checkNumberJson");
-        String code = json.getString("checkNumber"); // session里的验证码
-        System.out.println(code + ":" + checkNumber);
-        if(code == null){
-            System.out.println("验证码为空");
-            map.put("code", "验证码为空");
-        }else if(true){
-            System.out.println(user.getName());
-            if(userService.findByName(user.getName())!=null){
-                System.out.println("用户已经存在");
-                map.put("user", "用户已经存在");
-            } else {
-                System.out.println("用户不存在，可以注册！");
-            }
-            try {
-                userService.saveUser(user);
-                System.out.println("注册成功");
-                map.put("user", "注册成功");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }else
-            System.out.println("验证码有误");
-            map.put("code", "验证码有误");
-        return map;
-    }
-
-    /**
-     * 用户注册2
-     * @param username
-     * @param mobile
+     * @param phone
      * @param password
      * @param checkNumber
      * @param nickname
@@ -273,13 +232,13 @@ public class LoginController  extends BaseController {
      * @param email
      * @return
      */
-    @PostMapping("/register2")
-    public  Map register_advance(
-            @RequestParam("username") String username,
-            @RequestParam("mobile") String mobile,
+    @PostMapping("/register")
+    public  Map register(
+            @RequestParam("phone") String phone,
             @RequestParam("password") String password,
             @RequestParam("checkNumber") String checkNumber,
-            String  nickname,
+            // String username,
+            String nickname,
             String sex,
             String school,
             String classes,
@@ -288,33 +247,59 @@ public class LoginController  extends BaseController {
     ){
         Map<String,Object> map = new HashMap<>();
         User user = new User();
-        user.setPassword(password);
-        user.setName(username);
-        Long tel = Long.parseLong(mobile);
+        Long tel = Long.parseLong(phone);
         user.setTel(tel);
+        user.setPassword(password);
         user.setNickname(nickname);
         if(!StringUtils.isEmpty(sex)){
             user.setSex(sex);
         }
+        user.setSchool(school);
         user.setClasses(classes);
         user.setEmail(email);
-        user.setSchool(school);
         user.setSchoolNumber(school_number);
-        //首先获取验证码
-        Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession();
-        JSONObject json = (JSONObject) session.getAttribute("checkNumberJson");
-        String code = json.getString("checkNumber");
-        if(code == null){
-            map.put("code", "验证码为空");
-        }else if(code.equals(checkNumber)){
-            if(userService.findByName(user.getName())!=null){
-                map.put("user", "用户已经存在");
+        System.out.println("新用户信息：" + user);
+        // 获取验证码
+        try{
+            Subject subject = SecurityUtils.getSubject();
+            Session session = subject.getSession();
+            JSONObject json = (JSONObject) session.getAttribute("checkNumberJson");
+            String code = json.getString("checkNumber"); // session里的验证码
+            System.out.println(code + ":" + checkNumber);
+            if(code == null){
+                System.out.println("验证码为空");
+                map.put("code", 100);
+                map.put("msg", "验证码为空");
+            }else if(code.equals(checkNumber)){ //
+                // 设定默认用户名
+                user.setName("用户" + code);
+                try {
+                    if(userService.findByName(user.getName())!=null){
+                        System.out.println("用户已经存在");
+                        map.put("code", 200);
+                        map.put("msg", "用户已经存在");
+                    } else {
+                        userService.saveUser(user);
+                        System.out.println("注册成功");
+                        map.put("code", 0);
+                        map.put("msg", "注册成功");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                System.out.println("验证码有误");
+                map.put("code", 300);
+                map.put("msg", "验证码有误");
             }
-            userService.saveUserAllInfo(user);
-            map.put("user", "注册成功");
-        }else
-            map.put("code", "验证码有误");
+        } catch (Exception e) {
+            System.out.println("获取验证码失败");
+            map.put("code", 400);
+            map.put("msg", "获取验证码失败");
+            e.printStackTrace();
+        }
+
+
         return map;
     }
 

@@ -108,21 +108,17 @@ public class UserServiceImpl implements IUserService {
     @Transactional
     @Override
     public void saveUser(User user) {
-//        String username = user.getName();
-//        username = StringUtils.lowerCase(username);
-//        String password = user.getPassword();
-//        password = StringUtils.lowerCase(password);
-        user = passwordHelper.encryptPassword(user);
-        userMapper.insert(user);
+        try{
+            user = passwordHelper.encryptPassword(user);
+            userMapper.insert(user);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Transactional
     @Override
     public void saveUserAllInfo(User user) {
-//        String username = user.getName();
-//        username = StringUtils.lowerCase(username);
-//        String password = user.getPassword();
-//        password = StringUtils.lowerCase(password);
         user = passwordHelper.encryptPassword(user);
         userMapper.insertAllinfo(user);
     }
