@@ -34,3 +34,5 @@ build/
 /target/
 
 *.yml
+.gitignore
+pom.xml
