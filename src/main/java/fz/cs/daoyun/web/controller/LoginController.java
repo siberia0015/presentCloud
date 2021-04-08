@@ -166,13 +166,14 @@ public class LoginController  extends BaseController {
      */
     @ResponseBody
     @PostMapping("/getCode")
-    public boolean getCode(@RequestParam("telephoneNumber")String telephoneNumber){
+    public Map<String, Object> getCode(@RequestParam("telephoneNumber")String telephoneNumber){
+        Map<String,Object> map = new HashMap<>();
         Subject subject = SecurityUtils.getSubject();
         SmsUtils smsUtils = new SmsUtils();
         Session session = subject.getSession();
         try {
             //随机生成验证码
-            String checkNumber = String.valueOf(new Random().nextInt(999999));
+            String checkNumber =  String.valueOf(new Random().nextInt(999999));
             //将验证码通过阿里云接口发送至手机
             SendSmsResponse sendSms =smsUtils.sendSms(telephoneNumber,checkNumber);//填写你需要测试的手机号码
 
@@ -182,18 +183,18 @@ public class LoginController  extends BaseController {
             System.out.println("RequestId=" + sendSms.getRequestId());
             System.out.println("BizId=" + sendSms.getBizId());
 
-            //将验证码存到session中,同时存入创建时间
-            //以json存放，这里使用的是阿里的fastjson
-            JSONObject json = new JSONObject();
-            json.put("telephoneNumber",telephoneNumber);
-            json.put("checkNumber",checkNumber);
-            json.put("createTime",System.currentTimeMillis());
-            // 将认证码存入SESSION
-            session.setAttribute("checkNumberJson",json);
-            return true;
+            //将验证码存到传给前端中,同时存入创建时间
+            map.put("phone", telephoneNumber);
+            map.put("checkNumber", checkNumber);
+            map.put("createTime", System.currentTimeMillis());
+            map.put("code", 0);
+            map.put("msg", "发送验证码成功");
+            return map;
         } catch (Exception e) {
+            map.put("code", 100);
+            map.put("msg", "发送验证码失败");
             e.printStackTrace();
-            return false;
+            return map;
         }
     }
 
@@ -245,6 +246,9 @@ public class LoginController  extends BaseController {
             String school_number,
             String email
     ){
+        System.out.println(phone);
+        System.out.println(password);
+        System.out.println(checkNumber);
         Map<String,Object> map = new HashMap<>();
         User user = new User();
         Long tel = Long.parseLong(phone);
@@ -258,21 +262,16 @@ public class LoginController  extends BaseController {
         user.setClasses(classes);
         user.setEmail(email);
         user.setSchoolNumber(school_number);
-        System.out.println("新用户信息：" + user);
-        // 获取验证码
+        //  验证码正确性在前端验证
         try{
-            Subject subject = SecurityUtils.getSubject();
-            Session session = subject.getSession();
-            JSONObject json = (JSONObject) session.getAttribute("checkNumberJson");
-            String code = json.getString("checkNumber"); // session里的验证码
-            System.out.println(code + ":" + checkNumber);
-            if(code == null){
+            if(checkNumber == null){
                 System.out.println("验证码为空");
                 map.put("code", 100);
                 map.put("msg", "验证码为空");
-            }else if(code.equals(checkNumber)){ //
+            }else { //
                 // 设定默认用户名
-                user.setName("用户" + code);
+                user.setName("用户" + checkNumber);
+                System.out.println("新用户信息：" + user);
                 try {
                     if(userService.findByName(user.getName())!=null){
                         System.out.println("用户已经存在");
@@ -287,19 +286,13 @@ public class LoginController  extends BaseController {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else {
-                System.out.println("验证码有误");
-                map.put("code", 300);
-                map.put("msg", "验证码有误");
             }
         } catch (Exception e) {
-            System.out.println("获取验证码失败");
-            map.put("code", 400);
-            map.put("msg", "获取验证码失败");
+            System.out.println("其他错误");
+            map.put("code", 300);
+            map.put("msg", "其他错误");
             e.printStackTrace();
         }
-
-
         return map;
     }
 
