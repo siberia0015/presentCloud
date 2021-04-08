@@ -53,8 +53,8 @@ public class LoginController  extends BaseController {
     @Autowired
     private ILoginLogService iLoginLogService;
 
-    @RequestMapping("/test")
     @ResponseBody
+    @GetMapping("/test")
     public  String Test(){
         System.out.println(".............Login.........................");
 
@@ -69,7 +69,8 @@ public class LoginController  extends BaseController {
      * @param password
      * @return
      */
-    @RequestMapping(value = "/login")
+    @ResponseBody
+    @PostMapping(value = "/login")
     public Map<String, Object> login(@RequestParam("account") String username, @RequestParam("password")String password){
         System.out.println("login");
         Map<String,Object> map = new HashMap<>();
@@ -123,7 +124,6 @@ public class LoginController  extends BaseController {
             token.setRememberMe(true);
             System.out.println("login: " + token);
             subject.login(token);
-
         }catch (IncorrectCredentialsException e){
             map.put("code",100);
             map.put("msg","用户不存在或者密码错误");
@@ -151,6 +151,7 @@ public class LoginController  extends BaseController {
      * 用户未登录时的返回信息
      * @return
      */
+    @ResponseBody
     @RequestMapping("/unauth")
     public Map<String,Object> unauth(){
         Map<String,Object> map = new HashMap<>();
@@ -204,18 +205,19 @@ public class LoginController  extends BaseController {
      * @param checkNumber
      * @return
      */
-    @RequestMapping("/phoneLogin")
+    @PostMapping("/phoneLogin")
     public  Map<String,Object>  phonelogin(@RequestParam("telephoneNumber") String telephoneNumber, @RequestParam("checkNumber") String checkNumber){
         Map<String,Object> map = new HashMap<>();
-        Subject subject = SecurityUtils.getSubject();
-        UserPhoneToken token = new UserPhoneToken(checkNumber);
         try{
-            subject.login(token);
-            map.put("phoneLoginMsg", "登录成功");
+            Long un = Long.parseLong(telephoneNumber);
+            User user = userService.findByTel(un);
+            System.out.println(user);
+            map.put("code", 0);
+            map.put("msg", "登录成功");
         }catch (Exception e){
-            System.out.println(e);
-            map.put("phoneLoginError", "验证码错误");
-            map.put("token",SecurityUtils.getSubject().getSession().getId().toString());
+            e.printStackTrace();
+            map.put("code", 100);
+            map.put("msg", "用户不存在");
         }
         return map;
     }
@@ -233,6 +235,7 @@ public class LoginController  extends BaseController {
      * @param email
      * @return
      */
+    @ResponseBody
     @PostMapping("/register")
     public  Map register(
             @RequestParam("phone") String phone,
