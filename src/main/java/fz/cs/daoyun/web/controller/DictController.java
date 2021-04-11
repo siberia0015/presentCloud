@@ -1,6 +1,7 @@
 package fz.cs.daoyun.web.controller;
 
 
+import ch.qos.logback.classic.Logger;
 import fz.cs.daoyun.domain.Dict;
 import fz.cs.daoyun.domain.DictInfo;
 import fz.cs.daoyun.service.IDictService;
@@ -10,9 +11,11 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +23,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/dict")
 public class DictController {
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private IDictService dictService;
 
@@ -30,7 +35,18 @@ public class DictController {
 //    @RequiresUser
     @GetMapping("/findAllDict")
     public Result<List<Dict>> findAll(){
-       List<Dict> dicts  = dictService.findAllDict();
+        logger.info("/findAllDice");
+        List<Dict> dicts = new ArrayList<>();
+        try{
+              dicts = dictService.findAllDict();
+            if (dicts != null) {
+                logger.info(dicts.toString());
+            } else {
+                logger.info("无数据");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
        return Result.success(dicts);
     }
 

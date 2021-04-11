@@ -1,9 +1,7 @@
 package fz.cs.daoyun.web.controller;
 
-
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
-import com.zhenzi.sms.ZhenziSmsClient;
 import fz.cs.daoyun.domain.User;
 import fz.cs.daoyun.service.*;
 import fz.cs.daoyun.utils.shiro.spring.SpringCacheManagerWrapper;
@@ -20,6 +18,8 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +34,7 @@ import java.util.Random;
 @RestController
 @RequiredArgsConstructor
 public class LoginController  extends BaseController {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private IUserService userService;
@@ -75,7 +76,10 @@ public class LoginController  extends BaseController {
      */
     @ResponseBody
     @PostMapping(value = "/login")
-    public Map<String, Object> login(@RequestParam("account")String username, @RequestParam("password")String password){
+    public Map<String, Object> login(@RequestParam("account")String username,
+                                     @RequestParam("password")String password
+    ){
+        logger.info("/login");
         Map<String,Object> map = new HashMap<>();
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
@@ -90,12 +94,14 @@ public class LoginController  extends BaseController {
                 if (user == null) {
                     map.put("code",100);
                     map.put("msg","用户不存在");
+                    logger.info(map.toString());
                     return map;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 map.put("code",400);
                 map.put("msg","未知异常");
+                logger.info(map.toString());
                 return map;
             }
         }else if (username.matches(ph)){
@@ -106,12 +112,14 @@ public class LoginController  extends BaseController {
                 if (user == null) {
                     map.put("code",100);
                     map.put("msg","用户不存在");
+                    logger.info(map.toString());
                     return map;
                 }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
                 map.put("code",500);
                 map.put("msg","未知异常");
+                logger.info(map.toString());
                 return map;
             }
         }else {
@@ -121,12 +129,14 @@ public class LoginController  extends BaseController {
                 if (user == null) {
                     map.put("code",100);
                     map.put("msg","用户不存在");
+                    logger.info(map.toString());
                     return map;
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 map.put("code",100);
                 map.put("msg","用户不存在或者密码错误");
+                logger.info(map.toString());
                 return map;
             }
         }
@@ -140,14 +150,17 @@ public class LoginController  extends BaseController {
         }catch (IncorrectCredentialsException e){
             map.put("code",100);
             map.put("msg","用户不存在或者密码错误");
+            logger.info(map.toString());
             return map;
         }catch (AuthenticationException e) {
             map.put("code",200);
             map.put("msg","该用户不存在");
+            logger.info(map.toString());
             return map;
         } catch (Exception e) {
             map.put("code",300);
             map.put("msg","未知异常");
+            logger.info(map.toString());
             return map;
         }
         map.put("code",0);
@@ -155,7 +168,7 @@ public class LoginController  extends BaseController {
         map.put("token",SecurityUtils.getSubject().getSession().getId().toString());
         map.put("user", user);
         session.setAttribute("loginMap", map);
-        System.out.println(map);
+        logger.info(map.toString());
         return map;
 
     }
@@ -170,6 +183,7 @@ public class LoginController  extends BaseController {
         Map<String,Object> map = new HashMap<>();
         map.put("code",500);
         map.put("msg","未登录");
+        logger.info(map.toString());
         return map;
     }
 
@@ -224,7 +238,8 @@ public class LoginController  extends BaseController {
      */
     @PostMapping("/phoneLogin")
     public  Map<String,Object>  phonelogin(@RequestParam("phone") String phone,
-                                           @RequestParam("checkNumber") String checkNumber){
+                                           @RequestParam("checkNumber") String checkNumber
+    ){
         Map<String,Object> map = new HashMap<>();
         try{
             Long un = Long.parseLong(phone);
@@ -243,6 +258,7 @@ public class LoginController  extends BaseController {
             map.put("code", 100);
             map.put("msg", "未知错误");
         }
+        logger.info(map.toString());
         return map;
     }
 
@@ -291,19 +307,16 @@ public class LoginController  extends BaseController {
         //  验证码正确性在前端验证
         try{
             if(checkNumber == null){
-                System.out.println("验证码为空");
                 map.put("code", 100);
                 map.put("msg", "验证码为空");
             }else {
                 System.out.println("新用户信息：" + user);
                 try {
                     if(userService.findByName(user.getName())!=null){
-                        System.out.println("用户已经存在");
                         map.put("code", 200);
                         map.put("msg", "用户已经存在");
                     } else {
                         userService.saveUser(user);
-                        System.out.println("注册成功");
                         map.put("code", 0);
                         map.put("msg", "注册成功");
                     }
@@ -312,11 +325,11 @@ public class LoginController  extends BaseController {
                 }
             }
         } catch (Exception e) {
-            System.out.println("其他错误");
             map.put("code", 300);
             map.put("msg", "其他错误");
             e.printStackTrace();
         }
+        logger.info(map.toString());
         return map;
     }
 
@@ -328,7 +341,10 @@ public class LoginController  extends BaseController {
      * @return
      */
     @PostMapping("/resetPasswordWithCode")
-    public Map resetPassword(@RequestParam("phone") String phone, @RequestParam("checkNumber") String checkNumber,@RequestParam("password")String password){
+    public Map resetPassword(@RequestParam("phone") String phone,
+                             @RequestParam("checkNumber") String checkNumber,
+                             @RequestParam("password")String password
+    ){
         Map<String,Object> map = new HashMap<>();
         if (phone ==  null){
             map.put("code", 100);
@@ -346,6 +362,7 @@ public class LoginController  extends BaseController {
                 map.put("msg", "修改成功");
             }
         }
+        logger.info(map.toString());
         return map;
     }
 
@@ -428,7 +445,7 @@ public class LoginController  extends BaseController {
      * 登出
      * @return
      */
-    @RequestMapping("/logout")
+    @PostMapping("/logout")
     public Result logout() {
         try {
             Subject subject = SecurityUtils.getSubject();

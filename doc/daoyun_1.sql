@@ -1,4 +1,4 @@
-/*
+﻿/*
 Navicat MySQL Data Transfer
 
 Source Server         : 本地
@@ -361,7 +361,7 @@ CREATE TABLE `t_sign` (
   `id` bigint(11) NOT NULL AUTO_INCREMENT,
   `user_name` varchar(20) NOT NULL,
   `class_id` int(11) NOT NULL,
-  `sign_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `sign_time` datetime NOT NULL,
   `score` int(11) unsigned DEFAULT '2',
   `singn_times` int(11) DEFAULT NULL,
   `start_sign_id` int(11) NOT NULL,
@@ -389,7 +389,7 @@ CREATE TABLE `t_start_sign` (
   `user_name` varchar(20) NOT NULL,
   `class_id` int(11) NOT NULL,
   `singn_num` int(10) NOT NULL,
-  `sign_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `sign_time` datetime NOT NULL,
   `score` int(11) unsigned DEFAULT '2',
   `distance` int(5) unsigned DEFAULT '10',
   `type` int(11) NOT NULL,
