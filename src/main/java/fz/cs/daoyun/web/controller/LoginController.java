@@ -1,9 +1,7 @@
 package fz.cs.daoyun.web.controller;
 
-
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
-import com.zhenzi.sms.ZhenziSmsClient;
 import fz.cs.daoyun.domain.User;
 import fz.cs.daoyun.service.*;
 import fz.cs.daoyun.utils.shiro.spring.SpringCacheManagerWrapper;
@@ -20,6 +18,8 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresGuest;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +34,7 @@ import java.util.Random;
 @RestController
 @RequiredArgsConstructor
 public class LoginController  extends BaseController {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private IUserService userService;
@@ -53,8 +54,12 @@ public class LoginController  extends BaseController {
     @Autowired
     private ILoginLogService iLoginLogService;
 
-    @RequestMapping("/test")
+    /**
+     * test
+     * @return
+     */
     @ResponseBody
+    @GetMapping("/test")
     public  String Test(){
         System.out.println(".............Login.........................");
 
@@ -69,80 +74,101 @@ public class LoginController  extends BaseController {
      * @param password
      * @return
      */
-    @RequestMapping(value = "/login")
-    public Map<String, Object> login(@RequestParam("account") String username, @RequestParam("password")String password){
-        System.out.println("login");
+    @ResponseBody
+    @PostMapping(value = "/login")
+    public Map<String, Object> login(@RequestParam("account")String username,
+                                     @RequestParam("password")String password
+    ){
+        logger.info("/login");
         Map<String,Object> map = new HashMap<>();
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
         String em = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
         String ph = "^[1][34578]\\d{9}$";
         String name = null;
+        User user = null;
         if(username.matches(em)){
             /*邮箱登录*/
-            User user = null;
             try {
                 user = userService.findByEmail(username);
+                if (user == null) {
+                    map.put("code",100);
+                    map.put("msg","用户不存在");
+                    logger.info(map.toString());
+                    return map;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
-                map.put("code",100);
-                map.put("msg","用户不存在或者密码错误");
+                map.put("code",400);
+                map.put("msg","未知异常");
+                logger.info(map.toString());
                 return map;
             }
-            name = user.getName();
         }else if (username.matches(ph)){
             /*手机登录*/
-            User user = null;
             try {
                 Long un = Long.parseLong(username);
                 user = userService.findByTel(un);
+                if (user == null) {
+                    map.put("code",100);
+                    map.put("msg","用户不存在");
+                    logger.info(map.toString());
+                    return map;
+                }
             } catch (NumberFormatException e) {
                 e.printStackTrace();
-                map.put("code",100);
-                map.put("msg","用户不存在或者密码错误");
+                map.put("code",500);
+                map.put("msg","未知异常");
+                logger.info(map.toString());
                 return map;
             }
-            name = user.getName();
         }else {
             /*用户名登录*/
-            User user = null;
             try {
                 user = userService.findByName(username);
+                if (user == null) {
+                    map.put("code",100);
+                    map.put("msg","用户不存在");
+                    logger.info(map.toString());
+                    return map;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 map.put("code",100);
                 map.put("msg","用户不存在或者密码错误");
+                logger.info(map.toString());
                 return map;
             }
-            name = user.getName();
         }
-
+        name = user.getName();
         try {
             String pwd= Md5Util.encrypt(name, password);
             UsernamePasswordToken token = new UsernamePasswordToken(name, pwd);
             token.setRememberMe(true);
             System.out.println("login: " + token);
             subject.login(token);
-
         }catch (IncorrectCredentialsException e){
             map.put("code",100);
             map.put("msg","用户不存在或者密码错误");
+            logger.info(map.toString());
             return map;
         }catch (AuthenticationException e) {
             map.put("code",200);
             map.put("msg","该用户不存在");
+            logger.info(map.toString());
             return map;
         } catch (Exception e) {
             map.put("code",300);
             map.put("msg","未知异常");
+            logger.info(map.toString());
             return map;
         }
         map.put("code",0);
         map.put("msg","登录成功");
         map.put("token",SecurityUtils.getSubject().getSession().getId().toString());
-        map.put("username", username);
+        map.put("user", user);
         session.setAttribute("loginMap", map);
-        System.out.println(map);
+        logger.info(map.toString());
         return map;
 
     }
@@ -151,30 +177,33 @@ public class LoginController  extends BaseController {
      * 用户未登录时的返回信息
      * @return
      */
-    @RequestMapping("/unauth")
+    @ResponseBody
+    @GetMapping("/unauth")
     public Map<String,Object> unauth(){
         Map<String,Object> map = new HashMap<>();
         map.put("code",500);
         map.put("msg","未登录");
+        logger.info(map.toString());
         return map;
     }
 
     /**
      * 获取验证码
-     * @param telephoneNumber
+     * @param phone
      * @return
      */
     @ResponseBody
     @PostMapping("/getCode")
-    public boolean getCode(@RequestParam("telephoneNumber")String telephoneNumber){
+    public Map<String, Object> getCode(@RequestParam("phone")String phone){
+        Map<String,Object> map = new HashMap<>();
         Subject subject = SecurityUtils.getSubject();
         SmsUtils smsUtils = new SmsUtils();
         Session session = subject.getSession();
         try {
             //随机生成验证码
-            String checkNumber = String.valueOf(new Random().nextInt(999999));
+            String checkNumber =  String.valueOf(new Random().nextInt(999999));
             //将验证码通过阿里云接口发送至手机
-            SendSmsResponse sendSms =smsUtils.sendSms(telephoneNumber,checkNumber);//填写你需要测试的手机号码
+            SendSmsResponse sendSms =smsUtils.sendSms(phone,checkNumber);//填写你需要测试的手机号码
 
             System.out.println("短信接口返回的数据----------------");
             System.out.println("Code=" + sendSms.getCode());
@@ -182,40 +211,54 @@ public class LoginController  extends BaseController {
             System.out.println("RequestId=" + sendSms.getRequestId());
             System.out.println("BizId=" + sendSms.getBizId());
 
-            //将验证码存到session中,同时存入创建时间
-            //以json存放，这里使用的是阿里的fastjson
-            JSONObject json = new JSONObject();
-            json.put("telephoneNumber",telephoneNumber);
-            json.put("checkNumber",checkNumber);
-            json.put("createTime",System.currentTimeMillis());
-            // 将认证码存入SESSION
-            session.setAttribute("checkNumberJson",json);
-            return true;
+            if (!sendSms.getCode().equals("OK") || !sendSms.getMessage().equals("OK")) {
+                map.put("code", 200);
+                map.put("msg", sendSms.getMessage());
+            } else {
+                //将验证码存到传给前端中,同时存入创建时间
+                map.put("phone", phone);
+                map.put("checkNumber", checkNumber);
+                map.put("createTime", System.currentTimeMillis());
+                map.put("code", 0);
+                map.put("msg", "发送验证码成功");
+            }
         } catch (Exception e) {
+            map.put("code", 200);
+            map.put("msg", "发送验证码失败");
             e.printStackTrace();
-            return false;
         }
+        return map;
     }
 
     /**
      * 手机登陆
-     * @param telephoneNumber
+     * @param phone
      * @param checkNumber
      * @return
      */
-    @RequestMapping("/phoneLogin")
-    public  Map<String,Object>  phonelogin(@RequestParam("telephoneNumber") String telephoneNumber, @RequestParam("checkNumber") String checkNumber){
+    @PostMapping("/phoneLogin")
+    public  Map<String,Object>  phonelogin(@RequestParam("phone") String phone,
+                                           @RequestParam("checkNumber") String checkNumber
+    ){
         Map<String,Object> map = new HashMap<>();
-        Subject subject = SecurityUtils.getSubject();
-        UserPhoneToken token = new UserPhoneToken(checkNumber);
         try{
-            subject.login(token);
-            map.put("phoneLoginMsg", "登录成功");
+            Long un = Long.parseLong(phone);
+            User user = userService.findByTel(un);
+            if (user == null) {
+                map.put("code", 200);
+                map.put("msg", "用户不存在");
+            } else {
+                map.put("code", 0);
+                map.put("msg", "登录成功");
+                map.put("token",SecurityUtils.getSubject().getSession().getId().toString());
+                map.put("user", user);
+            }
         }catch (Exception e){
-            System.out.println(e);
-            map.put("phoneLoginError", "验证码错误");
-            map.put("token",SecurityUtils.getSubject().getSession().getId().toString());
+            e.printStackTrace();
+            map.put("code", 100);
+            map.put("msg", "未知错误");
         }
+        logger.info(map.toString());
         return map;
     }
 
@@ -232,6 +275,7 @@ public class LoginController  extends BaseController {
      * @param email
      * @return
      */
+    @ResponseBody
     @PostMapping("/register")
     public  Map register(
             @RequestParam("phone") String phone,
@@ -247,6 +291,8 @@ public class LoginController  extends BaseController {
     ){
         Map<String,Object> map = new HashMap<>();
         User user = new User();
+        // 设定默认用户名
+        user.setName(phone);
         Long tel = Long.parseLong(phone);
         user.setTel(tel);
         user.setPassword(password);
@@ -258,111 +304,148 @@ public class LoginController  extends BaseController {
         user.setClasses(classes);
         user.setEmail(email);
         user.setSchoolNumber(school_number);
-        System.out.println("新用户信息：" + user);
-        // 获取验证码
+        //  验证码正确性在前端验证
         try{
-            Subject subject = SecurityUtils.getSubject();
-            Session session = subject.getSession();
-            JSONObject json = (JSONObject) session.getAttribute("checkNumberJson");
-            String code = json.getString("checkNumber"); // session里的验证码
-            System.out.println(code + ":" + checkNumber);
-            if(code == null){
-                System.out.println("验证码为空");
+            if(checkNumber == null){
                 map.put("code", 100);
                 map.put("msg", "验证码为空");
-            }else if(code.equals(checkNumber)){ //
-                // 设定默认用户名
-                user.setName("用户" + code);
+            }else {
+                System.out.println("新用户信息：" + user);
                 try {
                     if(userService.findByName(user.getName())!=null){
-                        System.out.println("用户已经存在");
                         map.put("code", 200);
                         map.put("msg", "用户已经存在");
                     } else {
                         userService.saveUser(user);
-                        System.out.println("注册成功");
                         map.put("code", 0);
                         map.put("msg", "注册成功");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            } else {
-                System.out.println("验证码有误");
-                map.put("code", 300);
-                map.put("msg", "验证码有误");
             }
         } catch (Exception e) {
-            System.out.println("获取验证码失败");
-            map.put("code", 400);
-            map.put("msg", "获取验证码失败");
+            map.put("code", 300);
+            map.put("msg", "其他错误");
             e.printStackTrace();
         }
-
-
+        logger.info(map.toString());
         return map;
     }
 
     /**
-     * 忘记密码
-     * @param telephoneNumber
+     * 通过手机验证重置密码
+     * @param phone
      * @param checkNumber
-     * @param password1
+     * @param password
      * @return
      */
-    @GetMapping("/forgetPassword")
-    public Map  forgetPassword(@RequestParam("telephoneNumber") String telephoneNumber, @RequestParam("checkNumber") String checkNumber,@RequestParam("password1")String password1){
+    @PostMapping("/resetPasswordWithCode")
+    public Map resetPassword(@RequestParam("phone") String phone,
+                             @RequestParam("checkNumber") String checkNumber,
+                             @RequestParam("password")String password
+    ){
         Map<String,Object> map = new HashMap<>();
-        if (telephoneNumber ==  null  ){
-            map.put("tel","电话号码为空");
-        }
-        Long tel = Long.parseLong(telephoneNumber);
-
-        Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession();
-        JSONObject json = (JSONObject) session.getAttribute("checkNumberJson");
-        String code = json.getString("checkNumber");
-        if(code == null ||code.length() == 0){
-            map.put("code","验证码为空");
-        }else if(code.equals(checkNumber)){
+        if (phone ==  null){
+            map.put("code", 100);
+            map.put("msg", "手机号码为空");
+        } else {
+            Long tel = Long.parseLong(phone);
             User user = userService.findByTel(tel);
-            user.setPassword(password1);
-            user = passwordHelper.encryptPassword(user);
-            map.put("succes","修改成功");
-        }else
-            map.put("code", "验证码有误");
+            if (user == null) {
+                map.put("code", 200);
+                map.put("msg", "用户不存在");
+            } else {
+                user.setPassword(password);
+                userService.savePwd(user);
+                map.put("code", 0);
+                map.put("msg", "修改成功");
+            }
+        }
+        logger.info(map.toString());
         return map;
     }
 
     /**
-     * 忘记密码2
-     * @param user
-     * @param passwordold
-     * @param passwordnew
+     * 通过旧密码重置密码
+     * @param account
+     * @param oldPassword
+     * @param newPassword
      * @return
      */
-    @PostMapping("/forgetPasswordNoCode")
-    public Result  forgetpasswordNoCode(
-            @RequestBody User user,
-            @RequestParam("passwordold")String passwordold,
-            @RequestParam("passwordnew")String passwordnew
+    @PostMapping("/resetPasswordWithOldPassword")
+    public Map forgetpasswordNoCode(
+            @RequestParam("account")String account,
+            @RequestParam("oldPassword")String oldPassword,
+            @RequestParam("newPassword")String newPassword
     ){
-        String pwd= Md5Util.encrypt(user.getName(), passwordold);
-
-        if(pwd.equals(user.getPassword())){
-            user.setPassword(passwordnew);
-            userService.savePwd(user);
-            return Result.success();
-        }else{
-            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        String em = "^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$";
+        String ph = "^[1][34578]\\d{9}$";
+        User user = null;
+        Map<String,Object> map = new HashMap<>();
+        if(account.matches(em)){
+            try {
+                user = userService.findByEmail(account);
+                if (user == null) {
+                    map.put("code",100);
+                    map.put("msg","用户不存在");
+                    return map;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                map.put("code",400);
+                map.put("msg","未知异常");
+                return map;
+            }
+        }else if (account.matches(ph)){
+            try {
+                Long un = Long.parseLong(account);
+                user = userService.findByTel(un);
+                if (user == null) {
+                    map.put("code",100);
+                    map.put("msg","用户不存在");
+                    return map;
+                }
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                map.put("code",500);
+                map.put("msg","未知异常");
+                return map;
+            }
+        }else {
+            try {
+                user = userService.findByName(account);
+                if (user == null) {
+                    map.put("code",100);
+                    map.put("msg","用户不存在");
+                    return map;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                map.put("code",100);
+                map.put("msg","用户不存在或者密码错误");
+                return map;
+            }
         }
+
+        String pwd= Md5Util.encrypt(user.getName(), oldPassword);
+        if(pwd.equals(user.getPassword())){
+            user.setPassword(newPassword);
+            userService.savePwd(user);
+            map.put("code", 0);
+            map.put("msg", "修改成功");
+        }else{
+            map.put("code", 200);
+            map.put("msg", "与原密码不符");
+        }
+        return map;
     }
 
     /**
      * 登出
      * @return
      */
-    @RequestMapping("/logout")
+    @PostMapping("/logout")
     public Result logout() {
         try {
             Subject subject = SecurityUtils.getSubject();
