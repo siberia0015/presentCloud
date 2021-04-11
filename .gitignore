@@ -35,4 +35,5 @@ build/
 
 *.yml
 .gitignore
+.yml
 pom.xml

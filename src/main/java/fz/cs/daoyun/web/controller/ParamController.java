@@ -26,8 +26,8 @@ public class ParamController {
 
 
     /*获取所有参数*/
-    @RequiresUser
-    @GetMapping("/getallParam")
+    // @RequiresUser
+    @GetMapping("/getAllParam")
     public Result<List<Param>> getAllParam(){
         try {
             List<Param> params = paramService.getAll();

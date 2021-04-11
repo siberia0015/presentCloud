@@ -25,8 +25,8 @@ public interface DictMapper {
     int deleteByPrimaryKey(Integer id);
 
     @Insert({
-        "insert into t_dict (id, name, ",
-        "describe)",
+        "insert into t_dict (id, dict_name, ",
+        "dict_describe)",
         "values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, ",
         "#{describe,jdbcType=VARCHAR})"
     })
@@ -37,14 +37,14 @@ public interface DictMapper {
 
     @Select({
         "select",
-        "id, name, describe",
+        "id, dict_name, dict_describe",
         "from t_dict",
         "where id = #{id,jdbcType=INTEGER}"
     })
     @Results({
         @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
-        @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
-        @Result(column="describe", property="describe", jdbcType=JdbcType.VARCHAR)
+        @Result(column="dict_name", property="name", jdbcType=JdbcType.VARCHAR),
+        @Result(column="dict_describe", property="describe", jdbcType=JdbcType.VARCHAR)
     })
     Dict selectByPrimaryKey(Integer id);
 
@@ -53,16 +53,22 @@ public interface DictMapper {
 
     @Update({
         "update t_dict",
-        "set name = #{name,jdbcType=VARCHAR},",
-          "describe = #{describe,jdbcType=VARCHAR}",
+        "set dict_name = #{name,jdbcType=VARCHAR},",
+          "dict_describe = #{describe,jdbcType=VARCHAR}",
         "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(Dict record);
 
 
     @Select("select * from t_dict")
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
+            @Result(column="dict_name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="dict_describe", property="describe", jdbcType=JdbcType.VARCHAR)
+    })
     List<Dict> findall();
 
-    @Select("select * from t_dict where name = #{name,jdbcType=VARCHAR}")
+
+    @Select("select * from t_dict where dict_name = #{name,jdbcType=VARCHAR}")
     List<Dict> findByType(String name);
 }
