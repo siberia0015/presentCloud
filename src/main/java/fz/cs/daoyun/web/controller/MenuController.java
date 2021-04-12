@@ -55,7 +55,7 @@ public class MenuController {
 
 
     /*根据menuname查询*/
-    @RequiresUser
+    //@RequiresUser
     @RequestMapping("/findByName")
     public Result findByName(@RequestParam("name")String name){
         Menu menu = menuService.findByName(name);
@@ -63,7 +63,7 @@ public class MenuController {
     }
 
     /*根据Id查询*/
-    @RequiresPermissions("menu:select")
+    //@RequiresPermissions("menu:select")
     @RequestMapping("/findById")
     public Result findById(@RequestParam("id") Integer id){
         Menu menu = menuService.findById(id);
@@ -71,7 +71,7 @@ public class MenuController {
     }
 
     /*更新父菜单， 出入参数为实体*/
-    @RequiresPermissions("menu:update")
+    //@RequiresPermissions("menu:update")
     @PostMapping("/edit")
     public Result editMenu( @RequestBody Menu menu){
         try {
@@ -84,7 +84,7 @@ public class MenuController {
     }
 
     /*根据父菜单id， 更新子菜单*/
-    @RequiresPermissions("menu:update")
+    //@RequiresPermissions("menu:update")
     @PostMapping("updateByparentId")
     public  Result updateByParentId( @RequestBody Menu submenu){
         try {
@@ -97,7 +97,7 @@ public class MenuController {
     }
 
     /*更新父菜单， 请求为具体属性值*/
-    @RequiresPermissions("menu:update")
+    //@RequiresPermissions("menu:update")
     @PostMapping("/editByParam")
     public Result editByParam(@RequestParam("id") Integer id, @RequestParam("menuName")String menuName,
                               @RequestParam("menuIcon")String menuIcon,@RequestParam("menuLink")String menuLink,
@@ -121,7 +121,7 @@ public class MenuController {
     }
 
     /*添加父级菜单*/
-    @RequiresPermissions("menu:add")
+    //@RequiresPermissions("menu:add")
     @PostMapping("/add")
     public Result addMenu(@RequestBody Menu menu){
         try {
@@ -134,7 +134,7 @@ public class MenuController {
     }
 
     /*添加子级菜单*/
-    @RequiresPermissions("menu:add")
+    //@RequiresPermissions("menu:add")
     @PostMapping("/addSubMenu")
     public Result addSubMenu(@RequestBody Menu submenu){
         try {
@@ -149,7 +149,7 @@ public class MenuController {
 
 
     /*删除菜单*/
-    @RequiresPermissions("menu:delete")
+    //@RequiresPermissions("menu:delete")
     @GetMapping("delete")
     public Result deleteMenu(@RequestParam("id") Integer id){
         try {
@@ -163,7 +163,7 @@ public class MenuController {
     }
 
     /*删除子菜单*/
-    @RequiresPermissions("menu:delete")
+    //@RequiresPermissions("menu:delete")
     @GetMapping("deletesubmenu")
     public Result deletesubmenu(@RequestParam("subid") Integer subid){
         try {
