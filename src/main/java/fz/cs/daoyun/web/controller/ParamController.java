@@ -40,7 +40,7 @@ public class ParamController {
 
 
     /*修改参数*/
-    @RequiresPermissions("param:update")
+    //@RequiresPermissions("param:update")
     @PostMapping("update")
     public  Result update(@RequestParam("id") Integer id, @RequestParam("key")String key, @RequestParam("value") Integer value){
 //        Integer id = Integer.parseInt(id);
@@ -56,7 +56,7 @@ public class ParamController {
 
 
     /*修改参数*/
-    @RequiresPermissions("param:update")
+    //@RequiresPermissions("param:update")
     @PostMapping("updateByRecord")
     public  Result update(@RequestBody Param param) {
 
