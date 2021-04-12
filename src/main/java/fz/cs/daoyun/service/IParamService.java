@@ -14,4 +14,8 @@ public interface IParamService {
     Param findById(Integer id) throws Exception;
 
     void updateByRecord(Param param);
+
+    void insert(Param param);
+
+    void delete(Integer id);
 }

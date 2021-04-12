@@ -43,7 +43,7 @@ public class DictServiceImpl implements IDictService {
 
     @Override
     public boolean updateDictInfo(DictInfo dictinfo) {
-         dictInfoMapper.updateByPrimaryKey(dictinfo);
+         dictInfoMapper.updateByPrimaryKeySelective(dictinfo);
          return true;
     }
 

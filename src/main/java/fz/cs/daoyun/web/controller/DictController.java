@@ -15,10 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/dict")
@@ -103,11 +100,11 @@ public class DictController {
     /*添加字典详细信息*/
     //@RequiresPermissions("dict:add")
     @PostMapping("/addDictinfo")
-    public Result addDictinfo(@RequestParam("dictId")String dictId, @RequestBody DictInfo dictInfo){
+    public Result addDictinfo(@RequestBody DictInfo dictInfo){
         logger.info("/addDictinfo");
-       Integer dictid = Integer.parseInt(dictId);
-       dictInfo.setDictId(dictid);
         try {
+            dictInfo.setItemValue(String.valueOf(new Random().nextInt(999999)));
+            dictInfo.setSequence(1);
             dictService.addDictInfo(dictInfo);
             return Result.success();
         } catch (Exception e) {
@@ -117,19 +114,14 @@ public class DictController {
     }
 
 
-    /*更新Dict，如果不存在则新增*/
+    /*更新Dict*/
     //@RequiresPermissions("dict:update")
     @PostMapping("/updateDictInfo")
     public Result update(@RequestBody DictInfo dictInfo){
         logger.info("/updateDictInfo");
         try {
-            if (dictService.findByItemKey(dictInfo.getItemKey()) == null) {
-                logger.info("新增dictInfo");
-                dictService.addDictInfo(dictInfo);
-            } else {
-                dictService.updateDictInfo(dictInfo);
-                logger.info("修改dictInfo");
-            }
+            dictService.updateDictInfo(dictInfo);
+            logger.info("修改dictInfo");
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
@@ -155,16 +147,16 @@ public class DictController {
     /*删除*/
     //@RequiresPermissions("dict:update")
     @RequestMapping("/deleteDict")
-    public Result delete(@RequestParam("dictid")Integer dictid){
+    public Result delete(@RequestParam("dictId")Integer dictId){
         logger.info("/deleteDict");
-        List<DictInfo> dictInfos = dictService.findDictInfoByDictId(dictid);
+        List<DictInfo> dictInfos = dictService.findDictInfoByDictId(dictId);
         try {
             for (DictInfo dictinfo :dictInfos
                  ) {
                 dictService.deleteDictInfo(dictinfo.getId());
             }
 
-            dictService.deleteDict(dictid);
+            dictService.deleteDict(dictId);
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
@@ -174,11 +166,11 @@ public class DictController {
 
     /*删除*/
     //@RequiresPermissions("dict:delete")
-    @RequestMapping("/deleteDictInfo")
-    public Result deleteDictInfo(@RequestBody DictInfo dictInfo){
+    @PostMapping("/deleteDictInfo")
+    public Result deleteDictInfo(@RequestParam("dictInfoId")Integer dictInfoId){
         logger.info("/deleteDictInfo");
         try {
-            dictService.deleteDictInfo(dictInfo.getId());
+            dictService.deleteDictInfo(dictInfoId);
             return Result.success();
         } catch (Exception ex) {
             ex.printStackTrace();
