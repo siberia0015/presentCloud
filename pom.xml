@@ -10,7 +10,7 @@
     </parent>
     <groupId>fz.cs</groupId>
     <artifactId>daoyun</artifactId>
-    <version>0.0.1-Alpha-lab</version>
+    <version>0.0.1-Alpha-dom</version>
     <name>daoyun</name>
     <packaging>jar</packaging>
     <description>daoyun for springboot copyright for cs25</description>
@@ -69,12 +69,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <!--<scope>test</scope>-->
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.jupiter</groupId>
-                    <artifactId>junit-jupiter-api</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

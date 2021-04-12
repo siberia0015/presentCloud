@@ -32,10 +32,9 @@ public class DictController {
     /*
     * 查看所有字典目錄
     * */
-//    @RequiresUser
     @GetMapping("/findAllDict")
     public Result<List<Dict>> findAll(){
-        logger.info("/findAllDice");
+        logger.info("/findAllDict");
         List<Dict> dicts = new ArrayList<>();
         try{
               dicts = dictService.findAllDict();
@@ -56,6 +55,7 @@ public class DictController {
     @RequiresUser
     @RequestMapping("/findDictByType")
     public Result<List<Dict>> findByType(@RequestParam("type") String type){
+        logger.info("/findDictByType");
         List<Dict> dicts = dictService.findByDictType(type);
         return Result.success(dicts);
     }
@@ -64,6 +64,7 @@ public class DictController {
     @RequiresUser
     @PostMapping("/findByDictForDictInfo")
     public Result<List<DictInfo>> findByDictForDictInfo(@RequestBody Dict dict){
+        logger.info("/findByDictForDictInfo");
         try {
             List<DictInfo> dictIns = dictService.findDictInfoByDictId(dict.getId());
             return Result.success(dictIns);
@@ -78,6 +79,7 @@ public class DictController {
     @RequiresUser
     @RequestMapping("/findDictInfoByItemKey")
     public Result<DictInfo> findByItemKey(@RequestParam("itemKey")String itemKey){
+        logger.info("/findDictInfoByItemKey");
         DictInfo dictinfo = dictService.findByItemKey(itemKey);
         return Result.success(dictinfo);
     }
@@ -87,6 +89,7 @@ public class DictController {
     @RequiresPermissions("dict:add")
     @PostMapping("/addDict")
     public Result addDict(@RequestBody Dict dict){
+        logger.info("/addDict");
         try {
             dictService.addDict(dict);
             return Result.success();
@@ -101,6 +104,7 @@ public class DictController {
     @RequiresPermissions("dict:add")
     @PostMapping("/addDictinfo")
     public Result addDictinfo(@RequestParam("dictId")String dictId, @RequestBody DictInfo dictInfo){
+        logger.info("/addDictinfo");
        Integer dictid = Integer.parseInt(dictId);
        dictInfo.setDictId(dictid);
         try {
@@ -113,12 +117,19 @@ public class DictController {
     }
 
 
-    /*更新Dict*/
+    /*更新Dict，如果不存在则新增*/
     @RequiresPermissions("dict:update")
     @PostMapping("/updateDictInfo")
     public Result update(@RequestBody DictInfo dictInfo){
+        logger.info("/updateDictInfo");
         try {
-            dictService.updateDictInfo(dictInfo);
+            if (dictService.findByItemKey(dictInfo.getItemKey()) == null) {
+                logger.info("新增dictInfo");
+                dictService.addDictInfo(dictInfo);
+            } else {
+                dictService.updateDictInfo(dictInfo);
+                logger.info("修改dictInfo");
+            }
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
@@ -131,6 +142,7 @@ public class DictController {
     @RequiresPermissions("dict:update")
     @PostMapping("updateValue")
     public Result updateKeyValue(@RequestParam("id")Integer id,@RequestParam("value")String value){
+        logger.info("updateValue");
         boolean b = dictService.alteritemValue(id, value);
         if(b == false){
             return Result.failure(ResultCodeEnum.PARAM_ERROR);
@@ -144,6 +156,7 @@ public class DictController {
     @RequiresPermissions("dict:update")
     @RequestMapping("/deleteDict")
     public Result delete(@RequestParam("dictid")Integer dictid){
+        logger.info("/deleteDict");
         List<DictInfo> dictInfos = dictService.findDictInfoByDictId(dictid);
         try {
             for (DictInfo dictinfo :dictInfos
@@ -163,7 +176,7 @@ public class DictController {
     @RequiresPermissions("dict:delete")
     @RequestMapping("/deleteDictInfo")
     public Result deleteDictInfo(@RequestBody DictInfo dictInfo){
-
+        logger.info("/deleteDictInfo");
         try {
             dictService.deleteDictInfo(dictInfo.getId());
             return Result.success();
@@ -179,6 +192,7 @@ public class DictController {
     @RequiresUser
     @GetMapping("/findAllKV")
     public Result<List<Map<String, String>>> findAllKV(){
+        logger.info("/findAllKV");
         List<Map<String, String>> dicts  = dictService.findAllKV();
         return Result.success(dicts);
     }
@@ -186,6 +200,7 @@ public class DictController {
     @RequiresUser
     @RequestMapping("/findKVByType")
     public Result<List<Map<String, String>>> findKVByType(@RequestParam("type") String type){
+        logger.info("/findKVByType");
         List<Map<String, String>> dicts = dictService.findByKVDictType(type);
         return Result.success(dicts);
     }

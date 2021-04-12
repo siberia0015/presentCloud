@@ -6,7 +6,7 @@ spring:
         druid:
             # 主库数据源
             master:
-                url: jdbc:jdbc:mysql://localhost:3306/daoyun?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true
+                url: jdbc:jdbc:mysql://49.235.70.189:3306/daoyun?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&allowPublicKeyRetrieval=true
               # &serverTimezone=GMT%2B8
                 username: root
                 password: 123456
