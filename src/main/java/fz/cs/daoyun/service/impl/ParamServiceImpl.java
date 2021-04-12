@@ -28,8 +28,6 @@ public class ParamServiceImpl  implements IParamService {
         paramMapper.update(id, key, val);
     }
 
-
-
     @Override
     public Param findById(Integer id) throws  Exception{
         return paramMapper.selectByPrimaryKey(id);
@@ -39,4 +37,10 @@ public class ParamServiceImpl  implements IParamService {
     public void updateByRecord(Param param) {
         paramMapper.updateByPrimaryKey(param);
     }
+
+    @Override
+    public void insert(Param param) { paramMapper.insertSelective(param); }
+
+    @Override
+    public void delete(Integer id) { paramMapper.deleteByPrimaryKey(id); }
 }

@@ -12,6 +12,7 @@ import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
 import org.apache.shiro.subject.Subject;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,15 +21,34 @@ import java.util.List;
 @RestController
 @RequestMapping("/param")
 public class ParamController {
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private IParamService paramService;
 
+    /**
+     * 新增参数
+     */
+    @PostMapping("/addParam")
+    public Result addParam(@RequestBody Param param) {
+        logger.info("/addParam");
+        try {
+            paramService.insert(param);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
 
-    /*获取所有参数*/
+    /**
+     * 获取所有参数
+     * @return
+     */
     // @RequiresUser
     @GetMapping("/getAllParam")
     public Result<List<Param>> getAllParam(){
+        logger.info("/getAllParam");
         try {
             List<Param> params = paramService.getAll();
             return Result.success(params);
@@ -38,13 +58,17 @@ public class ParamController {
         }
     }
 
-
-    /*修改参数*/
+    /**
+     * 修改参数
+     * @param id
+     * @param key
+     * @param value
+     * @return
+     */
     //@RequiresPermissions("param:update")
-    @PostMapping("update")
-    public  Result update(@RequestParam("id") Integer id, @RequestParam("key")String key, @RequestParam("value") Integer value){
-//        Integer id = Integer.parseInt(id);
-//        Integer val = Integer.parseInt(value);
+    @PostMapping("/update")
+    public Result update(@RequestParam("id") Integer id, @RequestParam("key")String key, @RequestParam("value") Integer value){
+        logger.info("/update");
         try {
             paramService.update(id, key , value);
             return Result.success();
@@ -54,14 +78,32 @@ public class ParamController {
         }
     }
 
-
-    /*修改参数*/
+    /**
+     * 修改参数
+     * @param param
+     * @return
+     */
     //@RequiresPermissions("param:update")
-    @PostMapping("updateByRecord")
+    @PostMapping("/updateByRecord")
     public  Result update(@RequestBody Param param) {
-
+        logger.info("/updateByRecord");
         try {
             paramService.updateByRecord(param);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * 删除参数
+     */
+    @PostMapping("/delete")
+    public Result delete(@RequestParam("id") Integer id) {
+        logger.info("/delete");
+        try {
+            paramService.delete(id);
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
