@@ -21,7 +21,7 @@ public class User {
 
     private String email = null;
 
-    private Long tel;
+    private Long phone;
 
     private String school = null;
 
@@ -43,6 +43,36 @@ public class User {
 
     private List<String> rolenames = new ArrayList<String>();
 
+    private String college = null;
+
+    private Date brithday = new Date();
+
+    private boolean identity = true;
+
+    public Date getBrithday() {
+        return brithday;
+    }
+
+    public void setBrithday(Date brithday) {
+        this.brithday = brithday;
+    }
+
+    public boolean isIdentity() {
+        return identity;
+    }
+
+    public void setIdentity(boolean identity) {
+        this.identity = identity;
+    }
+
+    public String getCollege() {
+        return college;
+    }
+
+    public void setCollege(String college) {
+        this.college = college;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -51,7 +81,7 @@ public class User {
                 ", name='" + name + '\'' +
                 ", sex='" + sex + '\'' +
                 ", email='" + email + '\'' +
-                ", tel=" + tel +
+                ", phone=" + phone +
                 ", school='" + school + '\'' +
                 ", classes='" + classes + '\'' +
                 ", schoolNumber='" + schoolNumber + '\'' +
@@ -128,12 +158,12 @@ public class User {
         this.email = email == null ? null : email.trim();
     }
 
-    public Long getTel() {
-        return tel;
+    public Long getPhone() {
+        return phone;
     }
 
-    public void setTel(Long tel) {
-        this.tel = tel;
+    public void setPhone(Long phone) {
+        this.phone = phone;
     }
 
     public String getSchool() {

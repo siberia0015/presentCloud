@@ -86,14 +86,14 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User findByTel(Long tel) {
+    public User findByPhone(Long phone) {
 
-        return userMapper.selectByTel(tel);
+        return userMapper.selectByPhone(phone);
     }
 
     @Override
     public User findByPassportId(Long id) {
-        Passport passport = passportService.findByTel(id);
+        Passport passport = passportService.findByPhone(id);
         User  user = this.findById(passport.getUserId());
         return user;
     }
@@ -131,8 +131,8 @@ public class UserServiceImpl implements IUserService {
 
     @Transactional
     @Override
-    public void deleteUserByTel(Long tel) {
-        userMapper.deleteByTel(tel);
+    public void deleteUserByPhone(Long phone) {
+        userMapper.deleteByPhone(phone);
     }
 
     @Transactional
@@ -148,8 +148,8 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public String GetPasswordByTel(Long tel) {
-        Passport passport = passportService.findByTel(tel);
+    public String GetPasswordByPhone(Long phone) {
+        Passport passport = passportService.findByPhone(phone);
         return passport.getPassword();
     }
 

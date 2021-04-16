@@ -74,7 +74,7 @@ public class ShiroUserPhoneRealm extends AuthorizingRealm {
         String code = (String) token.getPrincipal();
 
         //去数据库根据手机号查询用户信息
-        User user = userService.findByTel(Long.parseLong(phone));
+        User user = userService.findByPhone(Long.parseLong(phone));
         if (StringUtils.isEmpty(verificationCode)) {
             try {
                 throw new Exception("网络错误");

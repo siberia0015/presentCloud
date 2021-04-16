@@ -15,7 +15,7 @@ public interface IUserService  {
 
     public User findByName(String name);
 
-    public User findByTel(Long tel);
+    public User findByPhone(Long phone);
 
     public User findByPassportId(Long id);
 
@@ -28,13 +28,13 @@ public interface IUserService  {
 
     public void deleteUserByUserId(Long id);
 
-    public void deleteUserByTel(Long tel);
+    public void deleteUserByPhone(Long phone);
 
     public void deleteUserByName(String name);
 
     public String GetPasswordByUserName(String name);
 
-    public String GetPasswordByTel(Long tel);
+    public String GetPasswordByPhone(Long phone);
 
     Set<String> queryRoles(String username);
 

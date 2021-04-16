@@ -106,7 +106,7 @@ public class AppLoginController {
      * */
     @ResponseBody
     @GetMapping("/getcode")
-    public boolean getCode(@RequestParam("telephoneNumber") String telephoneNumber) {
+    public boolean getCode(@RequestParam("phoneephoneNumber") String phoneephoneNumber) {
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
         try {
@@ -115,7 +115,7 @@ public class AppLoginController {
             String checkNumber = String.valueOf(new Random().nextInt(999999));
             //将验证码通过榛子云接口发送至手机
             ZhenziSmsClient client = new ZhenziSmsClient(apiUrl, appId, appSecret);
-            String result = client.send(telephoneNumber, "您的验证码为:" + checkNumber + "，该码有效期为5分钟，该码只能使用一次!");
+            String result = client.send(phoneephoneNumber, "您的验证码为:" + checkNumber + "，该码有效期为5分钟，该码只能使用一次!");
 
             json = JSONObject.parseObject(result);
             if (json.getIntValue("checkNumber") != 0) {//发送短信失败
@@ -124,7 +124,7 @@ public class AppLoginController {
             //将验证码存到session中,同时存入创建时间
             //以json存放，这里使用的是阿里的fastjson
             json = new JSONObject();
-            json.put("telephoneNumber", telephoneNumber);
+            json.put("phoneephoneNumber", phoneephoneNumber);
             json.put("checkNumber", checkNumber);
             json.put("createTime", System.currentTimeMillis());
             // 将认证码存入SESSION
@@ -147,7 +147,7 @@ public class AppLoginController {
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
         try {
-            User user = userService.findByTel(Long.valueOf(userId));
+            User user = userService.findByPhone(Long.valueOf(userId));
             if (user == null) {
                 map.put("code", 200);
                 map.put("msg", "用户不存在");
@@ -197,12 +197,12 @@ public class AppLoginController {
     /*忘记密码*/
 
     @GetMapping("/forgetpassword")
-    public Map forgetPassword(@RequestParam("telephoneNumber") String telephoneNumber, @RequestParam("checkNumber") String checkNumber, @RequestParam("password1") String password1) {
+    public Map forgetPassword(@RequestParam("phoneephoneNumber") String phoneephoneNumber, @RequestParam("checkNumber") String checkNumber, @RequestParam("password1") String password1) {
         Map<String, Object> map = new HashMap<>();
-        if (telephoneNumber == null) {
-            map.put("tel", "电话号码为空");
+        if (phoneephoneNumber == null) {
+            map.put("phone", "电话号码为空");
         }
-        Long tel = Long.parseLong(telephoneNumber);
+        Long phone = Long.parseLong(phoneephoneNumber);
 
         Subject subject = SecurityUtils.getSubject();
         Session session = subject.getSession();
@@ -211,7 +211,7 @@ public class AppLoginController {
         if (code == null || code.length() == 0) {
             map.put("code", "验证码为空");
         } else if (code.equals(checkNumber)) {
-            User user = userService.findByTel(tel);
+            User user = userService.findByPhone(phone);
             user.setPassword(password1);
             user = passwordHelper.encryptPassword(user);
             map.put("succes", "修改成功");

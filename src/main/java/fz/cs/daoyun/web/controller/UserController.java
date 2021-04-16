@@ -82,8 +82,8 @@ public class UserController {
         user.setSalt(randomNumberGenerator.nextBytes().toHex());
         user.setPassword(password);
         user.setName(username);
-        Long tel = Long.parseLong(mobile);
-        user.setTel(tel);
+        Long phone = Long.parseLong(mobile);
+        user.setPhone(phone);
         user.setNickname(nickname);
         if(!StringUtils.isEmpty(sex)){
 
@@ -120,8 +120,8 @@ public class UserController {
         System.out.println("调用了它");
         User user = userService.findByName(name);
 //        user.setPassword(password);
-        Long tel = Long.parseLong(mobile);
-        user.setTel(tel);
+        Long phone = Long.parseLong(mobile);
+        user.setPhone(phone);
         user.setNickname(nickname);
         user.setModifier(this.getCurrentUserFunc().getName());
         user.setModificationdate(new Date());
@@ -134,12 +134,12 @@ public class UserController {
     @RequiresPermissions("user:update")
     @ResponseBody
     @PostMapping("/update")
-    public Result update(@RequestParam("name")String name, @RequestParam("tel")String mobile, @RequestParam("password")String password, @RequestParam("nickname")String nickname){
+    public Result update(@RequestParam("name")String name, @RequestParam("phone")String mobile, @RequestParam("password")String password, @RequestParam("nickname")String nickname){
         User user = userService.findByName(name);
         user.setPassword(password);
-        Long tel = Long.parseLong(mobile);
+        Long phone = Long.parseLong(mobile);
         user.setNickname(nickname);
-        user.setTel(tel);
+        user.setPhone(phone);
         userService.saveUserAllInfo(user);
         return Result.success();
     }

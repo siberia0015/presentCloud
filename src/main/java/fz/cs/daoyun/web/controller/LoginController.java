@@ -108,7 +108,7 @@ public class LoginController  extends BaseController {
             /*手机登录*/
             try {
                 Long un = Long.parseLong(username);
-                user = userService.findByTel(un);
+                user = userService.findByPhone(un);
                 if (user == null) {
                     map.put("code",100);
                     map.put("msg","用户不存在");
@@ -243,7 +243,7 @@ public class LoginController  extends BaseController {
         Map<String,Object> map = new HashMap<>();
         try{
             Long un = Long.parseLong(phone);
-            User user = userService.findByTel(un);
+            User user = userService.findByPhone(un);
             if (user == null) {
                 map.put("code", 200);
                 map.put("msg", "用户不存在");
@@ -293,8 +293,8 @@ public class LoginController  extends BaseController {
         User user = new User();
         // 设定默认用户名
         user.setName(phone);
-        Long tel = Long.parseLong(phone);
-        user.setTel(tel);
+        Long phone1 = Long.parseLong(phone);
+        user.setPhone(phone1);
         user.setPassword(password);
         user.setNickname(nickname);
         if(!StringUtils.isEmpty(sex)){
@@ -350,8 +350,8 @@ public class LoginController  extends BaseController {
             map.put("code", 100);
             map.put("msg", "手机号码为空");
         } else {
-            Long tel = Long.parseLong(phone);
-            User user = userService.findByTel(tel);
+            Long phone1 = Long.parseLong(phone);
+            User user = userService.findByPhone(phone1);
             if (user == null) {
                 map.put("code", 200);
                 map.put("msg", "用户不存在");
@@ -400,7 +400,7 @@ public class LoginController  extends BaseController {
         }else if (account.matches(ph)){
             try {
                 Long un = Long.parseLong(account);
-                user = userService.findByTel(un);
+                user = userService.findByPhone(un);
                 if (user == null) {
                     map.put("code",100);
                     map.put("msg","用户不存在");
