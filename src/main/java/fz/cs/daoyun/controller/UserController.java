@@ -1,4 +1,4 @@
-package fz.cs.daoyun.web.controller;
+package fz.cs.daoyun.controller;
 
 
 import com.alibaba.fastjson.JSONObject;

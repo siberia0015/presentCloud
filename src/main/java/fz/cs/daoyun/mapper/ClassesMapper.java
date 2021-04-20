@@ -25,7 +25,7 @@ public interface ClassesMapper {
         "#{classesName,jdbcType=VARCHAR}, #{school,jdbcType=VARCHAR}, ",
         "#{department,jdbcType=VARCHAR}, #{teacherId,jdbcType=VARCHAR}, ",
         "#{teacherName,jdbcType=VARCHAR}, #{courseName,jdbcType=VARCHAR}, ",
-        "#{term,jdbcType=VARCHAR}, #{textbook,jdbcType=VARCHAR}, #{classImage,jdbcType=VARCHAR})"
+        "#{term,jdbcType=VARCHAR}, #{textbook,jdbcType=VARCHAR}, #{classImage,jdbcType=BLOB})"
     })
     int insert(Classes record);
 
@@ -50,7 +50,7 @@ public interface ClassesMapper {
         @Result(column="course_name", property="courseName", jdbcType=JdbcType.VARCHAR),
         @Result(column="term", property="term", jdbcType=JdbcType.VARCHAR),
         @Result(column="textbook", property="textbook", jdbcType=JdbcType.VARCHAR),
-        @Result(column="class_image", property="classImage", jdbcType=JdbcType.VARCHAR),
+        @Result(column="class_image", property="classImage", jdbcType=JdbcType.BLOB),
     })
     Classes selectByPrimaryKey(Integer id);
 
@@ -68,7 +68,7 @@ public interface ClassesMapper {
             "course_name = #{courseName,jdbcType=VARCHAR}",
             "term = #{term,jdbcType=VARCHAR}",
             "textbook = #{textbook,jdbcType=VARCHAR}",
-            "class_image = #{classImage,jdbcType=VARCHAR}",
+            "class_image = #{classImage,jdbcType=BLOB}",
         "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(Classes record);

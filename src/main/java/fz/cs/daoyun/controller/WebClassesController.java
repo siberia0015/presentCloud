@@ -1,4 +1,4 @@
-package fz.cs.daoyun.web.controller;
+package fz.cs.daoyun.controller;
 
 import fz.cs.daoyun.domain.Classes;
 import fz.cs.daoyun.domain.User;

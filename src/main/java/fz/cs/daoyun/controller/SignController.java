@@ -1,4 +1,4 @@
-package fz.cs.daoyun.app.controller;
+package fz.cs.daoyun.controller;
 
 
 import fz.cs.daoyun.domain.Sign;
