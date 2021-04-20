@@ -17,6 +17,8 @@ public interface IUserService  {
 
     public User findByPhone(Long phone);
 
+    public User find(Long id);
+
     public User findByPassportId(Long id);
 
     public User findByToken(String token);

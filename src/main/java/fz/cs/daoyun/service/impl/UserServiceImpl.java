@@ -99,6 +99,14 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public User find(Long id) {
+        User  user = userMapper.selectByName(id.toString());
+        if (user == null) user = userMapper.selectByPhone(id);
+        if (user == null) user = userMapper.selectByEmail(id.toString());
+        return user;
+    }
+
+    @Override
     public User findByToken(String token) {
         Passport passport = passportService.findByToken(token);
         User user = this.findById(passport.getUserId());

@@ -10,6 +10,7 @@ import fz.cs.daoyun.utils.tools.Md5Util;
 import fz.cs.daoyun.utils.tools.Result;
 import fz.cs.daoyun.utils.tools.ResultCodeEnum;
 import fz.cs.daoyun.utils.tools.SmsUtils;
+import jdk.nashorn.internal.parser.Token;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -163,12 +164,14 @@ public class LoginController  extends BaseController {
             logger.info(map.toString());
             return map;
         }
+        SecurityUtils.getSubject().getSession().setAttribute("username",username);
         map.put("code",0);
         map.put("msg","登录成功");
         map.put("token",SecurityUtils.getSubject().getSession().getId().toString());
         map.put("user", user);
-        session.setAttribute("loginMap", map);
+        SecurityUtils.getSubject().getSession().setAttribute("loginMap", map);
         logger.info(map.toString());
+        logger.info("当前用户：" + (String)SecurityUtils.getSubject().getSession().getAttribute("username"));
         return map;
 
     }
@@ -240,7 +243,10 @@ public class LoginController  extends BaseController {
     public  Map<String,Object>  phonelogin(@RequestParam("phone") String phone,
                                            @RequestParam("checkNumber") String checkNumber
     ){
+        logger.info("/phoneLogin");
         Map<String,Object> map = new HashMap<>();
+        Subject subject = SecurityUtils.getSubject();
+        Session session = subject.getSession();
         try{
             Long un = Long.parseLong(phone);
             User user = userService.findByPhone(un);
@@ -248,6 +254,7 @@ public class LoginController  extends BaseController {
                 map.put("code", 200);
                 map.put("msg", "用户不存在");
             } else {
+                SecurityUtils.getSubject().getSession().setAttribute("username",phone);
                 map.put("code", 0);
                 map.put("msg", "登录成功");
                 map.put("token",SecurityUtils.getSubject().getSession().getId().toString());
@@ -258,7 +265,9 @@ public class LoginController  extends BaseController {
             map.put("code", 100);
             map.put("msg", "未知错误");
         }
+        SecurityUtils.getSubject().getSession().setAttribute("loginMap", map);
         logger.info(map.toString());
+        logger.info("当前用户：" + (String)SecurityUtils.getSubject().getSession().getAttribute("username"));
         return map;
     }
 

@@ -13,6 +13,8 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,120 +22,27 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping("/app/sign")
+@RequestMapping("/sign")
 public class SignController {
     /*签到管理模块*/
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private ISignService signService;
-
-
-    /*查询所有用户的签到次数,
-    需要传入一个日期， 查询是哪一天的所有签到记录，
-    日期格式如：2020-05-01*/
-    @PostMapping("/findAll")
-    @RequiresPermissions("sign:select")
-    public Result<List<Sign>> findAddAtCurrentDay(@RequestParam("classid") String classid){
-        Date date = new Date();
-        Integer classId = Integer.parseInt((String)classid);
-        try {
-            List<Sign> signs = signService.findAllAtCurrentDay(DateUtil.toDateString(date), classId);
-            return Result.success(signs);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.failure(ResultCodeEnum.BAD_REQUEST);
-        }
-    }
-
-
-    /*查询所有用户的签到次数,*/
-
-    @GetMapping("/findAllTime")
-    @RequiresPermissions("sign:select")
-    public Result<List<Sign>> findAllTime(@RequestParam("classid") String classid){
-        System.out.println(classid);
-        Integer classId = Integer.parseInt((String)classid);
-        try {
-            List<Sign> signs = signService.findAllTime(classId);
-            return Result.success(signs);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.failure(ResultCodeEnum.BAD_REQUEST);
-        }
-    }
-
-
-
-
-    /*查询给定（当前）用户的签到记录*/
-    @RequiresPermissions("sign:select")
-    @PostMapping("/findCurrentUsersign")
-    public Result<List<Sign>> findCurrentUsersign(@RequestParam("username")Object username, @RequestParam("classid") Object classid){
-        Integer classId = Integer.parseInt((String)classid);
-
-        try {
-
-            List<Sign> currentRecord = signService.findCurrentRecord((String) username, classId);
-
-            return Result.success(currentRecord);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.failure(ResultCodeEnum.BAD_REQUEST);
-        }
-
-    }
-
-//    /*签到, 需要传入用户名（账户）， 班级id*/
-//    @RequiresPermissions("sign:add")
-//    @PostMapping("/startSign")
-//    public Result startSign(@RequestParam("username")String username, @RequestParam("classid") String classid){
-//        Integer classId = Integer.parseInt(classid);
-//        try {
-//            signService.addSign(username, classId);
-//            return  Result.success();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return Result.failure(ResultCodeEnum.BAD_REQUEST);
-//        }
-//    }
-
-    /*老师发起签到*/
-    /*传入参数说明
-    * @Param username: 发起签到人的账号, 可以不传
-    * @Param classid: 签到班级id
-    * @Param type: 签到类型， 0， 限时签到， 1， 数字签到， 2，限时数字签到
-    * @Param sign_num: 签到号码
-    * @Param score: 签到分数（默认为2， 仅仅第一次发起签到时可以修改）
-    * @Param  distance: 签到距离（默认限距10米）
-    * @Param time: 签到时间（默认限时3分钟）
-    * @Param latitude: 纬度
-    * @Param longitude: 经度
-    * */
-    @RequiresRoles(value = {"admin", "teacher"}, logical = Logical.OR)
-    @PostMapping("/startSign")
-    public Result startSign(@RequestBody StartSign startSign){
-        try {
-            String username = (String)SecurityUtils.getSubject().getPrincipal();
-            startSign.setUserName(username);
-            startSign.setSignTime(new Date());
-            signService.starSign(startSign);
-            return  Result.success();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.failure(ResultCodeEnum.BAD_REQUEST);
-        }
-    }
-
-
-
-
-
 
     private static double rad(double d) {
         return d * Math.PI / 180.0;
     }
 
-
+    /**
+     * 判断签到地点是否处于半径内
+     * @param longitude1
+     * @param latitude1
+     * @param longitude2
+     * @param latitude2
+     * @param radius
+     * @return
+     */
     public static boolean isInCircle(Double longitude1, Double latitude1,Double longitude2, Double latitude2,Integer radius){
         /*longitude1, latitude1 是学生的经纬度*/
         final double EARTH_RADIUS = 6378.137;////地球半径 （千米）
@@ -162,6 +71,109 @@ public class SignController {
         return true;
     }
 
+    /**
+     * 查询该班级当天所有签到记录
+     * @param classid
+     * @return
+     */
+    @PostMapping("/findAll")
+    // @RequiresPermissions("sign:select")
+    public Result<List<Sign>> findAddAtCurrentDay(@RequestParam("classId") String classid){
+        logger.info("/findAll" + ' ' + "查询该班级当天所有签到记录");
+        Date date = new Date();
+        Integer classId = Integer.parseInt((String)classid);
+        try {
+            List<Sign> signs = signService.findAllAtCurrentDay(DateUtil.toDateString(date), classId);
+            return Result.success(signs);
+        } catch (Exception e) {
+            logger.info("系统错误");
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * 查询所有用户的签到次数
+     * @param classid
+     * @return
+     */
+    @GetMapping("/findAllTime")
+    // @RequiresPermissions("sign:select")
+    public Result<List<Sign>> findAllTime(@RequestParam("classid") String classid){
+        logger.info("/findAllTime" + ' ' + "查询所有用户的签到次数");
+        Integer classId = Integer.parseInt((String)classid);
+        try {
+            List<Sign> signs = signService.findAllTime(classId);
+            return Result.success(signs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * 查询给定（当前）用户的签到记录
+     * @param username
+     * @param classid
+     * @return
+     */
+    // @RequiresPermissions("sign:select")
+    @PostMapping("/findCurrentUsersign")
+    public Result<List<Sign>> findCurrentUsersign(@RequestParam("username")Object username, @RequestParam("classid") Object classid){
+        logger.info("/findCurrentUsersign" + ' ' + "查询给定（当前）用户的签到记录");
+        Integer classId = Integer.parseInt((String)classid);
+        try {
+            List<Sign> currentRecord = signService.findCurrentRecord((String) username, classId);
+            return Result.success(currentRecord);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
+//    /*签到, 需要传入用户名（账户）， 班级id*/
+//    @RequiresPermissions("sign:add")
+//    @PostMapping("/startSign")
+//    public Result startSign(@RequestParam("username")String username, @RequestParam("classid") String classid){
+//        Integer classId = Integer.parseInt(classid);
+//        try {
+//            signService.addSign(username, classId);
+//            return  Result.success();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+//        }
+//    }
+
+    /*传入参数说明
+    * @Param username: 发起签到人的账号, 可以不传
+    * @Param classid: 签到班级id
+    * @Param type: 签到类型， 0， 限时签到， 1， 数字签到， 2，限时数字签到
+    * @Param sign_num: 签到号码
+    * @Param score: 签到分数（默认为2， 仅仅第一次发起签到时可以修改）
+    * @Param  distance: 签到距离（默认限距10米）
+    * @Param time: 签到时间（默认限时3分钟）
+    * @Param latitude: 纬度
+    * @Param longitude: 经度
+    * */
+    // @RequiresRoles(value = {"admin", "teacher"}, logical = Logical.OR)
+    @PostMapping("/startSign")
+    public Result startSign(@RequestBody StartSign startSign){
+        logger.info("/startSign " + "老师发起签到");
+        try {
+            String username = (String)SecurityUtils.getSubject().getPrincipal();
+            startSign.setUserName(username);
+            startSign.setSignTime(new Date());
+            signService.starSign(startSign);
+            return  Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
+
+
     /*学生签到*/
     /*
     *
@@ -171,7 +183,7 @@ public class SignController {
      * @Param longitude: 经度
     *
     * */
-    @RequiresUser
+    // @RequiresUser
     @PostMapping("/studentSign")
     public Result studentSign( @RequestParam("classid")Object classid,@RequestParam(value = "sign_num", defaultValue = "1234567")Object sign_num, @RequestParam("longitude")Object longitude, @RequestParam("latitude")Object latitude){
         try {
@@ -280,7 +292,6 @@ public class SignController {
             return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
     }
-
 
 }
 
