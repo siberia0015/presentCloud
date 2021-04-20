@@ -19,11 +19,13 @@ public interface ClassesMapper {
         "insert into t_class (id, classes_id, ",
         "classes_name, school, ",
         "department, teacher_id, ",
-        "teacher_name)",
+        "teacher_name, course_name, ",
+        "term, textbook, class_image)",
         "values (#{id,jdbcType=INTEGER}, #{classesId,jdbcType=INTEGER}, ",
         "#{classesName,jdbcType=VARCHAR}, #{school,jdbcType=VARCHAR}, ",
         "#{department,jdbcType=VARCHAR}, #{teacherId,jdbcType=VARCHAR}, ",
-        "#{teacherName,jdbcType=VARCHAR})"
+        "#{teacherName,jdbcType=VARCHAR}, #{courseName,jdbcType=VARCHAR}, ",
+        "#{term,jdbcType=VARCHAR}, #{textbook,jdbcType=VARCHAR}, #{classImage,jdbcType=VARCHAR})"
     })
     int insert(Classes record);
 
@@ -33,6 +35,7 @@ public interface ClassesMapper {
     @Select({
         "select",
         "id, classes_id, classes_name, school, department, teacher_id, teacher_name, ",
+        "course_name, term, textbook, class_image",
         "from t_class",
         "where id = #{id,jdbcType=INTEGER}"
     })
@@ -44,6 +47,10 @@ public interface ClassesMapper {
         @Result(column="department", property="department", jdbcType=JdbcType.VARCHAR),
         @Result(column="teacher_id", property="teacherId", jdbcType=JdbcType.VARCHAR),
         @Result(column="teacher_name", property="teacherName", jdbcType=JdbcType.VARCHAR),
+        @Result(column="course_name", property="courseName", jdbcType=JdbcType.VARCHAR),
+        @Result(column="term", property="term", jdbcType=JdbcType.VARCHAR),
+        @Result(column="textbook", property="textbook", jdbcType=JdbcType.VARCHAR),
+        @Result(column="class_image", property="classImage", jdbcType=JdbcType.VARCHAR),
     })
     Classes selectByPrimaryKey(Integer id);
 
@@ -58,6 +65,10 @@ public interface ClassesMapper {
           "department = #{department,jdbcType=VARCHAR},",
           "teacher_id = #{teacherId,jdbcType=VARCHAR},",
           "teacher_name = #{teacherName,jdbcType=VARCHAR}",
+            "course_name = #{courseName,jdbcType=VARCHAR}",
+            "term = #{term,jdbcType=VARCHAR}",
+            "textbook = #{textbook,jdbcType=VARCHAR}",
+            "class_image = #{classImage,jdbcType=VARCHAR}",
         "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(Classes record);
@@ -72,6 +83,6 @@ public interface ClassesMapper {
     void deleteByClassId(Integer classesId);
 
 
-    @Select("select classes_id, classes_name, school, department, teacher_id, teacher_name from t_class where teacher_id =  #{name,jdbcType=VARCHAR}")
+    @Select("select classes_id, classes_name, school, department, teacher_id, teacher_name, course_name, term, textbook, class_image from t_class where teacher_id =  #{name,jdbcType=VARCHAR}")
     List<fz.cs.daoyun.domain.Classes> selectByTeacherId(String name);
 }

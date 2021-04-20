@@ -41,7 +41,7 @@ public class RoleController {
     /*
     *查询所有的角色
      */
-    @RequiresPermissions("role:select")
+    // @RequiresPermissions("role:select")
     @RequestMapping("/findAllRoles")
     @ResponseBody
     public Result<List<Role>> findAllRoles(){
@@ -51,7 +51,7 @@ public class RoleController {
 
     /*
     * 添加角色*/
-    @RequiresPermissions("role:add")
+    // @RequiresPermissions("role:add")
     @ResponseBody
     @PostMapping("/create")
     public Result creteRole(@RequestParam("role")String role){
@@ -73,7 +73,7 @@ public class RoleController {
     * 删除角色
     * */
     @ResponseBody
-    @RequiresPermissions("role:delete")
+    // @RequiresPermissions("role:delete")
     @PostMapping("/delete")
     public Result deleteBatchByIds(@NotNull @RequestParam("rolename") String rolename) {
         roleService.deleteRole(rolename);
@@ -84,7 +84,7 @@ public class RoleController {
     * 修改角色
     * */
     @ResponseBody
-    @RequiresPermissions("role:update")
+    // @RequiresPermissions("role:update")
     @PostMapping("/update")
     public Result update(@RequestParam("id")Integer id, @RequestParam("rolename")String rolename) {
         Role role = new Role();
@@ -107,7 +107,7 @@ public class RoleController {
     * 查询角色权限
     * */
     @ResponseBody
-    @RequiresPermissions("role:select")
+    // @RequiresPermissions("role:select")
     @GetMapping("/getRolePermission")
     public Result getRolePermission(@RequestParam("rolename")String rolename){
         List<RolePermission>  permissions = rolePermissionService.findByRoleName(rolename);
@@ -115,7 +115,7 @@ public class RoleController {
     }
 
     /*查詢角色权限（2）*/
-    @RequiresPermissions("role:select")
+    // @RequiresPermissions("role:select")
     @PostMapping("/findRolePermission")
     public Result findRolePermission(@RequestParam("rolename")String rolename){
         try {
@@ -132,7 +132,7 @@ public class RoleController {
 
 
     /*添加角色和权限*/
-    @RequiresPermissions("role:add")
+    // @RequiresPermissions("role:add")
     @PostMapping("/addRolePermission")
     public  Result addRolePermission(@RequestParam("rolename")  Object rolename,@RequestParam("permissions") List<?> permissions){
         List<String> permissionList = new ArrayList<String>();
@@ -183,7 +183,7 @@ public class RoleController {
 
 
     /*更新角色及权限*/
-    @RequiresPermissions("role:update")
+    // @RequiresPermissions("role:update")
     @PostMapping("/updateRolePermission")
     public  Result updateRolePermission(@RequestParam("roleId") Integer roleId, @RequestParam("rolename")String rolename, @RequestParam("permissions") List<?> permissions){
         try {
@@ -239,7 +239,7 @@ public class RoleController {
     }
 
     /*删除角色权限*/
-    @RequiresPermissions("role:delete")
+    // @RequiresPermissions("role:delete")
     @PostMapping("/deleteRolePermission")
     public  Result deleteRolePermission(@RequestParam("roleid") String Roleid, @RequestParam("permissionid") String permissionid){
         try {

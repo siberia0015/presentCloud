@@ -15,6 +15,8 @@ public class UserClasses {
 
     private String classesName;
 
+    private boolean identity;
+
     public String getClassImage() {
         return classImage;
     }
@@ -54,8 +56,6 @@ public class UserClasses {
     public void setIdentity(boolean identity) {
         this.identity = identity;
     }
-
-    private boolean identity;
 
     public Integer getId() {
         return id;

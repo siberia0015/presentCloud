@@ -47,7 +47,7 @@ public class User {
 
     private Date brithday = new Date();
 
-    private boolean identity = true;
+    private boolean identity = false;
 
     public Date getBrithday() {
         return brithday;

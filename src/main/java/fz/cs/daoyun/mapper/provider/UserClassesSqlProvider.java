@@ -22,6 +22,24 @@ public class UserClassesSqlProvider {
             sql.VALUES("user_name", "#{userName,jdbcType=VARCHAR}");
         }
 
+        if (record.getClassesName() != null) {
+            sql.VALUES("class_name", "#{class_name,jdbcType=VARCHAR}");
+        }
+
+        if (record.getUserId() != null) {
+            sql.VALUES("user_id", "#{userName,jdbcType=BIGINT}");
+        }
+
+        if (record.getUserPhone() != null) {
+            sql.VALUES("user_phone", "#{userPhone,jdbcType=BIGINT}");
+        }
+
+        if (record.getClassImage() != null) {
+            sql.VALUES("class_image", "#{classImage,jdbcType=VARCHAR}");
+        }
+
+        sql.VALUES("identity", "#{identity,jdbcType=TINYINT}");
+
         return sql.toString();
     }
 
@@ -36,6 +54,24 @@ public class UserClassesSqlProvider {
         if (record.getUserName() != null) {
             sql.SET("user_name = #{userName,jdbcType=VARCHAR}");
         }
+
+        if (record.getClassesName() != null) {
+            sql.VALUES("class_name", "#{class_name,jdbcType=VARCHAR}");
+        }
+
+        if (record.getUserId() != null) {
+            sql.VALUES("user_id", "#{userName,jdbcType=BIGINT}");
+        }
+
+        if (record.getUserPhone() != null) {
+            sql.VALUES("user_phone", "#{userPhone,jdbcType=BIGINT}");
+        }
+
+        if (record.getClassImage() != null) {
+            sql.VALUES("class_image", "#{classImage,jdbcType=VARCHAR}");
+        }
+
+        sql.VALUES("identity", "#{identity,jdbcType=TINYINT}");
 
         sql.WHERE("id = #{id,jdbcType=INTEGER}");
 

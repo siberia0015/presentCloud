@@ -23,7 +23,7 @@ import java.util.Random;
 
 
 @RestController
-@RequestMapping("/app/class")
+@RequestMapping("/class")
 public class ClassController {
     /*班课管理模块*/
 
@@ -32,45 +32,41 @@ public class ClassController {
 
     @Autowired
     private IUserService userService;
+
     @Autowired
     private ISignService iSignService;
 
-    /*生成随机数*/
+    /**
+     * 生成随机数
+     * @return
+     */
     public Integer getRandomNumber(){
         Integer START = 10000;   //定义范围开始数字
-
         Integer END =100000; //定义范围结束数字
-
-
         //创建Random类对象
         Random random = new Random();
-
         //产生随机数
         Integer number = random.nextInt(END - START + 1) + START;
-
         //打印随机数
-//        System.out.println("产生一个"+START+"到"+END+"之间的随机整数："+number);
+        System.out.println("产生一个"+START+"到"+END+"之间的随机整数："+number);
         return number;
     }
 
-
-
-
-
     /*创建班课（教师用户）*/
     @PostMapping("/createClass")
-    @RequiresRoles(value = {"teacher"})
+    // @RequiresRoles(value = {"teacher"})
     public Result createClass(@RequestBody Classes myclass){
         try {
             Integer number = null;
+            // 确保班课号不重复
             while (true){
                 number = (int)getRandomNumber();
                 Classes classes = classesService.findByClassID(number);
                 if(classes == null){
                     break;
                 }
-
             }
+            // 设置班课号
             myclass.setClassesId(number);
             String username = (String)SecurityUtils.getSubject().getPrincipal();
             User user = userService.findByName(username);
@@ -83,7 +79,6 @@ public class ClassController {
             return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
     }
-
 
     /*删除班课（教师用户）*/
     @RequiresPermissions("class:delete")
@@ -127,8 +122,6 @@ public class ClassController {
         }
     }
 
-
-
     /*为给定用户（当前用户）删除指定班课（学生用户）*/
     @RequiresPermissions("class:delete")
     @PostMapping("/deleteClasstoUser")
@@ -142,7 +135,6 @@ public class ClassController {
             return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
     }
-
 
     /*查询所有班课*/
     @RequiresPermissions("class:select")
@@ -172,7 +164,6 @@ public class ClassController {
         }
     }
 
-
     /*查询当前用户的班课*/
     @RequiresUser
     @GetMapping("getCurrentusertClass")
@@ -189,9 +180,8 @@ public class ClassController {
 
     }
 
-
     /*获取当前用户创建的课程列表*/
-    @RequiresRoles(value = {"teacher"})
+    // @RequiresRoles(value = {"teacher"})
     @GetMapping("getCurrentUserCreateClass")
     public Result<List<Classes>> getCurrentUserCreateClass(){
         String principal = (String) SecurityUtils.getSubject().getPrincipal();
@@ -204,7 +194,5 @@ public class ClassController {
             return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
     }
-
-
 
 }

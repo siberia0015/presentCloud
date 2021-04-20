@@ -287,7 +287,9 @@ public class LoginController  extends BaseController {
             String school,
             String classes,
             String school_number,
-            String email
+            String email,
+            String college,
+            Boolean identity
     ){
         Map<String,Object> map = new HashMap<>();
         User user = new User();
@@ -297,6 +299,8 @@ public class LoginController  extends BaseController {
         user.setPhone(phone1);
         user.setPassword(password);
         user.setNickname(nickname);
+        user.setCollege(college);
+        if (identity != null) user.setIdentity(identity);
         if(!StringUtils.isEmpty(sex)){
             user.setSex(sex);
         }
@@ -317,6 +321,7 @@ public class LoginController  extends BaseController {
                         map.put("msg", "用户已经存在");
                     } else {
                         userService.saveUser(user);
+                        map.put("user", user);
                         map.put("code", 0);
                         map.put("msg", "注册成功");
                     }

@@ -16,6 +16,46 @@ public class Classes {
 
     private String teacherName;
 
+    private String courseName;
+
+    private String term;
+
+    private String textbook;
+
+    private String classImage;
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
+
+    public String getTerm() {
+        return term;
+    }
+
+    public void setTerm(String term) {
+        this.term = term;
+    }
+
+    public String getTextbook() {
+        return textbook;
+    }
+
+    public void setTextbook(String textbook) {
+        this.textbook = textbook;
+    }
+
+    public String getClassImage() {
+        return classImage;
+    }
+
+    public void setClassImage(String classImage) {
+        this.classImage = classImage;
+    }
+
     @Override
     public String toString() {
         return "Classes{" +

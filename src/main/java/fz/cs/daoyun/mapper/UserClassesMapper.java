@@ -25,10 +25,11 @@ public interface UserClassesMapper {
     int deleteByPrimaryKey(Integer id);
 
     @Insert({
-        "insert into t_user_class (id, class_id, ",
-        "user_name)",
-        "values (#{id,jdbcType=INTEGER}, #{classId,jdbcType=INTEGER}, ",
-        "#{userName,jdbcType=VARCHAR})"
+        "insert into t_user_class (id, class_id, user_name, class_image, user_id, ",
+        "user_phone, class_name, identity)",
+        "values (#{id,jdbcType=INTEGER}, #{classId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, ",
+        "#{classImage,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, #{userPhone,jdbcType=BIGINT}, ",
+        "#{className,jdbcType=VARCHAR}, #{identity,jdbcType=TINYINT})"
     })
     int insert(UserClasses record);
 
@@ -37,14 +38,19 @@ public interface UserClassesMapper {
 
     @Select({
         "select",
-        "id, class_id, user_name",
+        "id, class_id, user_name, class_image, user_id, user_phone, class_name, identity",
         "from t_user_class",
         "where id = #{id,jdbcType=INTEGER}"
     })
     @Results({
         @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
         @Result(column="class_id", property="classId", jdbcType=JdbcType.INTEGER),
-        @Result(column="user_name", property="userName", jdbcType=JdbcType.VARCHAR)
+        @Result(column="user_name", property="userName", jdbcType=JdbcType.VARCHAR),
+        @Result(column="class_image", property="classImage", jdbcType=JdbcType.VARCHAR),
+        @Result(column="user_id", property="userId", jdbcType=JdbcType.BIGINT),
+        @Result(column="user_phone", property="userPhone", jdbcType=JdbcType.BIGINT),
+        @Result(column="class_name", property="className", jdbcType=JdbcType.VARCHAR),
+        @Result(column="identity", property="identity", jdbcType=JdbcType.TINYINT)
     })
     UserClasses selectByPrimaryKey(Integer id);
 
@@ -55,6 +61,11 @@ public interface UserClassesMapper {
         "update t_user_class",
         "set class_id = #{classId,jdbcType=INTEGER},",
           "user_name = #{userName,jdbcType=VARCHAR}",
+            "class_image = #{classImage,jdbcType=VARCHAR}",
+            "user_id = #{userId,jdbcType=BIGINT}",
+            "user_phone = #{userPhone,jdbcType=BIGINT}",
+            "class_name = #{className,jdbcType=VARCHAR}",
+            "identity = #{identity,jdbcType=TINYINT}",
         "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(UserClasses record);
