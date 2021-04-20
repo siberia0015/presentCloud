@@ -38,8 +38,8 @@ public class UserRoleServiceImpl  implements IUserRoleService {
     }
 
     @Override
-    public List<UserRole> findByUserTel(Long tel) {
-        User user = userMapper.selectByTel(tel);
+    public List<UserRole> findByUserPhone(Long phone) {
+        User user = userMapper.selectByPhone(phone);
         return userRoleMapper.selectByUserId(user.getUserId());
     }
 
@@ -110,9 +110,9 @@ public class UserRoleServiceImpl  implements IUserRoleService {
     }
 
     @Override
-    public List<Role> FindRoleByUsertel(Long tel) {
+    public List<Role> FindRoleByUserphone(Long phone) {
         List<Role> roles = null;
-        User user = userMapper.selectByTel(tel);
+        User user = userMapper.selectByPhone(phone);
         List<UserRole> userRoles = userRoleMapper.selectByUserId(user.getUserId());
         for(UserRole userRole : userRoles){
             Role role = roleService.findById(userRole.getRoleId());

@@ -37,7 +37,21 @@ public class ClassesSqlProvider {
             sql.VALUES("teacher_id", "#{teacher_id,jdbcType=INTEGER}");
         }
 
+        if (record.getCourseName() != null) {
+            sql.VALUES("course_name", "#{course_name,jdbcType=VARCHAR}");
+        }
 
+        if (record.getTerm() != null) {
+            sql.VALUES("term", "#{term,jdbcType=VARCHAR}");
+        }
+
+        if (record.getTextbook() != null) {
+            sql.VALUES("textbook", "#{textbook,jdbcType=VARCHAR}");
+        }
+
+        if (record.getClassImage() != null) {
+            sql.VALUES("class_image", "#{class_image,jdbcType=VARCHAR}");
+        }
 
         return sql.toString();
     }
@@ -62,14 +76,28 @@ public class ClassesSqlProvider {
             sql.SET("department = #{department,jdbcType=VARCHAR}");
         }
 
-
-
         if (record.getTeacherName() != null) {
             sql.SET("teacher_name = #{teacher_name,jdbcType=VARCHAR}");
         }
 
         if (record.getTeacherId() != null) {
             sql.SET("teacher_id = #{getTeacher_id,jdbcType=INTEGER}");
+        }
+
+        if (record.getCourseName() != null) {
+            sql.VALUES("course_name", "#{course_name,jdbcType=VARCHAR}");
+        }
+
+        if (record.getTerm() != null) {
+            sql.VALUES("term", "#{term,jdbcType=VARCHAR}");
+        }
+
+        if (record.getTextbook() != null) {
+            sql.VALUES("textbook", "#{textbook,jdbcType=VARCHAR}");
+        }
+
+        if (record.getClassImage() != null) {
+            sql.VALUES("class_image", "#{class_image,jdbcType=VARCHAR}");
         }
 
         sql.WHERE("id = #{id,jdbcType=INTEGER}");

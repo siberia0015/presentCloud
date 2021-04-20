@@ -22,41 +22,29 @@ public interface UserMapper {
     })
     int deleteByPrimaryKey(Long userId);
 
-//    @Insert({
-//        "insert into t_user (user_id, nickname, ",
-//        "name, sex, email, password, salt ",
-//        "tel, school, classes, ",
-//        "school_number, CreationDate, ",
-//        "Creator, Modifier, ",
-//        "ModificationDate)",
-//        "values (#{userId,jdbcType=BIGINT}, #{nickname,jdbcType=VARCHAR}, ",
-//        "#{name,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},#{salt,jdbcType=VARCHAR},",
-//        "#{tel,jdbcType=BIGINT}, #{school,jdbcType=VARCHAR}, #{classes,jdbcType=VARCHAR}, ",
-//        "#{schoolNumber,jdbcType=VARCHAR}, #{creationdate,jdbcType=TIMESTAMP}, ",
-//        "#{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, ",
-//        "#{modificationdate,jdbcType=TIMESTAMP})"
-//    })
-    @Insert("insert into t_user(name, password, salt, tel) values(#{name,jdbcType=VARCHAR}, " +
-            " #{password,jdbcType=VARCHAR},#{salt,jdbcType=VARCHAR},#{tel,jdbcType=BIGINT})")
+    @Insert("insert into t_user(name, password, salt, phone, identity, CreationDate) values(#{name,jdbcType=VARCHAR}, " +
+            " #{password,jdbcType=VARCHAR},#{salt,jdbcType=VARCHAR},#{phone,jdbcType=BIGINT}, " +
+            " #{identity,jdbcType=TINYINT},#{creationdate,jdbcType=TIMESTAMP})")
     int insert(User record);
 
 
     @Insert({
             "insert into t_user (" +
                     "user_id, nickname, name, sex, email, password, " +
-                    "salt,  tel, school, classes, school_number, CreationDate, ",
+                    "salt,  phone, school, classes, school_number, CreationDate, ",
                     "Creator, Modifier, ModificationDate",
+                    "college, birthday, identity",
             ") " +
             "values(" +
                     "#{userId,jdbcType=BIGINT}, #{nickname,jdbcType=VARCHAR}," +
                     "#{name,jdbcType=VARCHAR}, #{sex,jdbcType=CHAR}, #{email,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},#{salt,jdbcType=VARCHAR},",
-                    "#{tel,jdbcType=BIGINT}, #{school,jdbcType=VARCHAR}, #{classes,jdbcType=VARCHAR}, ",
+                    "#{phone,jdbcType=BIGINT}, #{school,jdbcType=VARCHAR}, #{classes,jdbcType=VARCHAR}, ",
                     "#{schoolNumber,jdbcType=VARCHAR}, #{creationdate,jdbcType=TIMESTAMP}, ",
                     "#{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, ",
-                    "#{modificationdate,jdbcType=TIMESTAMP}",
+                    "#{modificationdate,jdbcType=TIMESTAMP}, #{birthday,jdbcType=TIMESTAMP}",
+                    "#{college,jdbcType=VARCHAR}, #{identity,jdbcType=TINYINT}",
             ")"
     })
-
     void saveUserAllInfo(User user);
 
     @Update({
@@ -67,7 +55,7 @@ public interface UserMapper {
                 "email = #{email,jdbcType=VARCHAR},",
                 "password = #{password,jdbcType=VARCHAR},",
                 "salt = #{salt,jdbcType=VARCHAR},",
-                "tel = #{tel,jdbcType=BIGINT},",
+                "phone = #{phone,jdbcType=BIGINT},",
                 "school = #{school,jdbcType=VARCHAR},",
                 "classes = #{classes,jdbcType=VARCHAR},",
                 "school_number = #{schoolNumber,jdbcType=VARCHAR},",
@@ -75,6 +63,9 @@ public interface UserMapper {
                 "Creator = #{creator,jdbcType=VARCHAR},",
                 "Modifier = #{modifier,jdbcType=VARCHAR},",
                 "ModificationDate = #{modificationdate,jdbcType=TIMESTAMP}",
+                "birthday = #{birthday,jdbcType=TIMESTAMP}",
+                "college = #{college,jdbcType=VARCHAR},",
+                "identity = #{identity,jdbcType=TINYINT},",
                 "where user_id = #{userId,jdbcType=BIGINT}"
     })
     int insertAllinfo(User record);
@@ -85,8 +76,8 @@ public interface UserMapper {
 
     @Select({
         "select",
-        "user_id, nickname, name, sex, email, password, salt, tel, school, classes, school_number, CreationDate, ",
-        "Creator, Modifier, ModificationDate",
+            "user_id, nickname, name, sex, email, password, salt, phone, school, classes, school_number, CreationDate, ",
+            "Creator, Modifier, ModificationDate, college, birthday, identity",
         "from t_user",
         "where user_id = #{userId,jdbcType=BIGINT}"
     })
@@ -98,7 +89,7 @@ public interface UserMapper {
         @Result(column="email", property="email", jdbcType=JdbcType.VARCHAR),
         @Result(column = "password", property = "password", jdbcType=JdbcType.VARCHAR),
         @Result(column = "salt", property = "salt", jdbcType=JdbcType.VARCHAR),
-        @Result(column="tel", property="tel", jdbcType=JdbcType.BIGINT),
+        @Result(column="phone", property="phone", jdbcType=JdbcType.BIGINT),
         @Result(column="school", property="school", jdbcType=JdbcType.VARCHAR),
         @Result(column="classes", property="classes", jdbcType=JdbcType.VARCHAR),
         @Result(column="school_number", property="schoolNumber", jdbcType=JdbcType.VARCHAR),
@@ -120,7 +111,7 @@ public interface UserMapper {
           "email = #{email,jdbcType=VARCHAR},",
           "password = #{password,jdbcType=VARCHAR},",
           "salt = #{salt,jdbcType=VARCHAR},",
-          "tel = #{tel,jdbcType=BIGINT},",
+          "phone = #{phone,jdbcType=BIGINT},",
           "school = #{school,jdbcType=VARCHAR},",
           "classes = #{classes,jdbcType=VARCHAR},",
           "school_number = #{schoolNumber,jdbcType=VARCHAR},",
@@ -128,6 +119,9 @@ public interface UserMapper {
           "Creator = #{creator,jdbcType=VARCHAR},",
           "Modifier = #{modifier,jdbcType=VARCHAR},",
           "ModificationDate = #{modificationdate,jdbcType=TIMESTAMP}",
+            "birthday = #{birthday,jdbcType=TIMESTAMP}",
+            "college = #{college,jdbcType=VARCHAR},",
+            "identity = #{identity,jdbcType=TINYINT},",
         "where user_id = #{userId,jdbcType=BIGINT}"
     })
     int updateByPrimaryKey(User record);
@@ -135,8 +129,8 @@ public interface UserMapper {
 
     @Select({
             "select",
-            "user_id, nickname, name, sex, email, password, salt, tel, school, classes, school_number, CreationDate, ",
-            "Creator, Modifier, ModificationDate",
+            "user_id, nickname, name, sex, email, password, salt, phone, school, classes, school_number, CreationDate, ",
+            "Creator, Modifier, ModificationDate, college, birthday, identity",
             "from t_user",
             "where name = #{name,jdbcType=VARCHAR}"
     })
@@ -148,24 +142,27 @@ public interface UserMapper {
             @Result(column="email", property="email", jdbcType=JdbcType.VARCHAR),
             @Result(column = "password", property = "password", jdbcType=JdbcType.VARCHAR),
             @Result(column = "salt", property = "salt", jdbcType=JdbcType.VARCHAR),
-            @Result(column="tel", property="tel", jdbcType=JdbcType.BIGINT),
+            @Result(column="phone", property="phone", jdbcType=JdbcType.BIGINT),
             @Result(column="school", property="school", jdbcType=JdbcType.VARCHAR),
             @Result(column="classes", property="classes", jdbcType=JdbcType.VARCHAR),
             @Result(column="school_number", property="schoolNumber", jdbcType=JdbcType.VARCHAR),
             @Result(column="CreationDate", property="creationdate", jdbcType=JdbcType.TIMESTAMP),
             @Result(column="Creator", property="creator", jdbcType=JdbcType.VARCHAR),
             @Result(column="Modifier", property="modifier", jdbcType=JdbcType.VARCHAR),
-            @Result(column="ModificationDate", property="modificationdate", jdbcType=JdbcType.TIMESTAMP)
+            @Result(column="ModificationDate", property="modificationdate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="college", property="college", jdbcType=JdbcType.VARCHAR),
+            @Result(column="birthday", property="birthday", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="identity", property="identity", jdbcType=JdbcType.TINYINT)
     })
     User selectByName(String name);
 
 
     @Select({
             "select",
-            "user_id, nickname, name, sex, email, password, salt, tel, school, classes, school_number, CreationDate, ",
-            "Creator, Modifier, ModificationDate",
+            "user_id, nickname, name, sex, email, password, salt, phone, school, classes, school_number, CreationDate, ",
+            "Creator, Modifier, ModificationDate, college, birthday, identity",
             "from t_user",
-            "where tel = #{tel,jdbcType=BIGINT}"
+            "where phone = #{phone,jdbcType=BIGINT}"
     })
     @Results({
             @Result(column="user_id", property="userId", jdbcType=JdbcType.BIGINT, id=true),
@@ -175,53 +172,29 @@ public interface UserMapper {
             @Result(column="email", property="email", jdbcType=JdbcType.VARCHAR),
             @Result(column = "password", property = "password", jdbcType=JdbcType.VARCHAR),
             @Result(column = "salt", property = "salt", jdbcType=JdbcType.VARCHAR),
-            @Result(column="tel", property="tel", jdbcType=JdbcType.BIGINT),
+            @Result(column="phone", property="phone", jdbcType=JdbcType.BIGINT),
             @Result(column="school", property="school", jdbcType=JdbcType.VARCHAR),
             @Result(column="classes", property="classes", jdbcType=JdbcType.VARCHAR),
             @Result(column="school_number", property="schoolNumber", jdbcType=JdbcType.VARCHAR),
             @Result(column="CreationDate", property="creationdate", jdbcType=JdbcType.TIMESTAMP),
             @Result(column="Creator", property="creator", jdbcType=JdbcType.VARCHAR),
             @Result(column="Modifier", property="modifier", jdbcType=JdbcType.VARCHAR),
-            @Result(column="ModificationDate", property="modificationdate", jdbcType=JdbcType.TIMESTAMP)
+            @Result(column="ModificationDate", property="modificationdate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="college", property="college", jdbcType=JdbcType.VARCHAR),
+            @Result(column="birthday", property="birthday", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="identity", property="identity", jdbcType=JdbcType.TINYINT)
     })
-    User selectByTel(Long tel);
-
-
-//    @Select({
-//            "select",
-//            "user_id, nickname, name, sex, email, tel, school, classes, school_number, CreationDate, ",
-//            "Creator, Modifier, ModificationDate",
-//            "from t_user"
-//    })
-//    @Results({
-//            @Result(column="user_id", property="userId", jdbcType=JdbcType.BIGINT, id=true),
-//            @Result(column="nickname", property="nickname", jdbcType=JdbcType.VARCHAR),
-//            @Result(column="name", property="name", jdbcType=JdbcType.VARCHAR),
-//            @Result(column="sex", property="sex", jdbcType=JdbcType.CHAR),
-//            @Result(column="email", property="email", jdbcType=JdbcType.VARCHAR),
-//            @Result(column="tel", property="tel", jdbcType=JdbcType.BIGINT),
-//            @Result(column="school", property="school", jdbcType=JdbcType.VARCHAR),
-//            @Result(column="classes", property="classes", jdbcType=JdbcType.VARCHAR),
-//            @Result(column="school_number", property="schoolNumber", jdbcType=JdbcType.VARCHAR),
-//            @Result(column="CreationDate", property="creationdate", jdbcType=JdbcType.TIMESTAMP),
-//            @Result(column="Creator", property="creator", jdbcType=JdbcType.VARCHAR),
-//            @Result(column="Modifier", property="modifier", jdbcType=JdbcType.VARCHAR),
-//            @Result(column="ModificationDate", property="modificationdate", jdbcType=JdbcType.TIMESTAMP)
-//    })
-//    List<User> selectAll();
+    User selectByPhone(Long phone);
 
     @Select("Select * from t_user")
     List<User> selectAll();
 
-
-
-
     @Select({
             "select",
-            "user_id, nickname, name, sex, email, password, salt,  tel, school, classes, school_number, CreationDate, ",
-            "Creator, Modifier, ModificationDate",
+            "user_id, nickname, name, sex, email, password, salt, phone, school, classes, school_number, CreationDate, ",
+            "Creator, Modifier, ModificationDate, college, birthday, identity",
             "from t_user",
-            "where tel = #{token,jdbcType=BIGINT}"
+            "where phone = #{token,jdbcType=BIGINT}"
     })
     @Results({
             @Result(column="user_id", property="userId", jdbcType=JdbcType.BIGINT, id=true),
@@ -231,23 +204,25 @@ public interface UserMapper {
             @Result(column="email", property="email", jdbcType=JdbcType.VARCHAR),
             @Result(column = "password", property = "password", jdbcType=JdbcType.VARCHAR),
             @Result(column = "salt", property = "salt", jdbcType=JdbcType.VARCHAR),
-            @Result(column="tel", property="tel", jdbcType=JdbcType.BIGINT),
+            @Result(column="phone", property="phone", jdbcType=JdbcType.BIGINT),
             @Result(column="school", property="school", jdbcType=JdbcType.VARCHAR),
             @Result(column="classes", property="classes", jdbcType=JdbcType.VARCHAR),
             @Result(column="school_number", property="schoolNumber", jdbcType=JdbcType.VARCHAR),
             @Result(column="CreationDate", property="creationdate", jdbcType=JdbcType.TIMESTAMP),
             @Result(column="Creator", property="creator", jdbcType=JdbcType.VARCHAR),
             @Result(column="Modifier", property="modifier", jdbcType=JdbcType.VARCHAR),
-            @Result(column="ModificationDate", property="modificationdate", jdbcType=JdbcType.TIMESTAMP)
+            @Result(column="ModificationDate", property="modificationdate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="college", property="college", jdbcType=JdbcType.VARCHAR),
+            @Result(column="birthday", property="birthday", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="identity", property="identity", jdbcType=JdbcType.TINYINT)
     })
     User selectByToken(String token);
 
     @Delete({
             "delete from t_user",
-            "where tel = #{tel,jdbcType=BIGINT}"
+            "where phone = #{phone,jdbcType=BIGINT}"
     })
-    void deleteByTel(Long tel);
-
+    void deleteByPhone(Long phone);
 
     @Delete({
             "delete from t_user",
@@ -255,11 +230,10 @@ public interface UserMapper {
     })
     void deleteByName(String name);
 
-
     @Select({
             "select",
-            "user_id, nickname, name, sex, email, password, salt, tel, school, classes, school_number, CreationDate, ",
-            "Creator, Modifier, ModificationDate",
+            "user_id, nickname, name, sex, email, password, salt, phone, school, classes, school_number, CreationDate, ",
+            "Creator, Modifier, ModificationDate, college, birthday, identity",
             "from t_user",
             "where email = #{username,jdbcType=VARCHAR}"
     })

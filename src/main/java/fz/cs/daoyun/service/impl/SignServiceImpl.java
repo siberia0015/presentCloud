@@ -63,8 +63,6 @@ public class SignServiceImpl implements ISignService {
 
     }
 
-
-
     /*查询(需要传入当前日期（如：2000-11-11）)*/
     @Override
     public List<Sign> findAllAtCurrentDay(String date,  Integer classId ) throws  Exception{

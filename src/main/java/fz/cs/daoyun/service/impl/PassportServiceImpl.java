@@ -52,8 +52,8 @@ public class PassportServiceImpl  implements IPassportService  {
     }
 
     @Override
-    public Passport findByTel(Long tel) {
-        User user = userMapper.selectByTel(tel);
+    public Passport findByPhone(Long phone) {
+        User user = userMapper.selectByPhone(phone);
 
         return passportMapper.selectByUserId(user.getUserId());
     }
@@ -78,8 +78,8 @@ public class PassportServiceImpl  implements IPassportService  {
     }
 
     @Override
-    public void deletePassportByTel(Long tel) {
-        User user = userMapper.selectByTel(tel);
+    public void deletePassportByPhone(Long phone) {
+        User user = userMapper.selectByPhone(phone);
         passportMapper.deleteByUserId(user.getUserId());
     }
 

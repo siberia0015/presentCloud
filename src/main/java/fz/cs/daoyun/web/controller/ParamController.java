@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/param")
 public class ParamController {
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -29,7 +28,7 @@ public class ParamController {
     /**
      * 新增参数
      */
-    @PostMapping("/addParam")
+    @PostMapping("/param")
     public Result addParam(@RequestBody Param param) {
         logger.info("/addParam");
         try {
@@ -46,7 +45,7 @@ public class ParamController {
      * @return
      */
     // @RequiresUser
-    @GetMapping("/getAllParam")
+    @GetMapping("allParam")
     public Result<List<Param>> getAllParam(){
         logger.info("/getAllParam");
         try {
@@ -66,9 +65,9 @@ public class ParamController {
      * @return
      */
     //@RequiresPermissions("param:update")
-    @PostMapping("/update")
+    @PutMapping("/paramByID")
     public Result update(@RequestParam("id") Integer id, @RequestParam("key")String key, @RequestParam("value") Integer value){
-        logger.info("/update");
+        logger.info("/updateParamByID");
         try {
             paramService.update(id, key , value);
             return Result.success();
@@ -84,7 +83,7 @@ public class ParamController {
      * @return
      */
     //@RequiresPermissions("param:update")
-    @PostMapping("/updateByRecord")
+    @PutMapping("/paramByRecord")
     public  Result update(@RequestBody Param param) {
         logger.info("/updateByRecord");
         try {
@@ -99,9 +98,9 @@ public class ParamController {
     /**
      * 删除参数
      */
-    @PostMapping("/delete")
+    @DeleteMapping("/param")
     public Result delete(@RequestParam("id") Integer id) {
-        logger.info("/delete");
+        logger.info("/deleteParam");
         try {
             paramService.delete(id);
             return Result.success();

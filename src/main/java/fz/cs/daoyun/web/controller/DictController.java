@@ -1,7 +1,6 @@
 package fz.cs.daoyun.web.controller;
 
 
-import ch.qos.logback.classic.Logger;
 import fz.cs.daoyun.domain.Dict;
 import fz.cs.daoyun.domain.DictInfo;
 import fz.cs.daoyun.service.IDictService;
@@ -11,6 +10,7 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +20,7 @@ import java.util.*;
 @RestController
 @RequestMapping("/dict")
 public class DictController {
-    private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private IDictService dictService;

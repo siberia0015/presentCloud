@@ -29,7 +29,7 @@ public class WebClassesController {
 
     /*查询所有班课*/
     @GetMapping("/findAll")
-    @RequiresUser
+    // @RequiresUser
     public Result<List<Classes>> findAll(){
         try {
             List<Classes> classes = classesService.findAll();
@@ -44,7 +44,7 @@ public class WebClassesController {
 
 
     /*根据班课号查询当前班课的所有用户 @RequestParam("classes_id")*/
-    @RequiresUser
+    // @RequiresUser
     @PostMapping("/findAllUserInCurrentClass")
     public  Result<List<User>> findAllUserInCurrentClass(@RequestParam("classes_id") String classes_id){
 
@@ -69,7 +69,7 @@ public class WebClassesController {
     }
 
     /*编辑班课*/
-    @RequiresPermissions("class:update")
+    // @RequiresPermissions("class:update")
     @PostMapping("/update")
     public Result update(@RequestBody Classes classes){
         try {

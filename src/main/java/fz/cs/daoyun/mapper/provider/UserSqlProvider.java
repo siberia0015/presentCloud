@@ -29,8 +29,8 @@ public class UserSqlProvider {
             sql.VALUES("email", "#{email,jdbcType=VARCHAR}");
         }
 
-        if (record.getTel() != null) {
-            sql.VALUES("tel", "#{tel,jdbcType=BIGINT}");
+        if (record.getPhone() != null) {
+            sql.VALUES("phone", "#{phone,jdbcType=BIGINT}");
         }
 
         if (record.getSchool() != null) {
@@ -84,8 +84,8 @@ public class UserSqlProvider {
             sql.SET("email = #{email,jdbcType=VARCHAR}");
         }
 
-        if (record.getTel() != null) {
-            sql.SET("tel = #{tel,jdbcType=BIGINT}");
+        if (record.getPhone() != null) {
+            sql.SET("phone = #{phone,jdbcType=BIGINT}");
         }
 
         if (record.getSchool() != null) {
