@@ -1,4 +1,4 @@
-package fz.cs.daoyun.app.controller;
+package fz.cs.daoyun.controller;
 
 
 import fz.cs.daoyun.domain.Classes;
@@ -84,6 +84,7 @@ public class ClassController {
                 e.printStackTrace();
             }
             classesService.addClasses(myclass);
+            logger.info("新班课创建成功！");
             return Result.success(myclass);
         } catch (Exception e) {
             logger.info("系统错误");
@@ -106,7 +107,6 @@ public class ClassController {
 //            iSignService.deleteByClassid(classes.getId());
 //            classesService.deleteUser_Class(classid);
             classesService.delete(classid);
-
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();

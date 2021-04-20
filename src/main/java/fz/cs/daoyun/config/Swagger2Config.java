@@ -32,7 +32,7 @@ public class Swagger2Config {
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(basePackage("fz.cs.daoyun.web.controller"+ splitor +"fz.cs.daoyun.app.controller"))
+                .apis(basePackage("fz.cs.daoyun.controller"+ splitor +"fz.cs.daoyun.app.controller"))
                 .paths(PathSelectors.any())
                 .build();
     }
