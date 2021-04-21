@@ -26,7 +26,7 @@ public class DictController {
     private IDictService dictService;
 
     /**
-     * 查看所有字典目錄
+     * 查看所有字典
      * @return
      */
     @GetMapping("/findAllDict")
@@ -48,29 +48,36 @@ public class DictController {
     }
 
     /**
-     * 通过字典类型查询响应的字典
-     * @param type
+     * 通过字典的名字查询字典（为了获取字典ID和描述）
+     * @param name
      * @return
      */
     //@RequiresUser
-    @GetMapping("/findDictByType")
-    public Result<List<Dict>> findByType(@RequestParam("type") String type){
-        logger.info("/findDictByType");
-        List<Dict> dicts = dictService.findByDictType(type);
-        return Result.success(dicts);
+    @GetMapping("/findDictByDictName")
+    public Result<List<Dict>> findDictByDictName(@RequestParam("name") String name){
+        logger.info("/findDictByDictName");
+        try {
+            List<Dict> dicts = dictService.findDictByDictName(name);
+            if (dicts.size() != 1) {
+                return Result.failure(ResultCodeEnum.MORE_THAN_ONE);
+            } else {
+                return Result.success(dicts);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
     }
 
-
-
     /**
-     * 通过字典dict查询dictinfo
+     * 通过字典查询字典项
      * @param dict
      * @return
      */
     //@RequiresUser
-    @GetMapping("/findByDictForDictInfo")
-    public Result<List<DictInfo>> findByDictForDictInfo(@RequestBody Dict dict){
-        logger.info("/findByDictForDictInfo");
+    @GetMapping("/findDictInfoByDict")
+    public Result<List<DictInfo>> findDictInfoByDict(@RequestBody Dict dict){
+        logger.info("/findDictInfoByDict");
         try {
             List<DictInfo> dictIns = dictService.findDictInfoByDictId(dict.getId());
             return Result.success(dictIns);
@@ -80,9 +87,40 @@ public class DictController {
         }
     }
 
+    /**
+     * 通过字典名字查询字典项
+     * @param dictName
+     * @return
+     */
+    @GetMapping("/findDictInfoByDictName")
+    public Result<List<DictInfo>> findDictInfoByDictName(@RequestParam("dictName") String dictName){
+        logger.info("/findDictInfoByDictName");
+        logger.info("通过字典名查询字典ID");
+        Integer dictId = null;
+        try {
+            List<Dict> dict = dictService.findDictByDictName(dictName);
+            if (dict == null) {
+                return Result.failure(ResultCodeEnum.NO_DATA);
+            } else if (dict.size() != 1) {
+                return Result.failure(ResultCodeEnum.MORE_THAN_ONE);
+            }
+            dictId = dict.get(0).getId();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+        logger.info("通过字典ID查询字典项");
+        try {
+            List<DictInfo> dictInfo = dictService.findDictInfoByDictId(dictId);
+            return Result.success(dictInfo);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
 
     /**
-     * 通过字典的itemKey查询
+     * 通过字典项的Key查询字典项
      * @param itemKey
      * @return
      */
@@ -94,9 +132,8 @@ public class DictController {
         return Result.success(dictinfo);
     }
 
-
     /**
-     * 添加字典Dict
+     * 添加字典
      * @param dict
      * @return
      */
@@ -113,9 +150,8 @@ public class DictController {
         }
     }
 
-
     /**
-     * 添加字典详细信息
+     * 添加字典项
      * @param dictInfo
      * @return
      */
@@ -134,9 +170,8 @@ public class DictController {
         }
     }
 
-
     /**
-     * 更新Dict
+     * 更新字典
      * @param dictInfo
      * @return
      */
@@ -156,7 +191,7 @@ public class DictController {
     }
 
     /**
-     * 更新值
+     * 更新字典项的value值
      * @param id
      * @param value
      * @return
@@ -165,7 +200,7 @@ public class DictController {
     @PutMapping("/updateValue")
     public Result updateKeyValue(@RequestParam("id")Integer id,@RequestParam("value")String value){
         logger.info("updateValue");
-        boolean b = dictService.alteritemValue(id, value);
+        boolean b = dictService.alterItemValue(id, value);
         if(b == false){
             return Result.failure(ResultCodeEnum.PARAM_ERROR);
         }
@@ -173,7 +208,7 @@ public class DictController {
     }
 
     /**
-     * 删除
+     * 删除字典
      * @param dictId
      * @return
      */
@@ -197,7 +232,7 @@ public class DictController {
     }
 
     /**
-     * 删除
+     * 删除字典项
      * @param dictInfoId
      * @return
      */
@@ -214,40 +249,4 @@ public class DictController {
         }
     }
 
-    /**
-     * 查看所有字典键值对
-     * @return
-     */
-    //@RequiresUser
-    @GetMapping("/findAllKV")
-    public Result<List<Map<String, String>>> findAllKV(){
-        logger.info("/findAllKV");
-        List<Map<String, String>> dicts  = dictService.findAllKV();
-        return Result.success(dicts);
-    }
-
-    /**
-     * 通过字典类型查询响应的字典键值对
-     * @param type
-     * @return
-     */
-    //@RequiresUser
-    @RequestMapping("/findKVByType")
-    public Result<List<Map<String, String>>> findKVByType(@RequestParam("type") String type){
-        logger.info("/findKVByType");
-        List<Map<String, String>> dicts = dictService.findByKVDictType(type);
-        return Result.success(dicts);
-    }
-
-    /**
-     * 通过字典的itemKey查询键值对
-     * @param itemKey
-     * @return
-     */
-    //@RequiresUser
-    @RequestMapping("/findKVByItemKey")
-    public Result<List<Map<String, String>>> findKVByItemKey(@RequestParam("itemKey")String itemKey){
-        List<Map<String, String>> dicts  =  dictService.findKVByItemKey(itemKey);
-        return Result.success(dicts);
-    }
 }
