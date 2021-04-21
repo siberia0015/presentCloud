@@ -146,7 +146,6 @@ public class LoginController  extends BaseController {
             String pwd= Md5Util.encrypt(name, password);
             UsernamePasswordToken token = new UsernamePasswordToken(name, pwd);
             token.setRememberMe(true);
-            System.out.println("login: " + token);
             subject.login(token);
         }catch (IncorrectCredentialsException e){
             map.put("code",100);
@@ -164,16 +163,15 @@ public class LoginController  extends BaseController {
             logger.info(map.toString());
             return map;
         }
-        SecurityUtils.getSubject().getSession().setAttribute("username",username);
         map.put("code",0);
         map.put("msg","登录成功");
         map.put("token",SecurityUtils.getSubject().getSession().getId().toString());
         map.put("user", user);
-        SecurityUtils.getSubject().getSession().setAttribute("loginMap", map);
+        session.setAttribute("user", user);
+        session.setAttribute("loginMap", map);
         logger.info(map.toString());
-        logger.info("当前用户：" + (String)SecurityUtils.getSubject().getSession().getAttribute("username"));
+        logger.info("当前用户：" + (String)SecurityUtils.getSubject().getSession().getAttribute("user").toString());
         return map;
-
     }
 
     /**
@@ -183,6 +181,7 @@ public class LoginController  extends BaseController {
     @ResponseBody
     @GetMapping("/unauth")
     public Map<String,Object> unauth(){
+        logger.info("/unauth");
         Map<String,Object> map = new HashMap<>();
         map.put("code",500);
         map.put("msg","未登录");
@@ -198,10 +197,10 @@ public class LoginController  extends BaseController {
     @ResponseBody
     @PostMapping("/getCode")
     public Map<String, Object> getCode(@RequestParam("phone")String phone){
+        logger.info("/getCode");
         Map<String,Object> map = new HashMap<>();
-        Subject subject = SecurityUtils.getSubject();
         SmsUtils smsUtils = new SmsUtils();
-        Session session = subject.getSession();
+        Session session = SecurityUtils.getSubject().getSession();
         try {
             //随机生成验证码
             String checkNumber =  String.valueOf(new Random().nextInt(999999));
@@ -224,6 +223,7 @@ public class LoginController  extends BaseController {
                 map.put("createTime", System.currentTimeMillis());
                 map.put("code", 0);
                 map.put("msg", "发送验证码成功");
+                session.setAttribute("checkNumber", checkNumber);
             }
         } catch (Exception e) {
             map.put("code", 200);
@@ -235,6 +235,7 @@ public class LoginController  extends BaseController {
 
     /**
      * 手机登陆
+     * phoneLogin存在问题，登陆无法生成token
      * @param phone
      * @param checkNumber
      * @return
@@ -245,8 +246,7 @@ public class LoginController  extends BaseController {
     ){
         logger.info("/phoneLogin");
         Map<String,Object> map = new HashMap<>();
-        Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession();
+        Session session = SecurityUtils.getSubject().getSession();
         try{
             Long un = Long.parseLong(phone);
             User user = userService.findByPhone(un);
@@ -254,7 +254,7 @@ public class LoginController  extends BaseController {
                 map.put("code", 200);
                 map.put("msg", "用户不存在");
             } else {
-                SecurityUtils.getSubject().getSession().setAttribute("username",phone);
+                session.setAttribute("user",user);
                 map.put("code", 0);
                 map.put("msg", "登录成功");
                 map.put("token",SecurityUtils.getSubject().getSession().getId().toString());
@@ -265,9 +265,9 @@ public class LoginController  extends BaseController {
             map.put("code", 100);
             map.put("msg", "未知错误");
         }
-        SecurityUtils.getSubject().getSession().setAttribute("loginMap", map);
+        session.setAttribute("loginMap", map);
         logger.info(map.toString());
-        logger.info("当前用户：" + (String)SecurityUtils.getSubject().getSession().getAttribute("username"));
+        logger.info("当前用户：" + SecurityUtils.getSubject().getSession().getAttribute("user").toString());
         return map;
     }
 

@@ -25,10 +25,10 @@ public class DictController {
     @Autowired
     private IDictService dictService;
 
-
-    /*
-    * 查看所有字典目錄
-    * */
+    /**
+     * 查看所有字典目錄
+     * @return
+     */
     @GetMapping("/findAllDict")
     public Result<List<Dict>> findAll(){
         logger.info("/findAllDict");
@@ -39,6 +39,7 @@ public class DictController {
                 logger.info(dicts.toString());
             } else {
                 logger.info("无数据");
+                return Result.failure(ResultCodeEnum.NO_DATA);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -46,20 +47,28 @@ public class DictController {
        return Result.success(dicts);
     }
 
-
-
-    /*通过字典类型查询响应的字典*/
+    /**
+     * 通过字典类型查询响应的字典
+     * @param type
+     * @return
+     */
     //@RequiresUser
-    @RequestMapping("/findDictByType")
+    @GetMapping("/findDictByType")
     public Result<List<Dict>> findByType(@RequestParam("type") String type){
         logger.info("/findDictByType");
         List<Dict> dicts = dictService.findByDictType(type);
         return Result.success(dicts);
     }
 
-    /*通过字典dict查询dictinfo*/
+
+
+    /**
+     * 通过字典dict查询dictinfo
+     * @param dict
+     * @return
+     */
     //@RequiresUser
-    @PostMapping("/findByDictForDictInfo")
+    @GetMapping("/findByDictForDictInfo")
     public Result<List<DictInfo>> findByDictForDictInfo(@RequestBody Dict dict){
         logger.info("/findByDictForDictInfo");
         try {
@@ -72,9 +81,13 @@ public class DictController {
     }
 
 
-    /*通过字典的itemKey查询*/
+    /**
+     * 通过字典的itemKey查询
+     * @param itemKey
+     * @return
+     */
     //@RequiresUser
-    @RequestMapping("/findDictInfoByItemKey")
+    @GetMapping("/findDictInfoByItemKey")
     public Result<DictInfo> findByItemKey(@RequestParam("itemKey")String itemKey){
         logger.info("/findDictInfoByItemKey");
         DictInfo dictinfo = dictService.findByItemKey(itemKey);
@@ -82,7 +95,11 @@ public class DictController {
     }
 
 
-    /*添加字典Dict*/
+    /**
+     * 添加字典Dict
+     * @param dict
+     * @return
+     */
     //@RequiresPermissions("dict:add")
     @PostMapping("/addDict")
     public Result addDict(@RequestBody Dict dict){
@@ -97,7 +114,11 @@ public class DictController {
     }
 
 
-    /*添加字典详细信息*/
+    /**
+     * 添加字典详细信息
+     * @param dictInfo
+     * @return
+     */
     //@RequiresPermissions("dict:add")
     @PostMapping("/addDictinfo")
     public Result addDictinfo(@RequestBody DictInfo dictInfo){
@@ -114,9 +135,13 @@ public class DictController {
     }
 
 
-    /*更新Dict*/
+    /**
+     * 更新Dict
+     * @param dictInfo
+     * @return
+     */
     //@RequiresPermissions("dict:update")
-    @PostMapping("/updateDictInfo")
+    @PutMapping("/updateDictInfo")
     public Result update(@RequestBody DictInfo dictInfo){
         logger.info("/updateDictInfo");
         try {
@@ -130,9 +155,14 @@ public class DictController {
 
     }
 
-    /*更新值*/
+    /**
+     * 更新值
+     * @param id
+     * @param value
+     * @return
+     */
     //@RequiresPermissions("dict:update")
-    @PostMapping("updateValue")
+    @PutMapping("/updateValue")
     public Result updateKeyValue(@RequestParam("id")Integer id,@RequestParam("value")String value){
         logger.info("updateValue");
         boolean b = dictService.alteritemValue(id, value);
@@ -142,11 +172,13 @@ public class DictController {
         return Result.success();
     }
 
-
-
-    /*删除*/
+    /**
+     * 删除
+     * @param dictId
+     * @return
+     */
     //@RequiresPermissions("dict:update")
-    @RequestMapping("/deleteDict")
+    @DeleteMapping("/deleteDict")
     public Result delete(@RequestParam("dictId")Integer dictId){
         logger.info("/deleteDict");
         List<DictInfo> dictInfos = dictService.findDictInfoByDictId(dictId);
@@ -164,9 +196,13 @@ public class DictController {
         }
     }
 
-    /*删除*/
+    /**
+     * 删除
+     * @param dictInfoId
+     * @return
+     */
     //@RequiresPermissions("dict:delete")
-    @PostMapping("/deleteDictInfo")
+    @DeleteMapping("/deleteDictInfo")
     public Result deleteDictInfo(@RequestParam("dictInfoId")Integer dictInfoId){
         logger.info("/deleteDictInfo");
         try {
@@ -178,9 +214,10 @@ public class DictController {
         }
     }
 
-    /*
+    /**
      * 查看所有字典键值对
-     * */
+     * @return
+     */
     //@RequiresUser
     @GetMapping("/findAllKV")
     public Result<List<Map<String, String>>> findAllKV(){
@@ -188,7 +225,12 @@ public class DictController {
         List<Map<String, String>> dicts  = dictService.findAllKV();
         return Result.success(dicts);
     }
-    /*通过字典类型查询响应的字典键值对*/
+
+    /**
+     * 通过字典类型查询响应的字典键值对
+     * @param type
+     * @return
+     */
     //@RequiresUser
     @RequestMapping("/findKVByType")
     public Result<List<Map<String, String>>> findKVByType(@RequestParam("type") String type){
@@ -197,10 +239,11 @@ public class DictController {
         return Result.success(dicts);
     }
 
-
-
-
-    /*通过字典的itemKey查询键值对*/
+    /**
+     * 通过字典的itemKey查询键值对
+     * @param itemKey
+     * @return
+     */
     //@RequiresUser
     @RequestMapping("/findKVByItemKey")
     public Result<List<Map<String, String>>> findKVByItemKey(@RequestParam("itemKey")String itemKey){

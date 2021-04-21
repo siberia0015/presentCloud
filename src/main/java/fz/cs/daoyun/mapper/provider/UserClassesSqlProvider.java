@@ -30,12 +30,8 @@ public class UserClassesSqlProvider {
             sql.VALUES("user_id", "#{userName,jdbcType=BIGINT}");
         }
 
-        if (record.getUserPhone() != null) {
-            sql.VALUES("user_phone", "#{userPhone,jdbcType=BIGINT}");
-        }
-
-        if (record.getClassImage() != null) {
-            sql.VALUES("class_image", "#{classImage,jdbcType=VARCHAR}");
+        if (record.getScore() != null) {
+            sql.VALUES("score", "#{score,jdbcType=INTEGER}");
         }
 
         sql.VALUES("identity", "#{identity,jdbcType=TINYINT}");
@@ -63,12 +59,8 @@ public class UserClassesSqlProvider {
             sql.VALUES("user_id", "#{userName,jdbcType=BIGINT}");
         }
 
-        if (record.getUserPhone() != null) {
-            sql.VALUES("user_phone", "#{userPhone,jdbcType=BIGINT}");
-        }
-
-        if (record.getClassImage() != null) {
-            sql.VALUES("class_image", "#{classImage,jdbcType=VARCHAR}");
+        if (record.getScore() != null) {
+            sql.VALUES("score", "#{score,jdbcType=INTEGER}");
         }
 
         sql.VALUES("identity", "#{identity,jdbcType=TINYINT}");

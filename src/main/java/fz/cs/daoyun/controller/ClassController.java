@@ -14,6 +14,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +57,11 @@ public class ClassController {
         return number;
     }
 
-    /*创建班课（教师用户）*/
+    /**
+     * 创建班课（教师用户）
+     * @param myclass
+     * @return
+     */
     @PostMapping("/createClass")
     // @RequiresRoles(value = {"teacher"})
     public Result createClass(@RequestBody Classes myclass){
@@ -73,15 +78,15 @@ public class ClassController {
             // 设置班课号
             myclass.setClassesId(number);
             logger.info("获取当前用户信息...");
-            String username = (String)SecurityUtils.getSubject().getSession().getAttribute("username");
-            logger.info("当前用户：" + username);
+            User user = (User)SecurityUtils.getSubject().getSession().getAttribute("user");
+            logger.info("当前用户：" + user.getName());
             try{
-                User user = userService.findByName(username);
                 myclass.setTeacherId(user.getPhone().toString());
                 myclass.setTeacherName(user.getName());
             } catch (Exception e) {
                 logger.info("获取当前用户信息失败！");
                 e.printStackTrace();
+                return Result.failure(ResultCodeEnum.NO_CURRENT_USER);
             }
             classesService.addClasses(myclass);
             logger.info("新班课创建成功！");
@@ -93,19 +98,21 @@ public class ClassController {
         }
     }
 
-    /*删除班课（教师用户）*/
+    /**
+     * 删除班课（教师用户）
+     * @param classId
+     * @return
+     */
     // @RequiresPermissions("class:delete")
-    @PostMapping("/deleteClass")
+    @DeleteMapping("/deleteClass")
     public Result deleteClass(@RequestParam("classId") Object classId){
         logger.info("/deleteClass");
-        System.out.println(classId);
-
         Integer classid = Integer.parseInt((String)classId);
 //        Classes classes = classesService.findByClassID(classid);
         try {
-//
 //            iSignService.deleteByClassid(classes.getId());
 //            classesService.deleteUser_Class(classid);
+            logger.info("删除班课" + classid);
             classesService.delete(classid);
             return Result.success();
         } catch (Exception e) {
@@ -114,31 +121,49 @@ public class ClassController {
         }
     }
 
-    /*为给定用户（当前用户）添加班课（学生用户）*/
+    /**
+     * 为给定用户（当前用户）添加班课（学生用户）
+     * @param classId
+     * @return
+     */
     // @RequiresPermissions("class:add")
-    @PostMapping("/addClasstoUser")
-    public Result addClasstoUser(@RequestParam("usernmae") String usernmae, @RequestParam("classesId") String classesId){
-        logger.info("/addClasstoUser");
-        Integer classid = Integer.parseInt(classesId);
+    @PostMapping("/addClassToUser")
+    public Result addClasstoUser(@RequestParam("classId") Integer classId){
+        logger.info("/addClassToUser");
+        Session session = SecurityUtils.getSubject().getSession();
+        User user = (User)session.getAttribute("user");
+        Long userId = user.getUserId();
         try {
-            List<UserClasses> user_classByClassid = classesService.findUser_ClassByClassid(classid);
-            for (UserClasses uc :user_classByClassid
-                 ) {
-                if(uc.getUserName().equals(usernmae)){
+            UserClasses user_class = classesService.findUser_Class(userId, classId);
+            if (user_class != null) {
+                logger.info("用户已加入该班课");
+                return Result.failure(ResultCodeEnum.AlreadyExist);
+            } else {
+                try{
+                    classesService.addClassToUser(userId, classId);
+                } catch (Exception e) {
+                    logger.info("加入班课失败！");
+                    e.printStackTrace();
                     return Result.failure(ResultCodeEnum.BAD_REQUEST);
                 }
+                logger.info("加入班课成功！");
+                return Result.success(ResultCodeEnum.OK);
             }
-            classesService.addClassToUser(usernmae, classid);
-            return Result.success();
         } catch (Exception e) {
+            logger.info("系统错误");
             e.printStackTrace();
             return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
     }
 
-    /*为给定用户（当前用户）删除指定班课（学生用户）*/
+    /**
+     * 为给定用户（当前用户）删除指定班课（学生用户）
+     * @param username
+     * @param classesId
+     * @return
+     */
     // @RequiresPermissions("class:delete")
-    @PostMapping("/deleteClasstoUser")
+    @DeleteMapping("/deleteClasstoUser")
     public Result deleteClasstoUser(@RequestParam("username") String username, @RequestParam("classesId") String classesId){
         logger.info("/deleteClasstoUser");
         Integer classid = Integer.parseInt(classesId);
@@ -151,7 +176,10 @@ public class ClassController {
         }
     }
 
-    /*查询所有班课*/
+    /**
+     * 查询所有班课
+     * @return
+     */
     // @RequiresPermissions("class:select")
     @GetMapping("/findAll")
     public Result<List<Classes>> findAll(){
@@ -167,9 +195,13 @@ public class ClassController {
 
     }
 
-    /*编辑班课*/
+    /**
+     * 编辑班课
+     * @param classes
+     * @return
+     */
     // @RequiresPermissions("class:update")
-    @PostMapping("/update")
+    @PutMapping("/update")
     public Result update(@RequestBody Classes classes){
         logger.info("/update");
         try {
@@ -181,16 +213,18 @@ public class ClassController {
         }
     }
 
-    /*查询当前用户的班课*/
+    /**
+     * 查询当前用户的班课
+     * @return
+     */
     // @RequiresUser
     @GetMapping("/getCurrentusertClass")
     public Result<List<Classes> > getCurrentusertClass(){
         logger.info("/getCurrentusertClass");
-        String principal = (String) SecurityUtils.getSubject().getPrincipal();
-        User user = userService.findByName(principal);
+        User user = (User)SecurityUtils.getSubject().getSession().getAttribute("user");
         try {
-            List<Classes> currentusertClass = classesService.getCurrentusertClass(user.getName());
-            return Result.success(currentusertClass);
+            List<Classes> classes = classesService.getCurrentusertClass(user.getName());
+            return Result.success(classes);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failure(ResultCodeEnum.BAD_REQUEST);
@@ -198,13 +232,15 @@ public class ClassController {
 
     }
 
-    /*获取当前用户创建的课程列表*/
+    /**
+     * 获取当前用户创建的课程列表
+     * @return
+     */
     // @RequiresRoles(value = {"teacher"})
     @GetMapping("/getCurrentUserCreateClass")
     public Result<List<Classes>> getCurrentUserCreateClass(){
         logger.info("/getCurrentUserCreateClass");
-        String principal = (String) SecurityUtils.getSubject().getPrincipal();
-        User user = userService.findByName(principal);
+        User user = (User)SecurityUtils.getSubject().getSession().getAttribute("user");
         try {
             List<Classes> classess = classesService.getCurrentUserCreateClass(user.getName());
             return Result.success(classess);

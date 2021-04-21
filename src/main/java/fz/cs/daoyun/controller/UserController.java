@@ -314,16 +314,19 @@ public class UserController {
     }
 
 
-    /*获取当前登录的用户信息*/
+    /**
+     * 获取当前用户
+     */
     // @RequiresUser
-    @GetMapping("/getCurrrentUser")
-    public Result getCurrentUser(){
-        Subject subject = SecurityUtils.getSubject();
-        Session session = subject.getSession();
-        Map<String,Object> map  = (Map<String,Object>)session.getAttribute("loginMap");
-        String username = (String )map.get("username");
-        User user = userService.findByName(username);
-        return Result.success(user);
+    @GetMapping("/currentUser")
+    public User getCurrentUser() {
+        logger.info("/currentUser");
+        User user = (User)SecurityUtils.getSubject().getSession().getAttribute("user");
+        if (user == null)
+            logger.info("没有查询到当前用户信息");
+        else
+            logger.info(user.toString());
+        return user;
     }
 
 

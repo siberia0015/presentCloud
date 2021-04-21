@@ -2,14 +2,7 @@ package fz.cs.daoyun.mapper;
 
 import fz.cs.daoyun.mapper.provider.UserClassesSqlProvider;
 import fz.cs.daoyun.domain.UserClasses;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +22,7 @@ public interface UserClassesMapper {
         "user_phone, class_name, identity)",
         "values (#{id,jdbcType=INTEGER}, #{classId,jdbcType=INTEGER}, #{userName,jdbcType=VARCHAR}, ",
         "#{classImage,jdbcType=VARCHAR}, #{userId,jdbcType=BIGINT}, #{userPhone,jdbcType=BIGINT}, ",
-        "#{className,jdbcType=VARCHAR}, #{identity,jdbcType=TINYINT})"
+        "#{className,jdbcType=VARCHAR}, #{identity,jdbcType=TINYINT}, #{score,jdbcType=INTEGER})"
     })
     int insert(UserClasses record);
 
@@ -38,7 +31,7 @@ public interface UserClassesMapper {
 
     @Select({
         "select",
-        "id, class_id, user_name, class_image, user_id, user_phone, class_name, identity",
+        "id, class_id, user_name, class_image, user_id, user_phone, class_name, identity, score",
         "from t_user_class",
         "where id = #{id,jdbcType=INTEGER}"
     })
@@ -50,7 +43,8 @@ public interface UserClassesMapper {
         @Result(column="user_id", property="userId", jdbcType=JdbcType.BIGINT),
         @Result(column="user_phone", property="userPhone", jdbcType=JdbcType.BIGINT),
         @Result(column="class_name", property="className", jdbcType=JdbcType.VARCHAR),
-        @Result(column="identity", property="identity", jdbcType=JdbcType.TINYINT)
+        @Result(column="identity", property="identity", jdbcType=JdbcType.TINYINT),
+        @Result(column="score", property="score", jdbcType=JdbcType.INTEGER)
     })
     UserClasses selectByPrimaryKey(Integer id);
 
@@ -66,10 +60,10 @@ public interface UserClassesMapper {
             "user_phone = #{userPhone,jdbcType=BIGINT}",
             "class_name = #{className,jdbcType=VARCHAR}",
             "identity = #{identity,jdbcType=TINYINT}",
+            "score = #{score,jdbcType=INTEGER}",
         "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(UserClasses record);
-
 
     @Select("select * from t_user_class")
     List<UserClasses> selectAll();
@@ -80,6 +74,8 @@ public interface UserClassesMapper {
     @Select("select * from t_user_class where user_name = #{userName,jdbcType=VARCHAR}")
     List<UserClasses> selectByUserName(String name);
 
+    @Select("select * from t_user_class where user_id = #{userId,jdbcType=BIGINT} and class_id = #{classId,jdbcType=INTEGER}")
+    UserClasses selectByUserIdAndClassId(@Param("userId") Long userId, @Param("classId") Integer classId);
 
     @Delete({
             "delete from t_user_class",
@@ -89,12 +85,15 @@ public interface UserClassesMapper {
 
 
     @Insert({
-            "insert into t_user_class ( class_id, ",
-            "user_name)",
-            "values ( #{classid,jdbcType=INTEGER}, ",
-            "#{usernmae,jdbcType=VARCHAR})"
+            "insert into t_user_class (user_id, user_name, class_id, class_name)",
+            "values (#{userId,jdbcType=BIGINT}, #{userName,jdbcType=VARCHAR},",
+            "#{classId,jdbcType=INTEGER}, #{className,jdbcType=VARCHAR})"
     })
-    void insertClassToUser(String usernmae, Integer classid);
+    void insertClassToUser(@Param("userId") Long userId,
+                           @Param("userName") String userName,
+                           @Param("classId") Integer classId,
+                           @Param("className") String className
+    );
 
 
     @Delete({

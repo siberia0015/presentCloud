@@ -1,5 +1,7 @@
 package fz.cs.daoyun.domain;
 
+import io.swagger.models.auth.In;
+
 public class UserClasses {
     private Integer id;
 
@@ -7,22 +9,20 @@ public class UserClasses {
 
     private String userName;
 
-    private String classImage;
-
     private Long userId;
-
-    private Long userPhone;
 
     private String classesName;
 
-    private boolean identity;
+    private boolean identity = false;
 
-    public String getClassImage() {
-        return classImage;
+    private Integer score = 0;
+
+    public Integer getScore() {
+        return score;
     }
 
-    public void setClassImage(String classImage) {
-        this.classImage = classImage;
+    public void setScore(Integer score) {
+        this.score = score;
     }
 
     public Long getUserId() {
@@ -31,14 +31,6 @@ public class UserClasses {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public Long getUserPhone() {
-        return userPhone;
-    }
-
-    public void setUserPhone(Long userPhone) {
-        this.userPhone = userPhone;
     }
 
     public String getClassesName() {
