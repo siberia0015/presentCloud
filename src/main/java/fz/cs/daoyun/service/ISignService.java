@@ -3,6 +3,7 @@ package fz.cs.daoyun.service;
 import fz.cs.daoyun.domain.Sign;
 import fz.cs.daoyun.domain.StartSign;
 
+import java.util.Date;
 import java.util.List;
 
 public interface ISignService {
@@ -19,14 +20,16 @@ public interface ISignService {
 
     void deleteByClassid(Integer classid) throws Exception;
 
-    void starSign(StartSign startSign)throws Exception;
+    void startSign(StartSign startSign) throws Exception;
 
+    void endSign(Integer startSignId) throws Exception;
 
-    StartSign findBySignNum(Integer sign_num, Integer classid, String dateString) throws Exception;
+    StartSign signStatus(Integer id) throws Exception;
 
     StartSign findByparams(Integer classid, String dateString) throws Exception;
 
     Sign findByStartSignId(Integer startSignId, String username) throws Exception;
 
     List<Sign> findAllTime(Integer classId);
+
 }

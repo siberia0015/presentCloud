@@ -1,8 +1,10 @@
 package fz.cs.daoyun.controller;
 
 
+import com.sun.org.apache.regexp.internal.RE;
 import fz.cs.daoyun.domain.Sign;
 import fz.cs.daoyun.domain.StartSign;
+import fz.cs.daoyun.domain.User;
 import fz.cs.daoyun.service.ISignService;
 import fz.cs.daoyun.utils.tools.DateUtil;
 import fz.cs.daoyun.utils.tools.Result;
@@ -13,11 +15,13 @@ import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.authz.annotation.RequiresUser;
+import org.apache.shiro.session.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +33,7 @@ public class SignController {
 
     @Autowired
     private ISignService signService;
+
 
     private static double rad(double d) {
         return d * Math.PI / 180.0;
@@ -145,34 +150,84 @@ public class SignController {
 //        }
 //    }
 
-    /*传入参数说明
-    * @Param username: 发起签到人的账号, 可以不传
-    * @Param classid: 签到班级id
-    * @Param type: 签到类型， 0， 限时签到， 1， 数字签到， 2，限时数字签到
-    * @Param sign_num: 签到号码
-    * @Param score: 签到分数（默认为2， 仅仅第一次发起签到时可以修改）
-    * @Param  distance: 签到距离（默认限距10米）
-    * @Param time: 签到时间（默认限时3分钟）
-    * @Param latitude: 纬度
-    * @Param longitude: 经度
-    * */
+    /**
+     * 发起签到
+     * type: 签到类型 0， 限时签到， 1， 一键签到
+     * @param startSign
+     * @return
+     */
     // @RequiresRoles(value = {"admin", "teacher"}, logical = Logical.OR)
     @PostMapping("/startSign")
-    public Result startSign(@RequestBody StartSign startSign){
-        logger.info("/startSign " + "老师发起签到");
+    public Result startSign(@RequestBody StartSign startSign) {
+        logger.info("/startSign " + "教师发起签到");
+        User user = (User)SecurityUtils.getSubject().getSession().getAttribute("user");
+        if (user == null) {
+            return Result.failure(ResultCodeEnum.NO_CURRENT_USER);
+        }
         try {
-            String username = (String)SecurityUtils.getSubject().getPrincipal();
-            startSign.setUserName(username);
-            startSign.setSignTime(new Date());
-            signService.starSign(startSign);
-            return  Result.success();
+            startSign.setUserId(user.getUserId());
+            startSign.setStartTime(new Date());
+            if (startSign.getScore() == null) startSign.setScore(2);
+            signService.startSign(startSign);
+            return  Result.success(startSign);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
     }
 
+    /**
+     * 结束签到
+     * @param startSignId
+     * @return
+     */
+    @PutMapping("/endSign")
+    public Result endSign(@RequestParam("startSignId") Integer startSignId) {
+        logger.info("/endSign " + "教师结束签到");
+        try {
+            signService.endSign(startSignId);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.NO_DATA);
+        }
+    }
 
+    /**
+     * 查看签到状态（发起者）
+     * @param startSignId
+     * @return
+     */
+    @GetMapping("/signStatus")
+    public Result signStatus(@RequestParam("startSignId") Integer startSignId) {
+        logger.info("/signStatus");
+        try {
+            StartSign startSign = signService.signStatus(startSignId);
+            if (startSign == null) {
+                return Result.failure(ResultCodeEnum.NO_DATA);
+            } else {
+                if (startSign.getType() == 0 && startSign.isOver() == false) { // 限时签到
+                    // 判断签到是否截止
+                    try{
+                        long startTime = startSign.getStartTime().getTime();
+                        long currentTime = new Date().getTime();
+                        if (startTime + (60 * 1000) * startSign.getTimeLimit() < currentTime) {
+                            logger.info("签到时限已到");
+                            if (!startSign.isOver())
+                                signService.endSign(startSignId);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return Result.failure(ResultCodeEnum.BAD_REQUEST);
+                    }
+                }
+                return Result.success(startSign);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
 
     /*学生签到*/
     /*
@@ -184,7 +239,7 @@ public class SignController {
     *
     * */
     // @RequiresUser
-    @PostMapping("/studentSign")
+    /*@PostMapping("/studentSign")
     public Result studentSign( @RequestParam("classid")Object classid,@RequestParam(value = "sign_num", defaultValue = "1234567")Object sign_num, @RequestParam("longitude")Object longitude, @RequestParam("latitude")Object latitude){
         try {
 
@@ -196,7 +251,7 @@ public class SignController {
             Double longitudeApp = Double.parseDouble((String)longitude);
             Double latitudeApp = Double.parseDouble((String)latitude);
             String username = (String)SecurityUtils.getSubject().getPrincipal();
-            /*先判断签到的类型*/
+            *//*先判断签到的类型*//*
             Date date = new Date();
             String dateString = DateUtil.toDateString(date);
             StartSign startSign = signService.findByparams( classId, dateString);
@@ -225,7 +280,7 @@ public class SignController {
             sign.setStartSignId(startSignId);
 
             if(type==0){
-                /*限时类型type=0*/
+                *//*限时类型type=0*//*
                 Date signtime = startSign.getSignTime();
 
                 long millisOfDay = DateUtil.getMillisOfDay(signtime);
@@ -246,7 +301,7 @@ public class SignController {
                     }
                 }
             }else if (type==1){
-                /*数字类型type=1*/
+                *//*数字类型type=1*//*
                 Integer num = startSign.getSingnNum();
                 if(signNum.equals(num)){
                     try {
@@ -261,7 +316,7 @@ public class SignController {
                 }
 
             }else if(type==2){
-                /*限时数字类型type=2*/
+                *//*限时数字类型type=2*//*
                 Integer num = startSign.getSingnNum();
                 if(signNum.equals(num)){
                     Date signtime = startSign.getSignTime();
@@ -291,7 +346,7 @@ public class SignController {
             e.printStackTrace();
             return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
-    }
+    }*/
 
 }
 
