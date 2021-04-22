@@ -128,8 +128,19 @@ public class SignServiceImpl implements ISignService {
     }
 
     @Override
-    public StartSign findByparams(Integer classid, String dateString) throws  Exception{
+    public StartSign findByparams(Integer classid, String dateString) throws  Exception {
         return startSignMapper.findByParams(classid, dateString );
+    }
+
+    @Override
+    public StartSign findNearestStartSignByClassId(Integer classId) throws Exception {
+        List<StartSign> startSigns = startSignMapper.findStartSignByClassId(classId);
+        if (startSigns.size() == 0) {
+            return null;
+        } else {
+            return startSigns.get(0);
+        }
+
     }
 
     @Override

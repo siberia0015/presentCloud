@@ -28,6 +28,8 @@ public interface ISignService {
 
     StartSign findByparams(Integer classid, String dateString) throws Exception;
 
+    StartSign findNearestStartSignByClassId(Integer classId) throws Exception;
+
     Sign findByStartSignId(Integer startSignId, String username) throws Exception;
 
     List<Sign> findAllTime(Integer classId);

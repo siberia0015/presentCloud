@@ -78,15 +78,14 @@ public class SignController {
 
     /**
      * 查询该班级当天所有签到记录
-     * @param classid
+     * @param classId
      * @return
      */
     @PostMapping("/findAll")
     // @RequiresPermissions("sign:select")
-    public Result<List<Sign>> findAddAtCurrentDay(@RequestParam("classId") String classid){
+    public Result<List<Sign>> findAddAtCurrentDay(@RequestParam("classId") Integer classId){
         logger.info("/findAll" + ' ' + "查询该班级当天所有签到记录");
         Date date = new Date();
-        Integer classId = Integer.parseInt((String)classid);
         try {
             List<Sign> signs = signService.findAllAtCurrentDay(DateUtil.toDateString(date), classId);
             return Result.success(signs);
@@ -200,7 +199,7 @@ public class SignController {
      */
     @GetMapping("/signStatus")
     public Result signStatus(@RequestParam("startSignId") Integer startSignId) {
-        logger.info("/signStatus");
+        logger.info("/signStatus " + "查看签到状态（发起者）");
         try {
             StartSign startSign = signService.signStatus(startSignId);
             if (startSign == null) {
@@ -223,6 +222,26 @@ public class SignController {
                 }
                 return Result.success(startSign);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * 查看班课目前是否有签到
+     * @param classId
+     * @return
+     */
+    @GetMapping("/findStartSignByClassId")
+    public Result findStartSignByClassId(@RequestParam("classId") Integer classId) {
+        logger.info("/findStartSignByClassId " + "查看班课目前是否有签到");
+        try {
+            StartSign startSign = signService.findNearestStartSignByClassId(classId);
+            if (startSign == null) {
+                logger.info("当前无签到");
+            }
+            return Result.success(startSign);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failure(ResultCodeEnum.BAD_REQUEST);

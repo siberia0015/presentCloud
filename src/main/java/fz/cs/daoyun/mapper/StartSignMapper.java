@@ -8,6 +8,7 @@ import org.apache.ibatis.type.JdbcType;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Date;
+import java.util.List;
 
 public interface StartSignMapper {
     @Delete({
@@ -98,5 +99,15 @@ public interface StartSignMapper {
             "where id = #{startSignId,jdbcType=INTEGER}"
     })
     int startSign(Integer startSignId);
+
+    @Select({
+            "select",
+            "id, user_id, class_id, start_time, type, time_limit, end_time, ",
+            "over, score, distance, latitude, longitude",
+            "from t_start_sign",
+            "where class_id = #{classId,jdbcType=INTEGER} and over = 0",
+            "order by start_time desc"
+    })
+    List<StartSign> findStartSignByClassId(Integer classId);
 
 }
