@@ -34,7 +34,6 @@ public class SignController {
     @Autowired
     private ISignService signService;
 
-
     private static double rad(double d) {
         return d * Math.PI / 180.0;
     }
@@ -81,7 +80,7 @@ public class SignController {
      * @param classId
      * @return
      */
-    @PostMapping("/findAll")
+    /*@PostMapping("/findAll")
     // @RequiresPermissions("sign:select")
     public Result<List<Sign>> findAddAtCurrentDay(@RequestParam("classId") Integer classId){
         logger.info("/findAll" + ' ' + "查询该班级当天所有签到记录");
@@ -94,18 +93,17 @@ public class SignController {
             e.printStackTrace();
             return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
-    }
+    }*/
 
     /**
      * 查询所有用户的签到次数
-     * @param classid
+     * @param classId
      * @return
      */
     @GetMapping("/findAllTime")
     // @RequiresPermissions("sign:select")
-    public Result<List<Sign>> findAllTime(@RequestParam("classid") String classid){
+    public Result<List<Sign>> findAllTime(@RequestParam("classId") Integer classId){
         logger.info("/findAllTime" + ' ' + "查询所有用户的签到次数");
-        Integer classId = Integer.parseInt((String)classid);
         try {
             List<Sign> signs = signService.findAllTime(classId);
             return Result.success(signs);
@@ -115,39 +113,54 @@ public class SignController {
         }
     }
 
-    /**
-     * 查询给定（当前）用户的签到记录
-     * @param username
-     * @param classid
-     * @return
-     */
-    // @RequiresPermissions("sign:select")
-    @PostMapping("/findCurrentUsersign")
-    public Result<List<Sign>> findCurrentUsersign(@RequestParam("username")Object username, @RequestParam("classid") Object classid){
-        logger.info("/findCurrentUsersign" + ' ' + "查询给定（当前）用户的签到记录");
-        Integer classId = Integer.parseInt((String)classid);
+    @PostMapping("/sign")
+    public Result sign(@RequestParam("startSignId") Integer startSignId,
+                        @RequestParam("classId") Integer classId,
+                        Long userId, Integer score, Double longitude, Double latitude) {
+        logger.info("/sign " + "签到");
         try {
-            List<Sign> currentRecord = signService.findCurrentRecord((String) username, classId);
-            return Result.success(currentRecord);
+            User user = (User)SecurityUtils.getSubject().getSession().getAttribute("user");
+            if (user == null && userId == null) {
+                return Result.failure(ResultCodeEnum.PARAMS_MISS);
+            } else if (userId == null) {
+                userId = user.getUserId();
+            }
+            try{
+                Sign sign = signService.findByStartSignId(startSignId, userId);
+                StartSign startSign = signService.findNearestStartSignByClassId(classId);
+                if (startSign == null) {
+                    return Result.failure(ResultCodeEnum.NO_DATA);
+                } else {
+                    signStatus(startSign.getId());
+                    startSign = signService.findNearestStartSignByClassId(classId);
+                    if (startSign == null) {
+                        return Result.failure(ResultCodeEnum.TimeOut);
+                    }
+                }
+                if (sign != null) {
+                    return Result.failure(ResultCodeEnum.AlreadySign);
+                } else {
+                    sign = new Sign();
+                    sign.setUserId(userId);
+                    sign.setClassId(classId);
+                    sign.setSignTime(new Date());
+                    if (score !=null) sign.setScore(score); else sign.setScore(2);
+                    sign.setStartSignId(startSignId);
+                    sign.setLongitude(longitude);
+                    sign.setLatitude(latitude);
+                    signService.makeSign(sign);
+                    return Result.success(sign);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Result.failure(ResultCodeEnum.BAD_REQUEST);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
     }
-
-//    /*签到, 需要传入用户名（账户）， 班级id*/
-//    @RequiresPermissions("sign:add")
-//    @PostMapping("/startSign")
-//    public Result startSign(@RequestParam("username")String username, @RequestParam("classid") String classid){
-//        Integer classId = Integer.parseInt(classid);
-//        try {
-//            signService.addSign(username, classId);
-//            return  Result.success();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return Result.failure(ResultCodeEnum.BAD_REQUEST);
-//        }
-//    }
 
     /**
      * 发起签到
@@ -239,8 +252,11 @@ public class SignController {
         try {
             StartSign startSign = signService.findNearestStartSignByClassId(classId);
             if (startSign == null) {
-                logger.info("当前无签到");
+                return Result.failure(ResultCodeEnum.NO_DATA);
+            } else {
+                signStatus(startSign.getId());
             }
+            startSign = signService.findNearestStartSignByClassId(classId);
             return Result.success(startSign);
         } catch (Exception e) {
             e.printStackTrace();

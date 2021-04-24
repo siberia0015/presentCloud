@@ -3,6 +3,7 @@ package fz.cs.daoyun.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import fz.cs.daoyun.domain.User;
+import fz.cs.daoyun.domain.UserAuths;
 import fz.cs.daoyun.service.*;
 import fz.cs.daoyun.utils.shiro.spring.SpringCacheManagerWrapper;
 import fz.cs.daoyun.utils.shiro.token.UserPhoneToken;
@@ -26,6 +27,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import lombok.RequiredArgsConstructor;
 
+import javax.annotation.Resource;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -290,7 +296,7 @@ public class LoginController  extends BaseController {
             @RequestParam("phone") String phone,
             @RequestParam("password") String password,
             @RequestParam("checkNumber") String checkNumber,
-            // String username,
+            String username,
             String nickname,
             String sex,
             String school,
@@ -469,5 +475,155 @@ public class LoginController  extends BaseController {
             e.printStackTrace();
             return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
         }
+    }
+
+    @PostMapping("/oauthMobile")
+    public Result oauthMobile(
+            @RequestParam(value = "userId", required = false) Long userId,
+            @RequestParam(value = "identityType", required = true) String identityType,
+            @RequestParam(value = "identifier", required = true) String identifier,
+            @RequestParam(value = "credential", required = false) String credential
+            ) {
+        logger.info("/oauthMobile");
+        Session session = SecurityUtils.getSubject().getSession();
+        try {
+            User user = new User();
+            if (userId == null) {
+                user.setName(identifier);
+                user.setPassword("123456");
+                if (userService.findByName(identifier) == null) {
+                    userService.saveUser(user);
+                }
+            }
+            user = userService.findByName(identifier);
+            userId = user.getUserId();
+            UserAuths userAuths = userService.oauthMobile(userId, identityType, identifier);
+            session.setAttribute("user", user);
+            return Result.success(userAuths);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/oauthWeb")
+    public Result oauthWeb(@RequestParam(value = "clientId") String clientId,
+                            @RequestParam(value = "clientSecret") String clientSecret,
+                            @RequestParam(value = "code") String code) {
+        logger.info("/oauthWeb");
+        try {
+            String token_url = sendPost("https://github.com/login/oauth/access_token?client_id="+clientId+"&client_secret="+clientSecret+"&code="+code,null);
+            logger.info(token_url);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * 向指定 URL 发送POST方法的请求
+     *
+     * @param url
+     *            发送请求的 URL
+     * @param param
+     *            请求参数，请求参数应该是 name1=value1&name2=value2 的形式。
+     * @return 所代表远程资源的响应结果
+     */
+    public static String sendPost(String url, String param) {
+        PrintWriter out = null;
+        BufferedReader in = null;
+        String result = "";
+        try {
+            URL realUrl = new URL(url);
+            // 打开和URL之间的连接
+            URLConnection conn = realUrl.openConnection();
+            // 设置通用的请求属性
+            conn.setRequestProperty("accept", "*/*");
+            conn.setRequestProperty("connection", "Keep-Alive");
+            conn.setRequestProperty("user-agent",
+                    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+            // 发送POST请求必须设置如下两行
+            conn.setDoOutput(true);
+            conn.setDoInput(true);
+            conn.connect();
+            // 获取URLConnection对象对应的输出流
+            out = new PrintWriter(conn.getOutputStream());
+            // 发送请求参数
+            out.print(param);
+            // flush输出流的缓冲
+            out.flush();
+            // 定义BufferedReader输入流来读取URL的响应
+            InputStream instream = conn.getInputStream();
+            if(instream!=null){
+                in = new BufferedReader( new InputStreamReader(instream));
+                String line;
+                while ((line = in.readLine()) != null) {
+                    result += line;
+                }
+            }
+
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+        //使用finally块来关闭输出流、输入流
+        finally{
+            try{
+                if(out!=null){
+                    out.close();
+                }
+                if(in!=null){
+                    in.close();
+                }
+            }
+            catch(IOException ex){
+                ex.printStackTrace();
+            }
+        }
+
+        return result;
+    }
+    /**
+     * 发起http请求获取返回结果
+     * @param req_url 请求地址
+     * @return
+     */
+    public static String sendGet(String req_url) {
+        StringBuffer buffer = new StringBuffer();
+        try {
+            URL url = new URL(req_url);
+            HttpURLConnection httpUrlConn = (HttpURLConnection) url.openConnection();
+
+            httpUrlConn.setDoOutput(false);
+            httpUrlConn.setDoInput(true);
+            httpUrlConn.setUseCaches(false);
+
+            httpUrlConn.setRequestMethod("GET");
+            httpUrlConn.connect();
+
+            // 将返回的输入流转换成字符串
+            InputStream inputStream = httpUrlConn.getInputStream();
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream, "utf-8");
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            String str = null;
+            while ((str = bufferedReader.readLine()) != null) {
+                buffer.append(str);
+            }
+            //res = new String(buffer.toString().getBytes("iso-8859-1"),"utf-8");
+            bufferedReader.close();
+            inputStreamReader.close();
+            // 释放资源
+            inputStream.close();
+            inputStream = null;
+            httpUrlConn.disconnect();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return buffer.toString();
     }
 }

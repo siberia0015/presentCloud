@@ -29,7 +29,7 @@ public class DictController {
      * 查看所有字典
      * @return
      */
-    @GetMapping("/findAllDict")
+    @PostMapping("/findAllDict")
     public Result<List<Dict>> findAll(){
         logger.info("/findAllDict");
         List<Dict> dicts = new ArrayList<>();
@@ -53,7 +53,7 @@ public class DictController {
      * @return
      */
     //@RequiresUser
-    @GetMapping("/findDictByDictName")
+    @PostMapping("/findDictByDictName")
     public Result<List<Dict>> findDictByDictName(@RequestParam("name") String name){
         logger.info("/findDictByDictName");
         try {
@@ -75,7 +75,7 @@ public class DictController {
      * @return
      */
     //@RequiresUser
-    @GetMapping("/findDictInfoByDict")
+    @PostMapping("/findDictInfoByDict")
     public Result<List<DictInfo>> findDictInfoByDict(@RequestBody Dict dict){
         logger.info("/findDictInfoByDict");
         try {
@@ -92,7 +92,7 @@ public class DictController {
      * @param dictName
      * @return
      */
-    @GetMapping("/findDictInfoByDictName")
+    @PostMapping("/findDictInfoByDictName")
     public Result<List<DictInfo>> findDictInfoByDictName(@RequestParam("dictName") String dictName){
         logger.info("/findDictInfoByDictName");
         logger.info("通过字典名查询字典ID");
@@ -125,7 +125,7 @@ public class DictController {
      * @return
      */
     //@RequiresUser
-    @GetMapping("/findDictInfoByItemKey")
+    @PostMapping("/findDictInfoByItemKey")
     public Result<DictInfo> findByItemKey(@RequestParam("itemKey")String itemKey){
         logger.info("/findDictInfoByItemKey");
         DictInfo dictinfo = dictService.findByItemKey(itemKey);
@@ -176,7 +176,7 @@ public class DictController {
      * @return
      */
     //@RequiresPermissions("dict:update")
-    @PutMapping("/updateDictInfo")
+    @PostMapping("/updateDictInfo")
     public Result update(@RequestBody DictInfo dictInfo){
         logger.info("/updateDictInfo");
         try {
@@ -197,7 +197,7 @@ public class DictController {
      * @return
      */
     //@RequiresPermissions("dict:update")
-    @PutMapping("/updateValue")
+    @PostMapping("/updateValue")
     public Result updateKeyValue(@RequestParam("id")Integer id,@RequestParam("value")String value){
         logger.info("updateValue");
         boolean b = dictService.alterItemValue(id, value);
@@ -213,7 +213,7 @@ public class DictController {
      * @return
      */
     //@RequiresPermissions("dict:update")
-    @DeleteMapping("/deleteDict")
+    @PostMapping("/deleteDict")
     public Result delete(@RequestParam("dictId")Integer dictId){
         logger.info("/deleteDict");
         List<DictInfo> dictInfos = dictService.findDictInfoByDictId(dictId);
@@ -237,7 +237,7 @@ public class DictController {
      * @return
      */
     //@RequiresPermissions("dict:delete")
-    @DeleteMapping("/deleteDictInfo")
+    @PostMapping("/deleteDictInfo")
     public Result deleteDictInfo(@RequestParam("dictInfoId")Integer dictInfoId){
         logger.info("/deleteDictInfo");
         try {

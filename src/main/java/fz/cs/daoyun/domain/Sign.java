@@ -7,7 +7,7 @@ import java.util.Date;
 public class Sign {
     private Long id;
 
-    private String userName;
+    private Long userId;
 
     private Integer classId;
 
@@ -15,20 +15,46 @@ public class Sign {
 
     private Integer score;
 
-    private Integer singnTimes;
-
     private Integer startSignId;
+
+    private Double latitude;
+
+    private Double longitude;
 
     @Override
     public String toString() {
         return "Sign{" +
                 "id=" + id +
-                ", userName='" + userName + '\'' +
+                ", userId='" + userId + '\'' +
                 ", classId=" + classId +
                 ", signTime=" + signTime +
                 ", score=" + score +
-                ", singnTimes=" + singnTimes +
+                ", startSignId=" + startSignId +
                 '}';
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public Long getId() {
@@ -37,14 +63,6 @@ public class Sign {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName == null ? null : userName.trim();
     }
 
     public Integer getClassId() {
@@ -69,14 +87,6 @@ public class Sign {
 
     public void setScore(Integer score) {
         this.score = score;
-    }
-
-    public Integer getSingnTimes() {
-        return singnTimes;
-    }
-
-    public void setSingnTimes(Integer singnTimes) {
-        this.singnTimes = singnTimes;
     }
 
     public Integer getStartSignId() {

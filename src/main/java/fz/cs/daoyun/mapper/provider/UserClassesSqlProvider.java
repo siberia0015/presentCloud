@@ -80,8 +80,8 @@ public class UserClassesSqlProvider {
                 sql.VALUES("id", "#{id,jdbcType=BIGINT}");
             }
 
-            if (record.getUserName() != null) {
-                sql.VALUES("user_name", "#{userName,jdbcType=VARCHAR}");
+            if (record.getUserId() != null) {
+                sql.VALUES("user_id", "#{userId,jdbcType=BIGINT}");
             }
 
             if (record.getClassId() != null) {
@@ -96,6 +96,18 @@ public class UserClassesSqlProvider {
                 sql.VALUES("score", "#{score,jdbcType=INTEGER}");
             }
 
+            if (record.getStartSignId() != null) {
+                sql.VALUES("start_sign_id", "#{startSignId,jdbcType=INTEGER}");
+            }
+
+            if (record.getLongitude() != null) {
+                sql.VALUES("longitude", "#{longitude,jdbcType=DOUBLE}");
+            }
+
+            if (record.getLatitude() != null) {
+                sql.VALUES("latitude", "#{latitude,jdbcType=DOUBLE}");
+            }
+
             return sql.toString();
         }
 
@@ -103,20 +115,36 @@ public class UserClassesSqlProvider {
             SQL sql = new SQL();
             sql.UPDATE("t_sign");
 
-            if (record.getUserName() != null) {
-                sql.SET("user_name = #{userName,jdbcType=VARCHAR}");
+            if (record.getId() != null) {
+                sql.VALUES("id", "#{id,jdbcType=BIGINT}");
+            }
+
+            if (record.getUserId() != null) {
+                sql.VALUES("user_id", "#{userId,jdbcType=BIGINT}");
             }
 
             if (record.getClassId() != null) {
-                sql.SET("class_id = #{classId,jdbcType=INTEGER}");
+                sql.VALUES("class_id", "#{classId,jdbcType=INTEGER}");
             }
 
             if (record.getSignTime() != null) {
-                sql.SET("sign_time = #{signTime,jdbcType=TIMESTAMP}");
+                sql.VALUES("sign_time", "#{signTime,jdbcType=TIMESTAMP}");
             }
 
             if (record.getScore() != null) {
-                sql.SET("score = #{score,jdbcType=INTEGER}");
+                sql.VALUES("score", "#{score,jdbcType=INTEGER}");
+            }
+
+            if (record.getStartSignId() != null) {
+                sql.VALUES("start_sign_id", "#{startSignId,jdbcType=INTEGER}");
+            }
+
+            if (record.getLongitude() != null) {
+                sql.VALUES("longitude", "#{longitude,jdbcType=DOUBLE}");
+            }
+
+            if (record.getLatitude() != null) {
+                sql.VALUES("latitude", "#{latitude,jdbcType=DOUBLE}");
             }
 
             sql.WHERE("id = #{id,jdbcType=BIGINT}");

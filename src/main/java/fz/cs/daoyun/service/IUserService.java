@@ -2,6 +2,7 @@ package fz.cs.daoyun.service;
 
 import fz.cs.daoyun.domain.Role;
 import fz.cs.daoyun.domain.User;
+import fz.cs.daoyun.domain.UserAuths;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -44,8 +45,6 @@ public interface IUserService  {
 
     void savePwd(User user);
 
-
-
     List<User> findAllGoPage(int page, int size, boolean count);
 
     void createUserAllInfo(User user);
@@ -53,4 +52,6 @@ public interface IUserService  {
     User exitsUser(String username);
 
     User findByEmail(String username);
+
+    UserAuths oauthMobile(Long userId, String identityType, String identifier);
 }
