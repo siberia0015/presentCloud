@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <properties resource="application-old.properties"/>
+    <context id="DB2Tables" targetRuntime="MyBatis3">
+        <commentGenerator>
+            <property name="suppressDate" value="true"/>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+        <!--数据库链接地址账号密码-->
+
+        <jdbcConnection driverClass="${spring.datasource.driver-class-name}"
+                        connectionURL="${spring.datasource.url}"
+                        userId="${spring.datasource.username}"
+                        password="${spring.datasource.password}">
+        </jdbcConnection>
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false"/>
+        </javaTypeResolver>
+        <!--生成Model类存放位置-->
+        <javaModelGenerator targetPackage="fz.cs.daoyun.domain" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+        <!--生成映射文件存放位置-->
+        <sqlMapGenerator targetPackage="fz.cs.daoyun.mapper" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+        <!--生成Dao类存放位置
+         客户端代码，生成易于使用的针对Model对象和XML配置文件 的代码
+                type="ANNOTATEDMAPPER",生成Java Model 和基于注解的Mapper对象
+                type="MIXEDMAPPER",生成基于注解的Java Model 和相应的Mapper对象
+                type="XMLMAPPER",生成SQLMap XML文件和独立的Mapper接口-->
+        <javaClientGenerator type="ANNOTATEDMAPPER" targetPackage="fz.cs.daoyun.mapper" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+        <!--生成对应表及类名-->
+        <table tableName="t_sign" domainObjectName="Sign" enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false"
+               enableSelectByExample="false" selectByExampleQueryId="false">
+
+        </table>
+<!--        <table tableName="t_dict_info" domainObjectName="DictInfo" enableCountByExample="false" enableUpdateByExample="false"-->
+<!--               enableDeleteByExample="false"-->
+<!--               enableSelectByExample="false" selectByExampleQueryId="false">-->
+
+<!--        </table>-->
+
+
+    </context>
+</generatorConfiguration>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<!DOCTYPE generatorConfiguration-->
+<!--        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"-->
+<!--        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">-->
+
+<!--<generatorConfiguration>-->
+<!--    <properties resource="application-old.properties"/>-->
+
+<!--    <context id="Mysql" targetRuntime="MyBatis3Simple" defaultModelType="flat">-->
+<!--        <property name="beginningDelimiter" value="`"/>-->
+<!--        <property name="endingDelimiter" value="`"/>-->
+
+<!--        <plugin type="tk.mybatis.mapper.generator.MapperPlugin">-->
+<!--            <property name="mappers" value="fz.cs.daoyun.utils.tools.MyMapper"/>-->
+<!--        </plugin>-->
+
+<!--        <jdbcConnection driverClass="${spring.datasource.driver-class-name}"-->
+<!--                        connectionURL="${spring.datasource.url}"-->
+<!--                        userId="${spring.datasource.username}"-->
+<!--                        password="${spring.datasource.password}">-->
+<!--        </jdbcConnection>-->
+
+<!--        <javaModelGenerator targetPackage="fz.cs.daoyun.data.domain" targetProject="src/main/java"/>-->
+
+<!--        <sqlMapGenerator targetPackage="fz.cs.daoyun.data.mapper" targetProject="src/main/java"-->
+<!--                         />-->
+
+<!--        <javaClientGenerator targetPackage="fz.cs.daoyun.data.mapper" targetProject="src/main/java"-->
+<!--                             type="ANNOTATEDMAPPER"/>-->
+
+<!--        <table schema="daoyun" tableName="t_class" domainObjectName="Classes"-->
+
+<!--            enableCountByExample="false" enableUpdateByExample="false"-->
+<!--            enableDeleteByExample="false" enableSelectByExample="false"-->
+<!--            selectByExampleQueryId="false">-->
+<!--            &lt;!&ndash;mysql 配置&ndash;&gt;-->
+<!--            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>-->
+<!--            &lt;!&ndash;oracle 配置&ndash;&gt;-->
+<!--            &lt;!&ndash;<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>&ndash;&gt;-->
+<!--        </table>-->
+<!--&lt;!&ndash;        <table schema="daoyun" tableName="t_user" domainObjectName="User">&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;mysql 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;oracle 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        </table>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <table schema="daoyun" tableName="t_role" domainObjectName="Role">&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;mysql 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;oracle 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        </table>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <table schema="daoyun" tableName="t_passport" domainObjectName="Passport">&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;mysql 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;oracle 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        </table>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <table schema="daoyun" tableName="t_user_roe" domainObjectName="UserRole">&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;mysql 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;oracle 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        </table>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <table schema="daoyun" tableName="t_permission" domainObjectName="Permission">&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;mysql 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;oracle 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        </table>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <table schema="daoyun" tableName="t_role_permission" domainObjectName="Role_permission">&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;mysql 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;oracle 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        </table>&ndash;&gt;-->
+<!--&lt;!&ndash;        <table schema="daoyun" tableName="t_dict" domainObjectName="Dict">&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;mysql 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;oracle 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        </table>&ndash;&gt;-->
+<!--&lt;!&ndash;        <table schema="daoyun" tableName="t_menu" domainObjectName="Menu">&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;mysql 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;oracle 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        </table>&ndash;&gt;-->
+<!--&lt;!&ndash;        <table schema="daoyun" tableName="t_button" domainObjectName="Button">&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;mysql 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            <generatedKey column="id" sqlStatement="Mysql" identity="true"/>&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;oracle 配置&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;            &lt;!&ndash;<generatedKey column="id" sqlStatement="select SEQ_{1}.nextval from dual" identity="false" type="pre"/>&ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;        </table>&ndash;&gt;-->
+<!--    </context>-->
+<!--</generatorConfiguration>-->
