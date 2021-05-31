@@ -5,25 +5,67 @@ import java.util.Date;
 public class StartSign {
     private Integer id;
 
-    private String userName;
+    private Long userId;
 
     private Integer classId;
 
-    private Integer singnNum;
+    private Date startTime = new Date();
 
-    private Date signTime;
-
-    private Integer score;
-
-    private Integer distance;
+    private Date endTime;
 
     private Integer type;
 
-    private Integer time;
+    private Integer timeLimit = 3;
+
+    private boolean over = false;
+
+    private Integer score = 2;
+
+    private Integer distance = 10;
 
     private Double latitude;
 
     private Double longitude;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Date startTime) {
+        this.startTime = startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
+    }
+
+    public Integer getTimeLimit() {
+        return timeLimit;
+    }
+
+    public void setTimeLimit(Integer timeLimit) {
+        this.timeLimit = timeLimit;
+    }
+
+    public boolean isOver() {
+        return over;
+    }
+
+    public void setOver(boolean over) {
+        this.over = over;
+    }
 
     public Integer getId() {
         return id;
@@ -33,36 +75,12 @@ public class StartSign {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName == null ? null : userName.trim();
-    }
-
     public Integer getClassId() {
         return classId;
     }
 
     public void setClassId(Integer classId) {
         this.classId = classId;
-    }
-
-    public Integer getSingnNum() {
-        return singnNum;
-    }
-
-    public void setSingnNum(Integer singnNum) {
-        this.singnNum = singnNum;
-    }
-
-    public Date getSignTime() {
-        return signTime;
-    }
-
-    public void setSignTime(Date signTime) {
-        this.signTime = signTime;
     }
 
     public Integer getScore() {
@@ -87,14 +105,6 @@ public class StartSign {
 
     public void setType(Integer type) {
         this.type = type;
-    }
-
-    public Integer getTime() {
-        return time;
-    }
-
-    public void setTime(Integer time) {
-        this.time = time;
     }
 
     public Double getLatitude() {

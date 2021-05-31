@@ -74,15 +74,15 @@ public interface ClassesMapper {
     int updateByPrimaryKey(Classes record);
 
     @Select("select * from t_class")
-    List<fz.cs.daoyun.domain.Classes> selectAll();
+    List<Classes> selectAll();
 
     @Select("select * from  t_class where classes_id = #{classesId,jdbcType=INTEGER}")
-    fz.cs.daoyun.domain.Classes selectByClassId(Integer classId);
+    Classes selectByClassId(Integer classId);
 
     @Delete("delete  from t_class where classes_id = #{classesId,jdbcType=INTEGER}")
     void deleteByClassId(Integer classesId);
 
 
-    @Select("select classes_id, classes_name, school, department, teacher_id, teacher_name, course_name, term, textbook, class_image from t_class where teacher_id =  #{name,jdbcType=VARCHAR}")
-    List<fz.cs.daoyun.domain.Classes> selectByTeacherId(String name);
+    @Select("select classes_id, classes_name, school, department, teacher_id, teacher_name, course_name, term, textbook, class_image from t_class where teacher_id =  #{id,jdbcType=BIGINT}")
+    List<Classes> selectByTeacherId(Long id);
 }

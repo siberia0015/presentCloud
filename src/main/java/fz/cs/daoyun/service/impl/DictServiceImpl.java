@@ -27,18 +27,13 @@ public class DictServiceImpl implements IDictService {
     }
 
     @Override
-    public List<Dict> findByDictType(String type) {
-        return dictMapper.findByType(type);
+    public List<Dict> findDictByDictName(String name) {
+        return dictMapper.findDictByDictName(name);
     }
 
     @Override
     public DictInfo findByItemKey(String itemKey) {
         return dictInfoMapper.selectByItemKey(itemKey);
-    }
-
-    @Override
-    public DictInfo findDictInfoById(Integer dictId) {
-        return null;
     }
 
     @Override
@@ -48,8 +43,8 @@ public class DictServiceImpl implements IDictService {
     }
 
     @Override
-    public boolean alteritemValue(Integer infoid, String itemValue) {
-        DictInfo dictInfo = dictInfoMapper.selectByPrimaryKey(infoid);
+    public boolean alterItemValue(Integer infoId, String itemValue) {
+        DictInfo dictInfo = dictInfoMapper.selectByPrimaryKey(infoId);
         dictInfo.setItemValue(itemValue);
         dictInfoMapper.updateByPrimaryKey(dictInfo);
 
@@ -91,28 +86,7 @@ public class DictServiceImpl implements IDictService {
     }
 
     @Override
-    public List<Map<String, String>> findAllKV() {
-        return null;
-    }
-
-    @Override
-    public List<Map<String, String>> findByKVDictType(String type) {
-        return null;
-    }
-
-    @Override
-    public List<Map<String, String>> findKVByItemKey(String itemKey) {
-        return null;
-    }
-
-    @Override
-    public boolean alterKV(Integer id, String key, String value) {
-        return false;
-    }
-
-    @Override
     public List<DictInfo> findDictInfoByDictId(Integer dictid) {
-
         return dictInfoMapper.selectByDictId(dictid);
     }
 }

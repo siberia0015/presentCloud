@@ -2,11 +2,9 @@ package fz.cs.daoyun.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import fz.cs.daoyun.domain.Passport;
-import fz.cs.daoyun.domain.Permission;
-import fz.cs.daoyun.domain.Role;
-import fz.cs.daoyun.domain.User;
+import fz.cs.daoyun.domain.*;
 import fz.cs.daoyun.mapper.RoleMapper;
+import fz.cs.daoyun.mapper.UserAuthsMapper;
 import fz.cs.daoyun.mapper.UserMapper;
 import fz.cs.daoyun.service.*;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +23,9 @@ import java.util.Set;
 public class UserServiceImpl implements IUserService {
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private UserAuthsMapper userAuthsMapper;
 
     @Autowired
     private IRoleService roleService;
@@ -226,6 +227,19 @@ public class UserServiceImpl implements IUserService {
     @Override
     public User findByEmail(String username) {
         return userMapper.selectByEmail(username);
+    }
+
+    @Override
+    public UserAuths oauthMobile(Long userId, String identityType, String identifier) {
+        UserAuths userAuths = userAuthsMapper.select(userId, identityType, identifier);
+        if (userAuths == null) {
+            userAuths = new UserAuths();
+            userAuths.setUserId(userId);
+            userAuths.setIdentityType(identityType);
+            userAuths.setIdentifier(identifier);
+            userAuthsMapper.insert(userAuths);
+        }
+        return userAuths;
     }
 
 }

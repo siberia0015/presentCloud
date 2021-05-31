@@ -5,7 +5,7 @@ import fz.cs.daoyun.domain.Dict;
 import org.apache.ibatis.jdbc.SQL;
 public class ClassesSqlProvider {
 
-    public String insertSelective(fz.cs.daoyun.domain.Classes record) {
+    public String insertSelective(Classes record) {
         SQL sql = new SQL();
         sql.INSERT_INTO("t_class");
 

@@ -24,6 +24,16 @@ public class Classes {
 
     private String classImage;
 
+    public Boolean over = false;
+
+    public Boolean getOver() {
+        return over;
+    }
+
+    public void setOver(Boolean over) {
+        this.over = over;
+    }
+
     public String getCourseName() {
         return courseName;
     }

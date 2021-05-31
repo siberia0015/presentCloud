@@ -70,5 +70,5 @@ public interface DictMapper {
 
 
     @Select("select * from t_dict where dict_name = #{name,jdbcType=VARCHAR}")
-    List<Dict> findByType(String name);
+    List<Dict> findDictByDictName(String name);
 }

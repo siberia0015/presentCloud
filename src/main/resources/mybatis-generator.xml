@@ -20,12 +20,12 @@
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
         <!--生成Model类存放位置-->
-        <javaModelGenerator targetPackage="fz.cs.daoyun.data.domain" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="fz.cs.daoyun.domain" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
         <!--生成映射文件存放位置-->
-        <sqlMapGenerator targetPackage="fz.cs.daoyun.data.mapper" targetProject="src/main/java">
+        <sqlMapGenerator targetPackage="fz.cs.daoyun.mapper" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
         <!--生成Dao类存放位置
@@ -33,7 +33,7 @@
                 type="ANNOTATEDMAPPER",生成Java Model 和基于注解的Mapper对象
                 type="MIXEDMAPPER",生成基于注解的Java Model 和相应的Mapper对象
                 type="XMLMAPPER",生成SQLMap XML文件和独立的Mapper接口-->
-        <javaClientGenerator type="ANNOTATEDMAPPER" targetPackage="fz.cs.daoyun.data.mapper" targetProject="src/main/java">
+        <javaClientGenerator type="ANNOTATEDMAPPER" targetPackage="fz.cs.daoyun.mapper" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
         <!--生成对应表及类名-->

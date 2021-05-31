@@ -92,8 +92,6 @@ public class ClassesServiceImpl  implements IClassesService {
         return classUserUtils;
     }
 
-
-
     @Override
     public void addClasses(Classes classes) throws Exception {
         classesMapper.insert(classes);
@@ -134,8 +132,13 @@ public class ClassesServiceImpl  implements IClassesService {
     }
 
     @Override
-    public void addClassToUser(String usernmae, Integer classid)  throws  Exception{
-        userClassesMapper.insertClassToUser(usernmae, classid);
+    public UserClasses addClassToUser(Long userId, Integer classId)  throws  Exception{
+        User user = userMapper.selectByPrimaryKey(userId);
+        Classes classes = classesMapper.selectByClassId(classId);
+        String userName = user.getName();
+        String className = classes.getClassesName();
+        userClassesMapper.insertClassToUser(userId, userName, classId, className);
+        return userClassesMapper.selectByUserIdAndClassId(userId, classId);
     }
 
     @Override
@@ -146,6 +149,11 @@ public class ClassesServiceImpl  implements IClassesService {
     @Override
     public  List<UserClasses> findUser_ClassByClassid(Integer classes_id) throws Exception{
         return userClassesMapper.selectByClassId(classes_id);
+    }
+
+    @Override
+    public UserClasses findUser_Class(Long user_id, Integer classes_id) throws Exception{
+        return userClassesMapper.selectByUserIdAndClassId(user_id, classes_id);
     }
 
     @Override
@@ -166,7 +174,7 @@ public class ClassesServiceImpl  implements IClassesService {
     }
 
     @Override
-    public List<Classes> getCurrentUserCreateClass(String name) throws  Exception {
-        return classesMapper.selectByTeacherId(name);
+    public List<Classes> getCurrentUserCreateClass(Long id) throws  Exception {
+        return classesMapper.selectByTeacherId(id);
     }
 }

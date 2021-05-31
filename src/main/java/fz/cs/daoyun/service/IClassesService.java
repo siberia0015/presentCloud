@@ -35,15 +35,17 @@ public interface IClassesService {
 
     void deleteByUsername(String username);
 
-    void addClassToUser(String usernmae, Integer classid) throws Exception;
+    UserClasses addClassToUser(Long userId, Integer classId) throws Exception;
 
     void deleteClassToUser(String usernmae, Integer classid) throws Exception;
 
     List<UserClasses> findUser_ClassByClassid(Integer classes_id) throws Exception;
 
+    UserClasses findUser_Class(Long user_id, Integer classes_id) throws Exception;
+
     void deleteUser_Class(Integer classesId) throws Exception;
 
     List<Classes>  getCurrentusertClass(String name) throws Exception;
 
-    List<Classes> getCurrentUserCreateClass(String name) throws Exception;
+    List<Classes> getCurrentUserCreateClass(Long id) throws Exception;
 }
