@@ -146,5 +146,5 @@ public interface PassportMapper {
             @Result(column="login_time", property="loginTime", jdbcType=JdbcType.TIMESTAMP),
             @Result(column="salt", property="salt", jdbcType=JdbcType.VARCHAR),
     })
-    String selectSalt(Long  id);
+    String selectSalt(Long id);
 }

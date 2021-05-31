@@ -84,7 +84,7 @@ public interface SignMapper {
             "from t_sign",
             "where sign_time like CONCAT(#{date,jdbcType=VARCHAR}, '%') and class_id = #{classId,jdbcType=INTEGER}"
     })
-    List<Sign> selectAllByDate(String date,  Integer classId);
+    List<Sign> selectAllByDate(String date, Integer classId);
 
     @Select({
             "select *",

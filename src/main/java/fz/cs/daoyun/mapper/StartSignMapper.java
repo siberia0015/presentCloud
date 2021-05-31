@@ -91,7 +91,7 @@ public interface StartSignMapper {
             "set over = 1, end_time = #{endTime,jdbcType=TIMESTAMP}",
             "where id = #{startSignId,jdbcType=INTEGER}"
     })
-    int endSign(@Param("startSignId") Integer startSignId, @Param("endTime")Date endTime);
+    int endSign(@Param("startSignId") Integer startSignId, @Param("endTime") Date endTime);
 
     @Update({
             "update t_start_sign",

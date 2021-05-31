@@ -174,7 +174,7 @@ public class ClassesServiceImpl  implements IClassesService {
     }
 
     @Override
-    public List<Classes> getCurrentUserCreateClass(String name) throws  Exception {
-        return classesMapper.selectByTeacherId(name);
+    public List<Classes> getCurrentUserCreateClass(Long id) throws  Exception {
+        return classesMapper.selectByTeacherId(id);
     }
 }

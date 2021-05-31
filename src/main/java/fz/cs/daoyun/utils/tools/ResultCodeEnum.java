@@ -16,6 +16,7 @@ public enum ResultCodeEnum {
     AlreadyExist("208", "已经存在记录"),
     NO_DATA("209", "无数据"),
     MORE_THAN_ONE("210", "本应只有一条数据却查询到多条"),
+    WRONG_CODE("211", "验证码错误"),
     BAD_REQUEST("400", "请求参数有误"),
     UNAUTHORIZED("401", "未授权"),
     NO_CURRENT_USER("402", "无当前用户信息"),

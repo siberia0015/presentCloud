@@ -18,7 +18,7 @@ public interface IDictService {
     public DictInfo findByItemKey(String itemKey);
 
     /*修改字典信息*/
-    public boolean updateDictInfo( DictInfo dictinfo);
+    public boolean updateDictInfo(DictInfo dictinfo);
 
     /*修改字典的itemValue*/
     public boolean alterItemValue(Integer infoId, String itemValue);

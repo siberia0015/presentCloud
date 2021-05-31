@@ -16,7 +16,7 @@ public interface IPassportService {
 
     public Passport findByPhone(Long phone);
 
-    public void addPassport(Passport passport , User user);
+    public void addPassport(Passport passport, User user);
 
     public void deletePassportByUserName(String name);
 

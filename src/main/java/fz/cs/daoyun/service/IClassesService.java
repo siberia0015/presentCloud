@@ -47,5 +47,5 @@ public interface IClassesService {
 
     List<Classes>  getCurrentusertClass(String name) throws Exception;
 
-    List<Classes> getCurrentUserCreateClass(String name) throws Exception;
+    List<Classes> getCurrentUserCreateClass(Long id) throws Exception;
 }

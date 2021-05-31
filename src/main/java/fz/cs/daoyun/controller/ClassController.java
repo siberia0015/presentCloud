@@ -10,6 +10,12 @@ import fz.cs.daoyun.service.IUserService;
 import fz.cs.daoyun.service.impl.ClassUserUtils;
 import fz.cs.daoyun.utils.tools.Result;
 import fz.cs.daoyun.utils.tools.ResultCodeEnum;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.authz.annotation.RequiresRoles;
@@ -21,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Random;
 
@@ -81,7 +88,7 @@ public class ClassController {
             User user = (User)SecurityUtils.getSubject().getSession().getAttribute("user");
             logger.info("当前用户：" + user.getName());
             try{
-                myclass.setTeacherId(user.getPhone().toString());
+                myclass.setTeacherId(user.getUserId().toString());
                 myclass.setTeacherName(user.getName());
             } catch (Exception e) {
                 logger.info("获取当前用户信息失败！");
@@ -240,9 +247,11 @@ public class ClassController {
     @GetMapping("/getCurrentUserCreateClass")
     public Result<List<Classes>> getCurrentUserCreateClass(){
         logger.info("/getCurrentUserCreateClass");
+        logger.info("获取当前用户信息...");
         User user = (User)SecurityUtils.getSubject().getSession().getAttribute("user");
+        logger.info("当前用户：" + user.getName());
         try {
-            List<Classes> classess = classesService.getCurrentUserCreateClass(user.getName());
+            List<Classes> classess = classesService.getCurrentUserCreateClass(user.getUserId());
             return Result.success(classess);
         } catch (Exception e) {
             e.printStackTrace();
