@@ -3,7 +3,17 @@ package fz.cs.daoyun.domain;
 public class Param {
     private Integer id;
 
+    private String keyEng;
+
     private String keyName;
+
+    public String getKeyEng() {
+        return keyEng;
+    }
+
+    public void setKeyEng(String keyEng) {
+        this.keyEng = keyEng;
+    }
 
     private Integer value;
 

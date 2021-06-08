@@ -24,10 +24,16 @@ public interface DictMapper {
     })
     int deleteByPrimaryKey(Integer id);
 
+    @Delete({
+            "delete from t_dict",
+            "where dict_eng = #{dictEng,jdbcType=VARCHAR}"
+    })
+    int deleteByEng(String dictEng);
+
     @Insert({
-        "insert into t_dict (id, dict_name, ",
+        "insert into t_dict (id, dict_name, dict_eng, ",
         "dict_describe)",
-        "values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, ",
+        "values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{eng,jdbcType=VARCHAR}, ",
         "#{describe,jdbcType=VARCHAR})"
     })
     int insert(Dict record);
@@ -64,6 +70,7 @@ public interface DictMapper {
     @Results({
             @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
             @Result(column="dict_name", property="name", jdbcType=JdbcType.VARCHAR),
+            @Result(column="dict_eng", property="eng", jdbcType=JdbcType.VARCHAR),
             @Result(column="dict_describe", property="describe", jdbcType=JdbcType.VARCHAR)
     })
     List<Dict> findall();

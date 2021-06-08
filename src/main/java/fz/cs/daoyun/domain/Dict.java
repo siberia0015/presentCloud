@@ -5,6 +5,16 @@ public class Dict {
 
     private String name;
 
+    private String eng;
+
+    public String getEng() {
+        return eng;
+    }
+
+    public void setEng(String eng) {
+        this.eng = eng;
+    }
+
     private String describe;
 
     public Integer getId() {

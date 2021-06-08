@@ -19,18 +19,22 @@ public class ParamServiceImpl  implements IParamService {
     @Override
     public List<Param> getAll() throws  Exception{
         List<Param> params =  paramMapper.selectAll();
-        System.out.println(params);
         return params;
     }
 
     @Override
-    public void update(Integer id, String key, Integer val) throws Exception{
-        paramMapper.update(id, key, val);
+    public void update(String key_eng, String key_name, Integer val) throws Exception{
+        paramMapper.update(key_eng, key_name, val);
     }
 
     @Override
     public Param findById(Integer id) throws  Exception{
         return paramMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public Param findByKeyEng(String keyEng) throws Exception{
+        return paramMapper.selectByKeyEng(keyEng);
     }
 
     @Override
@@ -42,5 +46,5 @@ public class ParamServiceImpl  implements IParamService {
     public void insert(Param param) { paramMapper.insertSelective(param); }
 
     @Override
-    public void delete(Integer id) { paramMapper.deleteByPrimaryKey(id); }
+    public void delete(String keyEng) { paramMapper.deleteByKeyEng(keyEng); }
 }

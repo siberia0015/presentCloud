@@ -13,8 +13,8 @@ public class DictInfoSqlProvider {
             sql.VALUES("id", "#{id,jdbcType=INTEGER}");
         }
 
-        if (record.getDictId() != null) {
-            sql.VALUES("dict_id", "#{dictId,jdbcType=INTEGER}");
+        if (record.getDictEng() != null) {
+            sql.VALUES("dict_eng", "#{dictEng,jdbcType=INTEGER}");
         }
 
         if (record.getItemKey() != null) {
@@ -23,10 +23,6 @@ public class DictInfoSqlProvider {
 
         if (record.getItemValue() != null) {
             sql.VALUES("item_value", "#{itemValue,jdbcType=VARCHAR}");
-        }
-
-        if (record.getSequence() != null) {
-            sql.VALUES("sequence", "#{sequence,jdbcType=INTEGER}");
         }
 
         if (record.getIsdefault() != null) {
@@ -40,8 +36,8 @@ public class DictInfoSqlProvider {
         SQL sql = new SQL();
         sql.UPDATE("t_dict_info");
 
-        if (record.getDictId() != null) {
-            sql.SET("dict_id = #{dictId,jdbcType=INTEGER}");
+        if (record.getDictEng() != null) {
+            sql.SET("dict_eng = #{dictEng,jdbcType=INTEGER}");
         }
 
         if (record.getItemKey() != null) {
@@ -50,10 +46,6 @@ public class DictInfoSqlProvider {
 
         if (record.getItemValue() != null) {
             sql.SET("item_value = #{itemValue,jdbcType=VARCHAR}");
-        }
-
-        if (record.getSequence() != null) {
-            sql.SET("sequence = #{sequence,jdbcType=INTEGER}");
         }
 
         if (record.getIsdefault() != null) {
