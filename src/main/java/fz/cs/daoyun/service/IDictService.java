@@ -30,11 +30,14 @@ public interface IDictService {
     public boolean addDict(Dict dict);
 
     /*删除字典根据ID*/
-    public boolean deleteDict(Integer dictId) throws Exception;
+    public boolean deleteDict(String dictEng) throws Exception;
 
+    /*新增字典项*/
     boolean addDictInfo(DictInfo dictinfo);
 
+    /*删除字典项*/
     boolean deleteDictInfo(Integer dictinfoId) throws Exception;
 
-    List<DictInfo> findDictInfoByDictId(Integer dictid);
+    /*根据字典查找字典项*/
+    List<DictInfo> findDictInfoByDictEng(String dictEng);
 }

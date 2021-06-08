@@ -2,14 +2,7 @@ package fz.cs.daoyun.mapper;
 
 import fz.cs.daoyun.mapper.provider.DictInfoSqlProvider;
 import fz.cs.daoyun.domain.DictInfo;
-import org.apache.ibatis.annotations.Delete;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.InsertProvider;
-import org.apache.ibatis.annotations.Result;
-import org.apache.ibatis.annotations.Results;
-import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
-import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.type.JdbcType;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,12 +18,12 @@ public interface DictInfoMapper {
     int deleteByPrimaryKey(Integer id);
 
     @Insert({
-        "insert into t_dict_info (id, dict_id, ",
+        "insert into t_dict_info (id, dict_eng, ",
         "item_key, item_value, ",
-        "sequence, isdefault)",
-        "values (#{id,jdbcType=INTEGER}, #{dictId,jdbcType=INTEGER}, ",
+        "isdefault)",
+        "values (#{id,jdbcType=INTEGER}, #{dictEng,jdbcType=VARCHAR}, ",
         "#{itemKey,jdbcType=VARCHAR}, #{itemValue,jdbcType=VARCHAR}, ",
-        "#{sequence,jdbcType=INTEGER}, #{isdefault,jdbcType=BIT})"
+        "#{isdefault,jdbcType=BIT})"
     })
     int insert(DictInfo record);
 
@@ -39,16 +32,15 @@ public interface DictInfoMapper {
 
     @Select({
         "select",
-        "id, dict_id, item_key, item_value, sequence, isdefault",
+        "id, dict_eng, item_key, item_value, isdefault",
         "from t_dict_info",
         "where id = #{id,jdbcType=INTEGER}"
     })
     @Results({
         @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
-        @Result(column="dict_id", property="dictId", jdbcType=JdbcType.INTEGER),
+        @Result(column="dict_eng", property="dictEng", jdbcType=JdbcType.VARCHAR),
         @Result(column="item_key", property="itemKey", jdbcType=JdbcType.VARCHAR),
         @Result(column="item_value", property="itemValue", jdbcType=JdbcType.VARCHAR),
-        @Result(column="sequence", property="sequence", jdbcType=JdbcType.INTEGER),
         @Result(column="isdefault", property="isdefault", jdbcType=JdbcType.BIT)
     })
     DictInfo selectByPrimaryKey(Integer id);
@@ -58,18 +50,24 @@ public interface DictInfoMapper {
 
     @Update({
         "update t_dict_info",
-        "set dict_id = #{dictId,jdbcType=INTEGER},",
+        "set dict_eng = #{dictEng,jdbcType=VARCHAR},",
           "item_key = #{itemKey,jdbcType=VARCHAR},",
           "item_value = #{itemValue,jdbcType=VARCHAR},",
-          "sequence = #{sequence,jdbcType=INTEGER},",
           "isdefault = #{isdefault,jdbcType=BIT}",
         "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(DictInfo record);
 
+    @Update({
+            "update t_dict_info",
+            "set isdefault = #{isDefault,jdbcType=BIT}",
+            "where dict_eng = #{dictEng,jdbcType=VARCHAR}"
+    })
+    int updateDefault(@Param("isDefault") Boolean isDefault, @Param("dictEng") String dictEng);
+
     @Select("select * from t_dict_info where item_key = #{itemKey,jdbcType=VARCHAR}")
     DictInfo selectByItemKey(String itemKey);
 
-    @Select("select * from t_dict_info where dict_id = #{dictId,jdbcType=INTEGER}")
-    List<DictInfo> selectByDictId(Integer dictid);
+    @Select("select * from t_dict_info where dict_eng = #{dictEng,jdbcType=VARCHAR}")
+    List<DictInfo> selectByDictEng(String dictEng);
 }

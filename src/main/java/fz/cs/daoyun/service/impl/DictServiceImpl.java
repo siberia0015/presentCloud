@@ -38,8 +38,13 @@ public class DictServiceImpl implements IDictService {
 
     @Override
     public boolean updateDictInfo(DictInfo dictinfo) {
-         dictInfoMapper.updateByPrimaryKeySelective(dictinfo);
-         return true;
+        String eng = dictinfo.getDictEng();
+        Boolean flag = dictinfo.getIsdefault();
+        if (flag == true) {
+            dictInfoMapper.updateDefault(false, eng);
+        }
+        dictInfoMapper.updateByPrimaryKeySelective(dictinfo);
+        return true;
     }
 
     @Override
@@ -63,13 +68,18 @@ public class DictServiceImpl implements IDictService {
     }
 
     @Override
-    public boolean deleteDict(Integer dictId) throws Exception {
-        dictMapper.deleteByPrimaryKey(dictId);
+    public boolean deleteDict(String dictEng) throws Exception {
+        dictMapper.deleteByEng(dictEng);
         return true;
     }
 
     @Override
     public boolean addDictInfo(DictInfo dictinfo) {
+        String eng = dictinfo.getDictEng();
+        Boolean flag = dictinfo.getIsdefault();
+        if (flag == true) {
+            dictInfoMapper.updateDefault(false, eng);
+        }
         dictInfoMapper.insert(dictinfo);
         return true;
     }
@@ -86,7 +96,7 @@ public class DictServiceImpl implements IDictService {
     }
 
     @Override
-    public List<DictInfo> findDictInfoByDictId(Integer dictid) {
-        return dictInfoMapper.selectByDictId(dictid);
+    public List<DictInfo> findDictInfoByDictEng(String dictEng) {
+        return dictInfoMapper.selectByDictEng(dictEng);
     }
 }

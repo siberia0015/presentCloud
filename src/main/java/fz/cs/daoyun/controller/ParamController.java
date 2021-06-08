@@ -35,6 +35,9 @@ public class ParamController {
     public Result addParam(@RequestBody Param param) {
         logger.info("/addParam");
         try {
+            if (paramService.findByKeyEng(param.getKeyEng()) != null) {
+                return Result.failure(ResultCodeEnum.KEY_DUPLICATE);
+            }
             paramService.insert(param);
             return Result.success();
         } catch (Exception e) {
@@ -62,17 +65,17 @@ public class ParamController {
 
     /**
      * 修改参数
-     * @param id
-     * @param key
+     * @param keyEng
+     * @param keyName
      * @param value
      * @return
      */
     //@RequiresPermissions("param:update")
-    @PutMapping("/paramByID")
-    public Result update(@RequestParam("id") Integer id, @RequestParam("key")String key, @RequestParam("value") Integer value){
-        logger.info("/updateParamByID");
+    @PutMapping("/param")
+    public Result update(@RequestParam("keyEng")String keyEng, @RequestParam("keyName")String keyName, @RequestParam("value") Integer value){
+        logger.info("/updateParam");
         try {
-            paramService.update(id, key , value);
+            paramService.update(keyEng, keyName, value);
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,10 +105,10 @@ public class ParamController {
      * 删除参数
      */
     @DeleteMapping("/param")
-    public Result delete(@RequestParam("id") Integer id) {
+    public Result delete(@RequestParam("keyEng") String keyEng) {
         logger.info("/deleteParam");
         try {
-            paramService.delete(id);
+            paramService.delete(keyEng);
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();

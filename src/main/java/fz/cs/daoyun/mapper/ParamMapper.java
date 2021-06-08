@@ -2,6 +2,7 @@ package fz.cs.daoyun.mapper;
 
 import fz.cs.daoyun.mapper.provider.ParamSqlProvider;
 import fz.cs.daoyun.domain.Param;
+import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.InsertProvider;
@@ -23,6 +24,12 @@ public interface ParamMapper {
         "where id = #{id,jdbcType=INTEGER}"
     })
     int deleteByPrimaryKey(Integer id);
+
+    @Delete({
+            "delete from t_param",
+            "where key_eng = #{keyEng,jdbcType=VARCHAR}"
+    })
+    int deleteByKeyEng(String keyEng);
 
     @Insert({
         "insert into t_param (id, key_name, ",
@@ -48,6 +55,20 @@ public interface ParamMapper {
     })
     Param selectByPrimaryKey(Integer id);
 
+    @Select({
+            "select",
+            "id, key_name, key_eng, value",
+            "from t_param",
+            "where key_eng = #{keyEng,jdbcType=VARCHAR}"
+    })
+    @Results({
+            @Result(column="id", property="id", jdbcType=JdbcType.INTEGER, id=true),
+            @Result(column="key_eng", property="keyEng", jdbcType=JdbcType.VARCHAR),
+            @Result(column="key_name", property="keyName", jdbcType=JdbcType.VARCHAR),
+            @Result(column="value", property="value", jdbcType=JdbcType.INTEGER)
+    })
+    Param selectByKeyEng(String keyEng);
+
     @UpdateProvider(type=ParamSqlProvider.class, method="updateByPrimaryKeySelective")
     int updateByPrimaryKeySelective(Param record);
 
@@ -66,9 +87,9 @@ public interface ParamMapper {
 
     @Update({
             "update t_param",
-            "set key_name = #{key_name,jdbcType=VARCHAR},",
-            "value = #{val,jdbcType=INTEGER}",
-            "where id = #{id,jdbcType=INTEGER}"
+            "set key_name = #{keyName,jdbcType=VARCHAR},",
+            "value = #{value,jdbcType=INTEGER}",
+            "where key_eng = #{keyEng,jdbcType=VARCHAR}"
     })
-    void update(Integer id, String key_name, Integer val);
+    void update(@org.apache.ibatis.annotations.Param("keyEng") String keyEng, @org.apache.ibatis.annotations.Param("keyName")String keyName, @org.apache.ibatis.annotations.Param("value")Integer value);
 }

@@ -13,6 +13,10 @@ public class ParamSqlProvider {
             sql.VALUES("id", "#{id,jdbcType=INTEGER}");
         }
 
+        if (record.getKeyEng() != null) {
+            sql.VALUES("key_eng", "#{keyEng,jdbcType=VARCHAR}");
+        }
+
         if (record.getKeyName() != null) {
             sql.VALUES("key_name", "#{keyName,jdbcType=VARCHAR}");
         }
@@ -27,6 +31,10 @@ public class ParamSqlProvider {
     public String updateByPrimaryKeySelective(Param record) {
         SQL sql = new SQL();
         sql.UPDATE("t_param");
+
+        if (record.getKeyEng() != null) {
+            sql.VALUES("key_eng", "#{keyEng,jdbcType=VARCHAR}");
+        }
 
         if (record.getKeyName() != null) {
             sql.SET("key_name = #{keyName,jdbcType=VARCHAR}");

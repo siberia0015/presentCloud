@@ -70,48 +70,15 @@ public class DictController {
     }
 
     /**
-     * 通过字典查询字典项
-     * @param dict
-     * @return
-     */
-    //@RequiresUser
-    @PostMapping("/findDictInfoByDict")
-    public Result<List<DictInfo>> findDictInfoByDict(@RequestBody Dict dict){
-        logger.info("/findDictInfoByDict");
-        try {
-            List<DictInfo> dictIns = dictService.findDictInfoByDictId(dict.getId());
-            return Result.success(dictIns);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
-        }
-    }
-
-    /**
      * 通过字典名字查询字典项
-     * @param dictName
+     * @param dictEng
      * @return
      */
-    @PostMapping("/findDictInfoByDictName")
-    public Result<List<DictInfo>> findDictInfoByDictName(@RequestParam("dictName") String dictName){
-        logger.info("/findDictInfoByDictName");
-        logger.info("通过字典名查询字典ID");
-        Integer dictId = null;
-        try {
-            List<Dict> dict = dictService.findDictByDictName(dictName);
-            if (dict == null) {
-                return Result.failure(ResultCodeEnum.NO_DATA);
-            } else if (dict.size() != 1) {
-                return Result.failure(ResultCodeEnum.MORE_THAN_ONE);
-            }
-            dictId = dict.get(0).getId();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Result.failure(ResultCodeEnum.BAD_REQUEST);
-        }
+    @PostMapping("/findDictInfoByDictEng")
+    public Result<List<DictInfo>> findDictInfoByDictName(@RequestParam("dictEng") String dictEng){
         logger.info("通过字典ID查询字典项");
         try {
-            List<DictInfo> dictInfo = dictService.findDictInfoByDictId(dictId);
+            List<DictInfo> dictInfo = dictService.findDictInfoByDictEng(dictEng);
             return Result.success(dictInfo);
         } catch (Exception e) {
             e.printStackTrace();
@@ -160,13 +127,14 @@ public class DictController {
     public Result addDictinfo(@RequestBody DictInfo dictInfo){
         logger.info("/addDictinfo");
         try {
-            dictInfo.setItemValue(String.valueOf(new Random().nextInt(999999)));
-            dictInfo.setSequence(1);
+            if (findByItemKey(dictInfo.getItemKey()) != null) {
+                return Result.failure(ResultCodeEnum.KEY_DUPLICATE);
+            }
             dictService.addDictInfo(dictInfo);
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
     }
 
@@ -181,7 +149,6 @@ public class DictController {
         logger.info("/updateDictInfo");
         try {
             dictService.updateDictInfo(dictInfo);
-            logger.info("修改dictInfo");
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
@@ -209,21 +176,21 @@ public class DictController {
 
     /**
      * 删除字典
-     * @param dictId
+     * @param dictEng
      * @return
      */
     //@RequiresPermissions("dict:update")
     @PostMapping("/deleteDict")
-    public Result delete(@RequestParam("dictId")Integer dictId){
+    public Result delete(@RequestParam("dictId")String dictEng){
         logger.info("/deleteDict");
-        List<DictInfo> dictInfos = dictService.findDictInfoByDictId(dictId);
+        List<DictInfo> dictInfos = dictService.findDictInfoByDictEng(dictEng);
         try {
             for (DictInfo dictinfo :dictInfos
                  ) {
                 dictService.deleteDictInfo(dictinfo.getId());
             }
 
-            dictService.deleteDict(dictId);
+            dictService.deleteDict(dictEng);
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
