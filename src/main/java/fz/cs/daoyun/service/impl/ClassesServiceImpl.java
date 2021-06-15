@@ -2,6 +2,7 @@ package fz.cs.daoyun.service.impl;
 
 
 import fz.cs.daoyun.domain.Classes;
+import fz.cs.daoyun.domain.StudentInfo;
 import fz.cs.daoyun.domain.User;
 import fz.cs.daoyun.domain.UserClasses;
 import fz.cs.daoyun.mapper.ClassesMapper;
@@ -29,6 +30,11 @@ public class ClassesServiceImpl  implements IClassesService {
     @Override
     public List<Classes> findAll() {
         return classesMapper.selectAll();
+    }
+
+    @Override
+    public void addScore(Long userId, Integer classId, Integer score) throws Exception {
+        userClassesMapper.addScore(userId, classId, score);
     }
 
     @Override
@@ -116,9 +122,6 @@ public class ClassesServiceImpl  implements IClassesService {
 
             userClassesMapper.updateByPrimaryKey(u);
         }
-
-
-
     }
 
     @Override
@@ -176,5 +179,10 @@ public class ClassesServiceImpl  implements IClassesService {
     @Override
     public List<Classes> getCurrentUserCreateClass(Long id) throws  Exception {
         return classesMapper.selectByTeacherId(id);
+    }
+
+    @Override
+    public List<StudentInfo> findStudentByClassId(Integer classId) throws Exception {
+        return userClassesMapper.selectStudentByClass(classId);
     }
 }

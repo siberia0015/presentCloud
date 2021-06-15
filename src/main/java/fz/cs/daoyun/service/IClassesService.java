@@ -1,6 +1,7 @@
 package fz.cs.daoyun.service;
 
 import fz.cs.daoyun.domain.Classes;
+import fz.cs.daoyun.domain.StudentInfo;
 import fz.cs.daoyun.domain.UserClasses;
 import fz.cs.daoyun.service.impl.ClassUserUtils;
 
@@ -10,6 +11,9 @@ import java.util.List;
 public interface IClassesService {
     /*查询所有的班课*/
     public List<Classes> findAll();
+
+    /*给学生加分*/
+    public void addScore(Long userId, Integer classId, Integer score) throws Exception;
 
     List<ClassUserUtils> findAllUserClasses();
 
@@ -32,6 +36,9 @@ public interface IClassesService {
 
     /*删除班课*/
     public void delete(Integer classesId) throws Exception;
+
+    /*根据班课号查询所有学生信息*/
+    public List<StudentInfo> findStudentByClassId(Integer classId) throws Exception;
 
     void deleteByUsername(String username);
 

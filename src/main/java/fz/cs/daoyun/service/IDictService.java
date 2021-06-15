@@ -40,4 +40,7 @@ public interface IDictService {
 
     /*根据字典查找字典项*/
     List<DictInfo> findDictInfoByDictEng(String dictEng);
+
+    /*上移*/
+    void upward(Integer dictInfoId);
 }

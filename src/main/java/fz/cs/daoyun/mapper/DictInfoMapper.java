@@ -68,6 +68,13 @@ public interface DictInfoMapper {
     @Select("select * from t_dict_info where item_key = #{itemKey,jdbcType=VARCHAR}")
     DictInfo selectByItemKey(String itemKey);
 
-    @Select("select * from t_dict_info where dict_eng = #{dictEng,jdbcType=VARCHAR}")
+    @Select("select * from t_dict_info where dict_eng = #{dictEng,jdbcType=VARCHAR} order by sequence desc")
     List<DictInfo> selectByDictEng(String dictEng);
+
+    @Update({
+            "update t_dict_info",
+            "set sequence = sequence + 1",
+            "where id = #{dictInfoId,jdbcType=INTEGER}"
+    })
+    int upward(@Param("dictInfoId")Integer dictInfoId);
 }

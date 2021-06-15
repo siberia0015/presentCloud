@@ -2,6 +2,7 @@ package fz.cs.daoyun.service.impl;
 
 import fz.cs.daoyun.domain.Sign;
 import fz.cs.daoyun.domain.StartSign;
+import fz.cs.daoyun.domain.StudentSignInfo;
 import fz.cs.daoyun.mapper.SignMapper;
 import fz.cs.daoyun.mapper.StartSignMapper;
 import fz.cs.daoyun.service.ISignService;
@@ -72,7 +73,7 @@ public class SignServiceImpl implements ISignService {
     public Sign findByStartSignId(Integer startSignId, Long userId)throws  Exception {return signMapper.selectByStartSignId(startSignId, userId);}
 
     @Override
-    public List<Sign> findAllTime(Integer classId) {return signMapper.findAlltime(classId);}
+    public List<Sign> selectAllTime(Integer classId) {return signMapper.findAlltime(classId);}
 
     @Override
     public void deleteByClassid(Integer classId) throws  Exception {signMapper.deleteByClassId(classId);}
@@ -80,4 +81,13 @@ public class SignServiceImpl implements ISignService {
     @Override
     public void makeSign(Sign sign) throws Exception {signMapper.insert(sign);}
 
+    @Override
+    public List<StudentSignInfo> selectSigned(Integer startSignId) throws Exception {
+        return signMapper.selectSigned(startSignId);
+    }
+
+    @Override
+    public List<StudentSignInfo> selectUnsigned(Integer startSignId, Integer classId) throws Exception {
+        return signMapper.selectUnsigned(startSignId, classId);
+    }
 }

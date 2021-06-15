@@ -127,7 +127,8 @@ public class DictController {
     public Result addDictinfo(@RequestBody DictInfo dictInfo){
         logger.info("/addDictinfo");
         try {
-            if (findByItemKey(dictInfo.getItemKey()) != null) {
+
+            if (dictService.findByItemKey(dictInfo.getItemKey()) != null) {
                 return Result.failure(ResultCodeEnum.KEY_DUPLICATE);
             }
             dictService.addDictInfo(dictInfo);
@@ -152,7 +153,7 @@ public class DictController {
             return Result.success();
         } catch (Exception e) {
             e.printStackTrace();
-            return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
 
     }
@@ -212,8 +213,22 @@ public class DictController {
             return Result.success();
         } catch (Exception ex) {
             ex.printStackTrace();
-            return Result.failure(ResultCodeEnum.NOT_IMPLEMENTED);
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
     }
 
+    /**
+     * 更改排序
+     */
+    @PostMapping("/upward")
+    public Result upward(@RequestParam("dictInfoId")Integer dictInfoId) {
+        logger.info("上移1位");
+        try{
+            dictService.upward(dictInfoId);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
 }
