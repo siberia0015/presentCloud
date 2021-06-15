@@ -4,7 +4,9 @@ package fz.cs.daoyun.controller;
 import com.sun.org.apache.regexp.internal.RE;
 import fz.cs.daoyun.domain.Sign;
 import fz.cs.daoyun.domain.StartSign;
+import fz.cs.daoyun.domain.StudentSignInfo;
 import fz.cs.daoyun.domain.User;
+import fz.cs.daoyun.service.IClassesService;
 import fz.cs.daoyun.service.ISignService;
 import fz.cs.daoyun.utils.tools.DateUtil;
 import fz.cs.daoyun.utils.tools.Result;
@@ -33,6 +35,9 @@ public class SignController {
 
     @Autowired
     private ISignService signService;
+
+    @Autowired
+    private IClassesService classesService;
 
     private static double rad(double d) {
         return d * Math.PI / 180.0;
@@ -76,26 +81,6 @@ public class SignController {
     }
 
     /**
-     * 查询该班级当天所有签到记录
-     * @param classId
-     * @return
-     */
-    /*@PostMapping("/findAll")
-    // @RequiresPermissions("sign:select")
-    public Result<List<Sign>> findAddAtCurrentDay(@RequestParam("classId") Integer classId){
-        logger.info("/findAll" + ' ' + "查询该班级当天所有签到记录");
-        Date date = new Date();
-        try {
-            List<Sign> signs = signService.findAllAtCurrentDay(DateUtil.toDateString(date), classId);
-            return Result.success(signs);
-        } catch (Exception e) {
-            logger.info("系统错误");
-            e.printStackTrace();
-            return Result.failure(ResultCodeEnum.BAD_REQUEST);
-        }
-    }*/
-
-    /**
      * 查询所有用户的签到次数
      * @param classId
      * @return
@@ -105,7 +90,7 @@ public class SignController {
     public Result<List<Sign>> findAllTime(@RequestParam("classId") Integer classId){
         logger.info("/findAllTime" + ' ' + "查询所有用户的签到次数");
         try {
-            List<Sign> signs = signService.findAllTime(classId);
+            List<Sign> signs = signService.selectAllTime(classId);
             return Result.success(signs);
         } catch (Exception e) {
             e.printStackTrace();
@@ -113,6 +98,16 @@ public class SignController {
         }
     }
 
+    /**
+     * 学生签到
+     * @param startSignId
+     * @param classId
+     * @param userId
+     * @param score
+     * @param longitude
+     * @param latitude
+     * @return
+     */
     @PostMapping("/sign")
     public Result sign(@RequestParam("startSignId") Integer startSignId,
                         @RequestParam("classId") Integer classId,
@@ -149,6 +144,7 @@ public class SignController {
                     sign.setLongitude(longitude);
                     sign.setLatitude(latitude);
                     signService.makeSign(sign);
+                    classesService.addScore(userId, classId, 2);
                     return Result.success(sign);
                 }
             } catch (Exception e) {
@@ -193,7 +189,7 @@ public class SignController {
      * @param startSignId
      * @return
      */
-    @PutMapping("/endSign")
+    @PostMapping("/endSign")
     public Result endSign(@RequestParam("startSignId") Integer startSignId) {
         logger.info("/endSign " + "教师结束签到");
         try {
@@ -264,125 +260,39 @@ public class SignController {
         }
     }
 
-    /*学生签到*/
-    /*
-    *
-     * @Param classid: 签到班级id
-     * @Param sign_num: 签到号码, 限时签到时可以不传
-     * @Param latitude: 纬度
-     * @Param longitude: 经度
-    *
-    * */
-    // @RequiresUser
-    /*@PostMapping("/studentSign")
-    public Result studentSign( @RequestParam("classid")Object classid,@RequestParam(value = "sign_num", defaultValue = "1234567")Object sign_num, @RequestParam("longitude")Object longitude, @RequestParam("latitude")Object latitude){
+    /**
+     * 查询已签到同学
+     * @param startSignId
+     * @return
+     */
+    @GetMapping("/findSigned")
+    public Result findSigned(@RequestParam("startSignId") Integer startSignId) {
+        logger.info("查询已签到同学");
         try {
-
-            Integer classId = Integer.parseInt((String)classid);
-            Integer signNum = null;
-            if(sign_num != null){
-                 signNum = Integer.parseInt((String)sign_num);
-            }
-            Double longitudeApp = Double.parseDouble((String)longitude);
-            Double latitudeApp = Double.parseDouble((String)latitude);
-            String username = (String)SecurityUtils.getSubject().getPrincipal();
-            *//*先判断签到的类型*//*
-            Date date = new Date();
-            String dateString = DateUtil.toDateString(date);
-            StartSign startSign = signService.findByparams( classId, dateString);
-            Integer startSignId = startSign.getId();
-            Sign byStartsignId = signService.findByStartSignId(startSignId, username);
-            if(byStartsignId != null){
-                return Result.failure(ResultCodeEnum.AlreadySign);
-            }
-            Double signLongtitue = startSign.getLongitude();
-            Double signLatitue = startSign.getLatitude();
-            Integer radius = startSign.getDistance();
-            if(radius == null){
-                radius=10;
-            }
-            if(!isInCircle(longitudeApp,  latitudeApp,  signLongtitue, signLatitue, radius)){
-                return Result.failure(ResultCodeEnum.DistanceOut);
-            }
-
-            Integer type = startSign.getType();
-            Sign sign = new Sign();
-            sign.setSingnTimes(1);
-            sign.setSignTime(date);
-            sign.setUserName(username);
-            sign.setClassId(classId);
-            sign.setScore(startSign.getScore());
-            sign.setStartSignId(startSignId);
-
-            if(type==0){
-                *//*限时类型type=0*//*
-                Date signtime = startSign.getSignTime();
-
-                long millisOfDay = DateUtil.getMillisOfDay(signtime);
-                long millisOfDay1 = DateUtil.getMillisOfDay(date);
-                long gotime = millisOfDay1 - millisOfDay;
-                Integer time = startSign.getTime();
-                if(time == null){time=3;}
-                Long tilemilli = (long)(time * 60 * 1000 );
-                if(gotime > tilemilli){
-                    return Result.failure(ResultCodeEnum.TimeOut);
-                }else {
-                    try {
-                        signService.addSign(sign);
-                        return Result.success();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return Result.failure(ResultCodeEnum.BAD_REQUEST);
-                    }
-                }
-            }else if (type==1){
-                *//*数字类型type=1*//*
-                Integer num = startSign.getSingnNum();
-                if(signNum.equals(num)){
-                    try {
-                        signService.addSign(sign);
-                        return Result.success();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return  Result.failure(ResultCodeEnum.BAD_REQUEST);
-                    }
-                }else {
-                    return Result.failure(ResultCodeEnum.BAD_REQUEST);
-                }
-
-            }else if(type==2){
-                *//*限时数字类型type=2*//*
-                Integer num = startSign.getSingnNum();
-                if(signNum.equals(num)){
-                    Date signtime = startSign.getSignTime();
-                    long millisOfDay = DateUtil.getMillisOfDay(signtime);
-                    long millisOfDay1 = DateUtil.getMillisOfDay(date);
-                    long gotime = millisOfDay1 - millisOfDay;
-                    Integer time = startSign.getTime();
-                    if(time == null){time=3;}
-                    Long tilemilli = (long)(time * 60 * 1000 );
-                    if(gotime > tilemilli){
-                        return Result.failure(ResultCodeEnum.TimeOut);
-                    }else {
-                        try {
-                            signService.addSign(sign);
-                            return Result.success();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            return Result.failure(ResultCodeEnum.BAD_REQUEST);
-                        }
-                    }
-                }
-            }else{
-                return Result.failure(ResultCodeEnum.BAD_REQUEST);
-            }
-            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+            List<StudentSignInfo> lists = signService.selectSigned(startSignId);
+            return Result.success(lists);
         } catch (Exception e) {
             e.printStackTrace();
             return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
-    }*/
+    }
 
+    /**
+     * 查询未签到同学
+     * @param startSignId
+     * @return
+     */
+    @GetMapping("/findUnsigned")
+    public Result findUnsigned(@RequestParam("startSignId") Integer startSignId, @RequestParam("classId") Integer classId) {
+        logger.info("查询未签到同学");
+        try {
+            List<StudentSignInfo> lists = signService.selectUnsigned(startSignId, classId);
+            return Result.success(lists);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
 }
 
 

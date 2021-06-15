@@ -2,6 +2,7 @@ package fz.cs.daoyun.service;
 
 import fz.cs.daoyun.domain.Sign;
 import fz.cs.daoyun.domain.StartSign;
+import fz.cs.daoyun.domain.StudentSignInfo;
 
 import java.util.Date;
 import java.util.List;
@@ -20,10 +21,15 @@ public interface ISignService {
 
     Sign findByStartSignId(Integer startSignId, Long userId) throws Exception;
 
-    List<Sign> findAllTime(Integer classId);
+    List<Sign> selectAllTime(Integer classId);
 
     void deleteByClassid(Integer classid) throws Exception;
 
     void makeSign(Sign sign) throws Exception;
 
+    /*根据签到号查询已签到学生*/
+    List<StudentSignInfo> selectSigned(Integer startSignId) throws Exception;
+
+    /*根据签到号查询未签到学生*/
+    List<StudentSignInfo> selectUnsigned(Integer startSignId, Integer classId) throws Exception;
 }

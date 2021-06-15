@@ -26,6 +26,16 @@ public class Classes {
 
     public Boolean over = false;
 
+    public Boolean joinable = true;
+
+    public Boolean getJoinable() {
+        return joinable;
+    }
+
+    public void setJoinable(Boolean joinable) {
+        this.joinable = joinable;
+    }
+
     public Boolean getOver() {
         return over;
     }

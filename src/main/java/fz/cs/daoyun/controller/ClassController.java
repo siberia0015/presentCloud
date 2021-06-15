@@ -2,6 +2,7 @@ package fz.cs.daoyun.controller;
 
 
 import fz.cs.daoyun.domain.Classes;
+import fz.cs.daoyun.domain.StudentInfo;
 import fz.cs.daoyun.domain.User;
 import fz.cs.daoyun.domain.UserClasses;
 import fz.cs.daoyun.service.IClassesService;
@@ -208,7 +209,7 @@ public class ClassController {
      * @return
      */
     // @RequiresPermissions("class:update")
-    @PutMapping("/update")
+    @PostMapping("/update")
     public Result update(@RequestBody Classes classes){
         logger.info("/update");
         try {
@@ -259,4 +260,49 @@ public class ClassController {
         }
     }
 
+    /**
+     * 根据班级号查找所有学生
+     * @param classId
+     * @return
+     */
+    @GetMapping("/getStudentByClass")
+    public Result<List<StudentInfo> > getStudentByClass(@RequestParam("classId") Integer classId) {
+        logger.info("根据班级号查找所有学生");
+        try{
+            List<StudentInfo> lists = classesService.findStudentByClassId(classId);
+            return Result.success(lists);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * 根据班级号查找班级
+     * @param classId
+     * @return
+     */
+    @GetMapping("/getClassById")
+    public Result<Classes> getClassById(@RequestParam("classId") Integer classId) {
+        logger.info("根据班级号查找班级");
+        try {
+            Classes myClass= classesService.findByClassID(classId);
+            return Result.success(myClass);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/addScore")
+    public Result addScore(@RequestParam("classId") Integer classId, @RequestParam("userId") Long userId, @RequestParam("score") Integer score) {
+        logger.info("给学生加分");
+        try {
+            classesService.addScore(userId, classId, score);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
 }

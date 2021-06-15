@@ -99,4 +99,9 @@ public class DictServiceImpl implements IDictService {
     public List<DictInfo> findDictInfoByDictEng(String dictEng) {
         return dictInfoMapper.selectByDictEng(dictEng);
     }
+
+    @Override
+    public void upward(Integer dictInfoId) {
+        dictInfoMapper.upward(dictInfoId);
+    }
 }

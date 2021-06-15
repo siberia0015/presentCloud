@@ -1,5 +1,6 @@
 package fz.cs.daoyun.mapper;
 
+import fz.cs.daoyun.domain.StudentInfo;
 import fz.cs.daoyun.mapper.provider.UserClassesSqlProvider;
 import fz.cs.daoyun.domain.UserClasses;
 import org.apache.ibatis.annotations.*;
@@ -109,4 +110,28 @@ public interface UserClassesMapper {
             "where class_id = #{classId,jdbcType=INTEGER}"
     })
     void deleteByClassId(Integer classesId);
+
+    @Select({
+            "select class_id, t_user_class.user_id userId, user_name, score, school_number, image",
+            "from t_user_class left join t_user",
+            "on t_user_class.user_id = t_user.user_id",
+            "where class_id = #{classId,jdbcType=INTEGER}",
+            "order by score desc"
+    })
+    @Results({
+            @Result(column="class_id", property="classId", jdbcType=JdbcType.INTEGER),
+            @Result(column="userId", property="studentId", jdbcType=JdbcType.BIGINT),
+            @Result(column="user_name", property="studentName", jdbcType=JdbcType.VARCHAR),
+            @Result(column="school_number", property="studentNumber", jdbcType=JdbcType.VARCHAR),
+            @Result(column="score", property="score", jdbcType=JdbcType.INTEGER),
+            @Result(column="image", property="studentImage", jdbcType=JdbcType.VARCHAR)
+    })
+    List<StudentInfo> selectStudentByClass(Integer classId);
+
+    @Update({
+            "update t_user_class",
+            "set score = score + #{score,jdbcType=INTEGER}",
+            "where user_id = #{userId,jdbcType=BIGINT} and class_id = #{classId,jdbcType=INTEGER}"
+    })
+    void addScore(@Param("userId") Long userId, @Param("classId") Integer classId, @Param("score") Integer score);
 }

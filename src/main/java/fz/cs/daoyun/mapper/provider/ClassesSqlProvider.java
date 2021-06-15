@@ -6,6 +6,7 @@ import org.apache.ibatis.jdbc.SQL;
 public class ClassesSqlProvider {
 
     public String insertSelective(Classes record) {
+        System.out.println("??????");
         SQL sql = new SQL();
         sql.INSERT_INTO("t_class");
 
@@ -53,6 +54,10 @@ public class ClassesSqlProvider {
             sql.VALUES("class_image", "#{class_image,jdbcType=VARCHAR}");
         }
 
+        sql.VALUES("over", "#{over,jdbcType=TINYINT}");
+
+        sql.VALUES("joinable", "#{joinable,jdbcType=TINYINT}");
+
         return sql.toString();
     }
 
@@ -99,6 +104,10 @@ public class ClassesSqlProvider {
         if (record.getClassImage() != null) {
             sql.VALUES("class_image", "#{class_image,jdbcType=VARCHAR}");
         }
+
+        sql.VALUES("over", "#{over,jdbcType=TINYINT}");
+
+        sql.VALUES("joinable", "#{joinable,jdbcType=TINYINT}");
 
         sql.WHERE("id = #{id,jdbcType=INTEGER}");
 

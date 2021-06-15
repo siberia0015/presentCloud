@@ -60,15 +60,17 @@ public interface ClassesMapper {
     @Update({
         "update t_class",
         "set classes_id = #{classesId,jdbcType=INTEGER},",
-          "classes_name = #{classesName,jdbcType=VARCHAR},",
-          "school = #{school,jdbcType=VARCHAR},",
-          "department = #{department,jdbcType=VARCHAR},",
-          "teacher_id = #{teacherId,jdbcType=VARCHAR},",
-          "teacher_name = #{teacherName,jdbcType=VARCHAR}",
-            "course_name = #{courseName,jdbcType=VARCHAR}",
-            "term = #{term,jdbcType=VARCHAR}",
-            "textbook = #{textbook,jdbcType=VARCHAR}",
-            "class_image = #{classImage,jdbcType=BLOB}",
+            "classes_name = #{classesName,jdbcType=VARCHAR},",
+            "school = #{school,jdbcType=VARCHAR},",
+            "department = #{department,jdbcType=VARCHAR},",
+            "teacher_id = #{teacherId,jdbcType=VARCHAR},",
+            "teacher_name = #{teacherName,jdbcType=VARCHAR},",
+            "course_name = #{courseName,jdbcType=VARCHAR},",
+            "term = #{term,jdbcType=VARCHAR},",
+            "textbook = #{textbook,jdbcType=VARCHAR},",
+            "class_image = #{classImage,jdbcType=BLOB},",
+            "over = #{over,jdbcType=TINYINT},",
+            "joinable = #{joinable,jdbcType=TINYINT}",
         "where id = #{id,jdbcType=INTEGER}"
     })
     int updateByPrimaryKey(Classes record);
@@ -81,7 +83,6 @@ public interface ClassesMapper {
 
     @Delete("delete  from t_class where classes_id = #{classesId,jdbcType=INTEGER}")
     void deleteByClassId(Integer classesId);
-
 
     @Select("select classes_id, classes_name, school, department, teacher_id, teacher_name, course_name, term, textbook, class_image from t_class where teacher_id =  #{id,jdbcType=BIGINT}")
     List<Classes> selectByTeacherId(Long id);

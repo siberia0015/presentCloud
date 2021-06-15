@@ -7,6 +7,8 @@ public class DictInfo  {
 
     private String dictEng;
 
+    private Integer sequence;
+
     public String getDictEng() {
         return dictEng;
     }
