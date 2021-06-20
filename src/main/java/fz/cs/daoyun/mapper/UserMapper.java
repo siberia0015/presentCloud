@@ -62,10 +62,9 @@ public interface UserMapper {
                 "CreationDate = #{creationdate,jdbcType=TIMESTAMP},",
                 "Creator = #{creator,jdbcType=VARCHAR},",
                 "Modifier = #{modifier,jdbcType=VARCHAR},",
-                "ModificationDate = #{modificationdate,jdbcType=TIMESTAMP}",
-                "birthday = #{birthday,jdbcType=TIMESTAMP}",
+                "ModificationDate = #{modificationdate,jdbcType=TIMESTAMP},",
                 "college = #{college,jdbcType=VARCHAR},",
-                "identity = #{identity,jdbcType=TINYINT},",
+                "identity = #{identity,jdbcType=TINYINT}",
                 "where user_id = #{userId,jdbcType=BIGINT}"
     })
     int insertAllinfo(User record);

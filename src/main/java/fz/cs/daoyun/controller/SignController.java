@@ -158,6 +158,46 @@ public class SignController {
         }
     }
 
+    @PostMapping("/sign2")
+    public Result sign2(@RequestParam("startSignId") Integer startSignId,
+                        @RequestParam("classId") Integer classId,
+                        Long userId, Integer score, Double longitude, Double latitude)
+    {
+        logger.info("补签");
+        try {
+            User user = (User)SecurityUtils.getSubject().getSession().getAttribute("user");
+            if (user == null && userId == null) {
+                return Result.failure(ResultCodeEnum.PARAMS_MISS);
+            } else if (userId == null) {
+                userId = user.getUserId();
+            }
+            try {
+                Sign sign = signService.findByStartSignId(startSignId, userId);
+                if (sign != null) {
+                    return Result.failure(ResultCodeEnum.AlreadySign);
+                } else {
+                    sign = new Sign();
+                    sign.setUserId(userId);
+                    sign.setClassId(classId);
+                    sign.setSignTime(new Date());
+                    if (score !=null) sign.setScore(score); else sign.setScore(2);
+                    sign.setStartSignId(startSignId);
+                    sign.setLongitude(longitude);
+                    sign.setLatitude(latitude);
+                    signService.makeSign(sign);
+                    classesService.addScore(userId, classId, 2);
+                    return Result.success(sign);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return Result.failure(ResultCodeEnum.BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
     /**
      * 发起签到
      * type: 签到类型 0， 限时签到， 1， 一键签到
@@ -293,6 +333,24 @@ public class SignController {
             return Result.failure(ResultCodeEnum.BAD_REQUEST);
         }
     }
+
+    /**
+     * 查看班级所有签到事件
+     * @param classId
+     * @return
+     */
+    @GetMapping("/findAllStartSign")
+    public Result findAllStartSign(@RequestParam("classId") Integer classId) {
+        logger.info("查看班级所有签到事件");
+        try {
+            List<StartSign> lists = signService.selectStartSignByClassId(classId);
+            return Result.success(lists);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
 }
 
 

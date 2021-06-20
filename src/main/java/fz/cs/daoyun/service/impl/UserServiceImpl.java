@@ -127,7 +127,7 @@ public class UserServiceImpl implements IUserService {
 
     @Transactional
     @Override
-    public void saveUserAllInfo(User user) {
+    public void update(User user) {
         user = passwordHelper.encryptPassword(user);
         userMapper.insertAllinfo(user);
     }

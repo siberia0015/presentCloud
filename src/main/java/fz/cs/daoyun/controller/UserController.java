@@ -108,39 +108,28 @@ public class UserController {
     * */
     // @RequiresPermissions("user:update")
     @ResponseBody
-    @PostMapping("/userEdit")
-    public Result userEdit(
-            @RequestParam("mobile")String mobile,
-            @RequestParam("name")String name,
-            @RequestParam("nickname")String  nickname,
-            @RequestParam("password")String password
-
-    ){
-
-        System.out.println("调用了它");
-        User user = userService.findByName(name);
-//        user.setPassword(password);
-        Long phone = Long.parseLong(mobile);
-        user.setPhone(phone);
-        user.setNickname(nickname);
-        user.setModifier(this.getCurrentUserFunc().getName());
-        user.setModificationdate(new Date());
-
-        userService.saveUserAllInfo(user);
-
-        return  Result.success();
+    @PostMapping("/update")
+    public Result update(@RequestBody User user){
+        logger.info("修改用户信息");
+        try {
+            userService.update(user);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
     }
 
     // @RequiresPermissions("user:update")
     @ResponseBody
-    @PostMapping("/update")
+    @PostMapping("/update2")
     public Result update(@RequestParam("name")String name, @RequestParam("phone")String mobile, @RequestParam("password")String password, @RequestParam("nickname")String nickname){
         User user = userService.findByName(name);
         user.setPassword(password);
         Long phone = Long.parseLong(mobile);
         user.setNickname(nickname);
         user.setPhone(phone);
-        userService.saveUserAllInfo(user);
+        userService.update(user);
         return Result.success();
     }
 
@@ -277,10 +266,6 @@ public class UserController {
         }
     }
 
-
-
-
-
     /*
      * 查询所有用户, 分页
      * @param page : 表示获取第几页的信息
@@ -304,9 +289,12 @@ public class UserController {
     * 查找单个用户， 通过用户名*/
 //    @ResponseBody
     // @RequiresPermissions("user:select")
-    @RequestMapping("/findUser")
+    @PostMapping("/findUser")
     public Result<User> findUser(@RequestParam("username")String username){
         User user = userService.findByName(username);
+        if (user == null) {
+            user = userService.findByPhone(Long.parseLong(username));
+        }
         if(user != null){
             return Result.success(user);
         }else
