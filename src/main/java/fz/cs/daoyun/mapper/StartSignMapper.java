@@ -110,4 +110,13 @@ public interface StartSignMapper {
     })
     List<StartSign> findStartSignByClassId(Integer classId);
 
+    @Select({
+            "select",
+            "id, user_id, class_id, start_time, type, time_limit, end_time, ",
+            "over, score, distance, latitude, longitude",
+            "from t_start_sign",
+            "where class_id = #{classId,jdbcType=INTEGER}",
+            "order by start_time desc"
+    })
+    List<StartSign> findStartSignByClassId1(Integer classId);
 }

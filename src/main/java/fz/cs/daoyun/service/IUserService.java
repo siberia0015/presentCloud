@@ -27,7 +27,7 @@ public interface IUserService  {
     public void saveUser(User user);
 
     @Transactional
-    void saveUserAllInfo(User user);
+    void update(User user);
 
     public void deleteUserByUserId(Long id);
 
