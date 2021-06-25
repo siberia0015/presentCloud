@@ -112,7 +112,7 @@ public interface UserClassesMapper {
     void deleteByClassId(Integer classesId);
 
     @Select({
-            "select class_id, t_user_class.user_id userId, user_name, score, school_number, image",
+            "select class_id, t_user_class.user_id userId, user_name, score, school_number, image, nickname",
             "from t_user_class left join t_user",
             "on t_user_class.user_id = t_user.user_id",
             "where class_id = #{classId,jdbcType=INTEGER}",
@@ -122,9 +122,10 @@ public interface UserClassesMapper {
             @Result(column="class_id", property="classId", jdbcType=JdbcType.INTEGER),
             @Result(column="userId", property="studentId", jdbcType=JdbcType.BIGINT),
             @Result(column="user_name", property="studentName", jdbcType=JdbcType.VARCHAR),
-            @Result(column="school_number", property="studentNumber", jdbcType=JdbcType.VARCHAR),
+            @Result(column="school_number", property="schoolNumber", jdbcType=JdbcType.VARCHAR),
             @Result(column="score", property="score", jdbcType=JdbcType.INTEGER),
-            @Result(column="image", property="studentImage", jdbcType=JdbcType.VARCHAR)
+            @Result(column="image", property="studentImage", jdbcType=JdbcType.VARCHAR),
+            @Result(column="nickname", property="nickname", jdbcType=JdbcType.VARCHAR)
     })
     List<StudentInfo> selectStudentByClass(Integer classId);
 

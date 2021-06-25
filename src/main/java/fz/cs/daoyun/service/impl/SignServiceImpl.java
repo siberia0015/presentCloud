@@ -155,4 +155,9 @@ public class SignServiceImpl implements ISignService {
     public List<StartSign> selectStartSignByClassId(Integer classId) throws Exception {
         return startSignMapper.findStartSignByClassId1(classId);
     }
+
+    @Override
+    public List<Sign> findSignRecord(Long userId, Integer classId) throws Exception {
+        return signMapper.findByUserId(userId, classId);
+    }
 }

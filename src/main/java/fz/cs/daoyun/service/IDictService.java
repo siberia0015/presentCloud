@@ -15,7 +15,7 @@ public interface IDictService {
     public List<Dict> findDictByDictName(String name);
 
     /*根据字典ItemKey获取字典值*/
-    public DictInfo findByItemKey(String itemKey);
+    public List<DictInfo> findByItemKey(String itemKey);
 
     /*修改字典信息*/
     public boolean updateDictInfo(DictInfo dictinfo);

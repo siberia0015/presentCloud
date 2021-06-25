@@ -93,9 +93,9 @@ public class DictController {
      */
     //@RequiresUser
     @PostMapping("/findDictInfoByItemKey")
-    public Result<DictInfo> findByItemKey(@RequestParam("itemKey")String itemKey){
+    public Result findByItemKey(@RequestParam("itemKey")String itemKey){
         logger.info("/findDictInfoByItemKey");
-        DictInfo dictinfo = dictService.findByItemKey(itemKey);
+        List<DictInfo> dictinfo = dictService.findByItemKey(itemKey);
         return Result.success(dictinfo);
     }
 
@@ -125,11 +125,13 @@ public class DictController {
     //@RequiresPermissions("dict:add")
     @PostMapping("/addDictinfo")
     public Result addDictinfo(@RequestBody DictInfo dictInfo){
-        logger.info("/addDictinfo");
+        logger.info("添加字典项");
         try {
-
-            if (dictService.findByItemKey(dictInfo.getItemKey()) != null) {
-                return Result.failure(ResultCodeEnum.KEY_DUPLICATE);
+            List<DictInfo> list = dictService.findByItemKey(dictInfo.getItemKey());
+            for (DictInfo i : list) {
+                if (Objects.equals(i.getDictEng(), dictInfo.getDictEng())) {
+                    return Result.failure(ResultCodeEnum.KEY_DUPLICATE);
+                }
             }
             dictService.addDictInfo(dictInfo);
             return Result.success();
@@ -147,8 +149,11 @@ public class DictController {
     //@RequiresPermissions("dict:update")
     @PostMapping("/updateDictInfo")
     public Result update(@RequestBody DictInfo dictInfo){
-        logger.info("/updateDictInfo");
+        logger.info("更新字典");
         try {
+            if (dictService.findByItemKey(dictInfo.getItemKey()) != null) {
+                return Result.failure(ResultCodeEnum.KEY_DUPLICATE);
+            }
             dictService.updateDictInfo(dictInfo);
             return Result.success();
         } catch (Exception e) {
@@ -182,7 +187,7 @@ public class DictController {
      */
     //@RequiresPermissions("dict:update")
     @PostMapping("/deleteDict")
-    public Result delete(@RequestParam("dictId")String dictEng){
+    public Result delete(@RequestParam("dictEng")String dictEng){
         logger.info("/deleteDict");
         List<DictInfo> dictInfos = dictService.findDictInfoByDictEng(dictEng);
         try {

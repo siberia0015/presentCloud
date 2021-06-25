@@ -13,9 +13,19 @@ public class StudentInfo {
 
     private String studentName;
 
-    private String studentNumber;
+    private String schoolNumber;
 
     private String studentImage;
+
+    private String nickname;
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
     public Integer getClassId() {
         return classId;
@@ -49,12 +59,12 @@ public class StudentInfo {
         this.studentName = studentName;
     }
 
-    public String getStudentNumber() {
-        return studentNumber;
+    public String getSchoolNumber() {
+        return schoolNumber;
     }
 
-    public void setStudentNumber(String studentNumber) {
-        this.studentNumber = studentNumber;
+    public void setSchoolNumber(String studentNumber) {
+        this.schoolNumber = studentNumber;
     }
 
     public String getStudentImage() {

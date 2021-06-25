@@ -36,14 +36,14 @@ public class PermissionController {
     * */
     @ResponseBody
     @RequestMapping("/findAllPermission")
-    @RequiresPermissions("permission:select")
+    //@RequiresPermissions("permission:select")
     public Result getAllPermission(){
         List<Permission> permissions = permissionService.findAll();
         return Result.success(permissions);
     }
 
     /* 通过权限名查询*/
-    @RequiresPermissions("permission:select")
+   // @RequiresPermissions("permission:select")
     @RequestMapping("/findByName")
     public Result findByName(@RequestParam("authName")String authName){
         Permission permission = permissionService.findByName(authName);
@@ -51,7 +51,7 @@ public class PermissionController {
     }
 
     /*通过Id查询*/
-    @RequiresPermissions("permission:select")
+    //@RequiresPermissions("permission:select")
     @RequestMapping("/findById")
     public Result findByName(@RequestParam("id")Integer id){
         Permission permission = permissionService.findById(id);
@@ -60,7 +60,7 @@ public class PermissionController {
 
 
     /*添加权限， 传入实体*/
-    @RequiresPermissions("permission:add")
+    //@RequiresPermissions("permission:add")
     @PostMapping("/create")
     public Result createPermission(@RequestParam("auth") Permission auth){
         try {
@@ -78,7 +78,7 @@ public class PermissionController {
     }
 
     /*添加权限，出入具体属性*/
-    @RequiresPermissions("permission:add")
+   // @RequiresPermissions("permission:add")
     @PostMapping("/add")
     public Result addPermission(@RequestParam("authName") String authName, @RequestParam("module") String module){
         try {
@@ -102,7 +102,7 @@ public class PermissionController {
     * @Param authName: name
     * @Param module: type
     * */
-    @RequiresPermissions("permission:update")
+   // @RequiresPermissions("permission:update")
     @PostMapping("/edit")
     public Result updatePermission(@RequestParam("id") Integer id, @RequestParam("authName") String authName, @RequestParam("module") String module){
         try {
@@ -125,7 +125,7 @@ public class PermissionController {
     }
 
     /*删除权限*/
-    @RequiresPermissions("permission:delete")
+    //@RequiresPermissions("permission:delete")
     @PostMapping("/delete")
     public Result deletePermission(@RequestBody Permission permission){
         Integer id = permission.getPermissionId();
@@ -140,7 +140,7 @@ public class PermissionController {
 
 
     /*获取所有的权限类型*/
-    @RequiresPermissions("permission:select")
+    //@RequiresPermissions("permission:select")
     @GetMapping("/getTypes")
     public Result<List<String>> getTypes(){
         try {
@@ -153,7 +153,7 @@ public class PermissionController {
     }
 
     /*获取所有可以添加的name*/
-    @RequiresPermissions("permission:select")
+    //@RequiresPermissions("permission:select")
     @GetMapping("/getNames")
     public Result<List<String>> getNames(){
         try {
@@ -174,7 +174,7 @@ public class PermissionController {
 
 
     /*添加权限(多个)*/
-    @RequiresPermissions("permission:add")
+    //@RequiresPermissions("permission:add")
     @PostMapping("/addPermissions")
     public Result addPermissions(@RequestParam("type")String type, @RequestParam("names")  Object names){
         List<String> nameList = new ArrayList<String>();

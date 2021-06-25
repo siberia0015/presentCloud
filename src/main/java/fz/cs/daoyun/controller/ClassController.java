@@ -112,7 +112,7 @@ public class ClassController {
      * @return
      */
     // @RequiresPermissions("class:delete")
-    @DeleteMapping("/deleteClass")
+    @PostMapping("/deleteClass")
     public Result deleteClass(@RequestParam("classId") Object classId){
         logger.info("/deleteClass");
         Integer classid = Integer.parseInt((String)classId);
@@ -171,7 +171,7 @@ public class ClassController {
      * @return
      */
     // @RequiresPermissions("class:delete")
-    @DeleteMapping("/deleteClasstoUser")
+    @PostMapping("/deleteClasstoUser")
     public Result deleteClasstoUser(@RequestParam("username") String username, @RequestParam("classesId") String classesId){
         logger.info("/deleteClasstoUser");
         Integer classid = Integer.parseInt(classesId);

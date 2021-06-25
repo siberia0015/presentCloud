@@ -27,6 +27,7 @@ public interface ISignService {
 
     void deleteByClassid(Integer classid) throws Exception;
 
+    /*签到*/
     void makeSign(Sign sign) throws Exception;
 
     /*根据签到号查询已签到学生*/
@@ -37,4 +38,7 @@ public interface ISignService {
 
     /*查看班级所有签到事件*/
     List<StartSign> selectStartSignByClassId(Integer classId) throws Exception;
+
+    /*查找签到成功记录*/
+    List<Sign> findSignRecord(Long userId, Integer classId) throws Exception;
 }
