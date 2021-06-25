@@ -108,6 +108,19 @@ public class UserController {
     * */
     // @RequiresPermissions("user:update")
     @ResponseBody
+    @PostMapping("/updatePassword")
+    public Result updatePassword(@RequestBody User user){
+        logger.info("修改用户信息");
+        try {
+            userService.updatePassword(user);
+            return Result.success();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
+    @ResponseBody
     @PostMapping("/update")
     public Result update(@RequestBody User user){
         logger.info("修改用户信息");

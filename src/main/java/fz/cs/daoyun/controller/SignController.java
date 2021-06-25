@@ -351,6 +351,18 @@ public class SignController {
         }
     }
 
+    @GetMapping("/findSignRecord")
+    public Result findSignRecord(@RequestParam("userId") Long userId, @RequestParam("classId") Integer classId) {
+        logger.info("查找签到成功记录");
+        try {
+            List<Sign> lists = signService.findSignRecord(userId, classId);
+            return Result.success(lists);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Result.failure(ResultCodeEnum.BAD_REQUEST);
+        }
+    }
+
 }
 
 

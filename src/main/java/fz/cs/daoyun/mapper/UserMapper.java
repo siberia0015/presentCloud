@@ -42,7 +42,7 @@ public interface UserMapper {
                     "#{schoolNumber,jdbcType=VARCHAR}, #{creationdate,jdbcType=TIMESTAMP}, ",
                     "#{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, ",
                     "#{modificationdate,jdbcType=TIMESTAMP}, #{birthday,jdbcType=TIMESTAMP}",
-                    "#{college,jdbcType=VARCHAR}, #{identity,jdbcType=TINYINT}",
+                    "#{college,jdbcType=VARCHAR}, #{identity,jdbcType=BOOLEAN}",
             ")"
     })
     void saveUserAllInfo(User user);
@@ -64,7 +64,7 @@ public interface UserMapper {
                 "Modifier = #{modifier,jdbcType=VARCHAR},",
                 "ModificationDate = #{modificationdate,jdbcType=TIMESTAMP},",
                 "college = #{college,jdbcType=VARCHAR},",
-                "identity = #{identity,jdbcType=TINYINT}",
+                "identity = #{identity,jdbcType=BOOLEAN}",
                 "where user_id = #{userId,jdbcType=BIGINT}"
     })
     int insertAllinfo(User record);
@@ -95,7 +95,8 @@ public interface UserMapper {
         @Result(column="CreationDate", property="creationdate", jdbcType=JdbcType.TIMESTAMP),
         @Result(column="Creator", property="creator", jdbcType=JdbcType.VARCHAR),
         @Result(column="Modifier", property="modifier", jdbcType=JdbcType.VARCHAR),
-        @Result(column="ModificationDate", property="modificationdate", jdbcType=JdbcType.TIMESTAMP)
+        @Result(column="ModificationDate", property="modificationdate", jdbcType=JdbcType.TIMESTAMP),
+            @Result(column="identity", property="identity", jdbcType=JdbcType.BOOLEAN)
     })
     User selectByPrimaryKey(Long userId);
 
@@ -120,7 +121,7 @@ public interface UserMapper {
           "ModificationDate = #{modificationdate,jdbcType=TIMESTAMP}",
             "birthday = #{birthday,jdbcType=TIMESTAMP}",
             "college = #{college,jdbcType=VARCHAR},",
-            "identity = #{identity,jdbcType=TINYINT},",
+            "identity = #{identity,jdbcType=BOOLEAN},",
         "where user_id = #{userId,jdbcType=BIGINT}"
     })
     int updateByPrimaryKey(User record);
@@ -151,7 +152,7 @@ public interface UserMapper {
             @Result(column="ModificationDate", property="modificationdate", jdbcType=JdbcType.TIMESTAMP),
             @Result(column="college", property="college", jdbcType=JdbcType.VARCHAR),
             @Result(column="birthday", property="birthday", jdbcType=JdbcType.TIMESTAMP),
-            @Result(column="identity", property="identity", jdbcType=JdbcType.TINYINT)
+            @Result(column="identity", property="identity", jdbcType=JdbcType.BOOLEAN)
     })
     User selectByName(String name);
 
@@ -181,7 +182,7 @@ public interface UserMapper {
             @Result(column="ModificationDate", property="modificationdate", jdbcType=JdbcType.TIMESTAMP),
             @Result(column="college", property="college", jdbcType=JdbcType.VARCHAR),
             @Result(column="birthday", property="birthday", jdbcType=JdbcType.TIMESTAMP),
-            @Result(column="identity", property="identity", jdbcType=JdbcType.TINYINT)
+            @Result(column="identity", property="identity", jdbcType=JdbcType.BOOLEAN)
     })
     User selectByPhone(Long phone);
 
@@ -213,7 +214,7 @@ public interface UserMapper {
             @Result(column="ModificationDate", property="modificationdate", jdbcType=JdbcType.TIMESTAMP),
             @Result(column="college", property="college", jdbcType=JdbcType.VARCHAR),
             @Result(column="birthday", property="birthday", jdbcType=JdbcType.TIMESTAMP),
-            @Result(column="identity", property="identity", jdbcType=JdbcType.TINYINT)
+            @Result(column="identity", property="identity", jdbcType=JdbcType.BOOLEAN)
     })
     User selectByToken(String token);
 

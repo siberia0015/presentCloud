@@ -66,7 +66,7 @@ public interface DictInfoMapper {
     int updateDefault(@Param("isDefault") Boolean isDefault, @Param("dictEng") String dictEng);
 
     @Select("select * from t_dict_info where item_key = #{itemKey,jdbcType=VARCHAR}")
-    DictInfo selectByItemKey(String itemKey);
+    List<DictInfo> selectByItemKey(String itemKey);
 
     @Select("select * from t_dict_info where dict_eng = #{dictEng,jdbcType=VARCHAR} order by sequence desc")
     List<DictInfo> selectByDictEng(String dictEng);

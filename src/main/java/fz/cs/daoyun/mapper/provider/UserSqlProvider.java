@@ -53,6 +53,10 @@ public class UserSqlProvider {
             sql.VALUES("Creator", "#{creator,jdbcType=VARCHAR}");
         }
 
+        if (record.getCreator() != null) {
+            sql.VALUES("college", "#{college,jdbcType=VARCHAR}");
+        }
+
         if (record.getModifier() != null) {
             sql.VALUES("Modifier", "#{modifier,jdbcType=VARCHAR}");
         }
@@ -60,6 +64,8 @@ public class UserSqlProvider {
         if (record.getModificationdate() != null) {
             sql.VALUES("ModificationDate", "#{modificationdate,jdbcType=TIMESTAMP}");
         }
+
+        sql.VALUES("identity", "#{identity,jdbcType=BOOLEAN}");
 
         return sql.toString();
     }
@@ -115,6 +121,12 @@ public class UserSqlProvider {
         if (record.getModificationdate() != null) {
             sql.SET("ModificationDate = #{modificationdate,jdbcType=TIMESTAMP}");
         }
+
+        if (record.getModificationdate() != null) {
+            sql.SET("college = #{college,jdbcType=VARCHAR}");
+        }
+
+        sql.SET("identity = #{identity,jdbcType=BOOLEAN}");
 
         sql.WHERE("user_id = #{userId,jdbcType=BIGINT}");
 

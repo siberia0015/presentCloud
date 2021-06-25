@@ -125,11 +125,15 @@ public class UserServiceImpl implements IUserService {
         }
     }
 
-    @Transactional
     @Override
-    public void update(User user) {
+    public void updatePassword(User user) {
         user = passwordHelper.encryptPassword(user);
         userMapper.insertAllinfo(user);
+    }
+
+    @Override
+    public void update(User user) {
+        userMapper.updateByPrimaryKeySelective(user);
     }
 
     @Transactional

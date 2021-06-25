@@ -117,7 +117,7 @@ public interface SignMapper {
 
     /*根据签到号查询已签到的学生*/
     @Select({
-            "select t_sign.user_id userId, sign_time, start_sign_id, longitude, latitude, name, school_number, image",
+            "select t_sign.user_id userId, sign_time, start_sign_id, longitude, latitude, name, school_number, image, nickname",
             "from t_sign left join t_user",
             "on t_sign.user_id = t_user.user_id",
             "where start_sign_id = #{startSignId,jdbcType=INTEGER}",
@@ -126,12 +126,13 @@ public interface SignMapper {
     @Results({
             @Result(column="userId", property="studentId", jdbcType=JdbcType.BIGINT),
             @Result(column="name", property="studentName", jdbcType=JdbcType.VARCHAR),
-            @Result(column="school_number", property="studentNumber", jdbcType=JdbcType.VARCHAR),
+            @Result(column="school_number", property="schoolNumber", jdbcType=JdbcType.VARCHAR),
             @Result(column="image", property="studentImage", jdbcType=JdbcType.VARCHAR),
             @Result(column="sign_time", property="signTime", jdbcType=JdbcType.TIMESTAMP),
             @Result(column="start_sign_id", property="startSignId", jdbcType=JdbcType.INTEGER),
             @Result(column="latitude", property="latitude", jdbcType=JdbcType.DOUBLE),
             @Result(column="longitude", property="longitude", jdbcType=JdbcType.DOUBLE),
+            @Result(column="nickname", property="nickname", jdbcType=JdbcType.VARCHAR)
     })
     List<StudentSignInfo> selectSigned(Integer startSignId);
 
@@ -148,12 +149,13 @@ public interface SignMapper {
     @Results({
             @Result(column="user_id", property="studentId", jdbcType=JdbcType.BIGINT),
             @Result(column="name", property="studentName", jdbcType=JdbcType.VARCHAR),
-            @Result(column="school_number", property="studentNumber", jdbcType=JdbcType.VARCHAR),
+            @Result(column="school_number", property="schoolNumber", jdbcType=JdbcType.VARCHAR),
             @Result(column="image", property="studentImage", jdbcType=JdbcType.VARCHAR),
             @Result(column="sign_time", property="signTime", jdbcType=JdbcType.TIMESTAMP),
             @Result(column="start_sign_id", property="startSignId", jdbcType=JdbcType.INTEGER),
             @Result(column="latitude", property="latitude", jdbcType=JdbcType.DOUBLE),
             @Result(column="longitude", property="longitude", jdbcType=JdbcType.DOUBLE),
+            @Result(column="nickname", property="nickname", jdbcType=JdbcType.VARCHAR)
     })
     List<StudentSignInfo> selectUnsigned(@Param("startSignId") Integer startSignId, @Param("classId") Integer classId);
 }

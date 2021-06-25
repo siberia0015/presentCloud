@@ -32,7 +32,7 @@ public class DictServiceImpl implements IDictService {
     }
 
     @Override
-    public DictInfo findByItemKey(String itemKey) {
+    public List<DictInfo> findByItemKey(String itemKey) {
         return dictInfoMapper.selectByItemKey(itemKey);
     }
 
