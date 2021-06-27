@@ -31,7 +31,7 @@ public class ParamController {
      * @param param
      * @return
      */
-    @PostMapping("/param")
+    @PostMapping("/addParam")
     public Result addParam(@RequestBody Param param) {
         logger.info("/addParam");
         try {
@@ -71,7 +71,7 @@ public class ParamController {
      * @return
      */
     //@RequiresPermissions("param:update")
-    @PutMapping("/param")
+    @PostMapping("/updateParam")
     public Result update(@RequestParam("keyEng")String keyEng, @RequestParam("keyName")String keyName, @RequestParam("value") Integer value){
         logger.info("/updateParam");
         try {
@@ -89,7 +89,7 @@ public class ParamController {
      * @return
      */
     //@RequiresPermissions("param:update")
-    @PutMapping("/paramByRecord")
+    @PostMapping("/paramByRecord")
     public  Result update(@RequestBody Param param) {
         logger.info("/updateByRecord");
         try {
@@ -104,7 +104,7 @@ public class ParamController {
     /**
      * 删除参数
      */
-    @DeleteMapping("/param")
+    @PostMapping("/deleteParam")
     public Result delete(@RequestParam("keyEng") String keyEng) {
         logger.info("/deleteParam");
         try {

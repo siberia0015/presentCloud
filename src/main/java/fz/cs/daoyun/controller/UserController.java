@@ -71,13 +71,14 @@ public class UserController {
             String school,
             String classes,
             String school_number,
-            String email
+            String email,
+            Integer identity
     ) {
         if(userService.exitsUser(username)!=null){
             return Result.failure(ResultCodeEnum.FAILED_USER_ALREADY_EXIST);
         }
         User user = new User();
-        mobile = username;
+        mobile = mobile;
         RandomNumberGenerator randomNumberGenerator = new SecureRandomNumberGenerator();
         user.setSalt(randomNumberGenerator.nextBytes().toHex());
         user.setPassword(password);
@@ -86,17 +87,15 @@ public class UserController {
         user.setPhone(phone);
         user.setNickname(nickname);
         if(!StringUtils.isEmpty(sex)){
-
             user.setSex(sex);
         }
+        if (identity != null) user.setIdentity(identity);
+        else user.setIdentity(2);
         user.setClasses(classes);
         user.setEmail(email);
         user.setSchool(school);
         user.setSchoolNumber(school_number);
         Date date = new Date();
-        user.setCreationdate(date);
-//        user.setModifier(this.getCurrentUserFunc().getName());
-//        user.setCreator(this.getCurrentUserFunc().getName());
         user.setCreationdate(date);
         userService.createUserAllInfo(user);
         return Result.success();

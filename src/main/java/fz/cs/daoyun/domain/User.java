@@ -45,23 +45,23 @@ public class User {
 
     private String college = null;
 
-    private Date brithday = new Date();
+    private Date birthday = new Date();
 
-    private boolean identity = false;
+    private Integer identity = 2;
 
-    public Date getBrithday() {
-        return brithday;
+    public Date getBirthday() {
+        return birthday;
     }
 
-    public void setBrithday(Date brithday) {
-        this.brithday = brithday;
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
     }
 
-    public boolean isIdentity() {
+    public Integer getIdentity() {
         return identity;
     }
 
-    public void setIdentity(boolean identity) {
+    public void setIdentity(Integer identity) {
         this.identity = identity;
     }
 

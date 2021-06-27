@@ -320,7 +320,7 @@ public class LoginController  extends BaseController {
             String school_number,
             String email,
             String college,
-            Boolean identity
+            Integer identity
     ){
         Map<String,Object> map = new HashMap<>();
         Session session = SecurityUtils.getSubject().getSession();
@@ -339,6 +339,7 @@ public class LoginController  extends BaseController {
         user.setNickname(nickname);
         user.setCollege(college);
         if (identity != null) user.setIdentity(identity);
+        else user.setIdentity(2);
         if(!StringUtils.isEmpty(sex)){
             user.setSex(sex);
         }
