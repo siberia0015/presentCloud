@@ -32,7 +32,7 @@ public interface UserMapper {
             "insert into t_user (" +
                     "user_id, nickname, name, sex, email, password, " +
                     "salt,  phone, school, classes, school_number, CreationDate, ",
-                    "Creator, Modifier, ModificationDate",
+                    "Creator, Modifier, ModificationDate, ",
                     "college, birthday, identity",
             ") " +
             "values(" +
@@ -41,7 +41,7 @@ public interface UserMapper {
                     "#{phone,jdbcType=BIGINT}, #{school,jdbcType=VARCHAR}, #{classes,jdbcType=VARCHAR}, ",
                     "#{schoolNumber,jdbcType=VARCHAR}, #{creationdate,jdbcType=TIMESTAMP}, ",
                     "#{creator,jdbcType=VARCHAR}, #{modifier,jdbcType=VARCHAR}, ",
-                    "#{modificationdate,jdbcType=TIMESTAMP}, #{birthday,jdbcType=TIMESTAMP}",
+                    "#{modificationdate,jdbcType=TIMESTAMP}, #{birthday,jdbcType=TIMESTAMP}, ",
                     "#{college,jdbcType=VARCHAR}, #{identity,jdbcType=BOOLEAN}",
             ")"
     })
