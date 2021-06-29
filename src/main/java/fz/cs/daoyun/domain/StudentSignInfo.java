@@ -24,6 +24,16 @@ public class StudentSignInfo {
 
     private String nickname;
 
+    private Double distance;
+
+    public Double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
+    }
+
     public String getNickname() {
         return nickname;
     }
