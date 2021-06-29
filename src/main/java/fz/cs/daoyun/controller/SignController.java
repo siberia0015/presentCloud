@@ -49,10 +49,9 @@ public class SignController {
      * @param latitude1
      * @param longitude2
      * @param latitude2
-     * @param radius
      * @return
      */
-    public static boolean isInCircle(Double longitude1, Double latitude1,Double longitude2, Double latitude2,Integer radius){
+    public static double getDistance(Double longitude1, Double latitude1,Double longitude2, Double latitude2){
         /*longitude1, latitude1 是学生的经纬度*/
         final double EARTH_RADIUS = 6378.137;////地球半径 （千米）
         double radLat1 = rad(latitude1);
@@ -68,16 +67,8 @@ public class SignController {
         distance = distance * EARTH_RADIUS;
         distance = Math.round(distance * 10000d) / 10000d;
         distance = distance*1000;//将计算出来的距离千米转为米
-//        System.out.println(distance);
-        double r = (double)radius ;
-
-        r = r+1694761.9;
-//        System.out.println(r);
-        //判断一个点是否在圆形区域内
-        if (distance > r) {
-            return false;
-        }
-        return true;
+        System.out.println(distance);
+        return distance;
     }
 
     /**
@@ -309,7 +300,14 @@ public class SignController {
     public Result findSigned(@RequestParam("startSignId") Integer startSignId) {
         logger.info("查询已签到同学");
         try {
+            StartSign startSign = signService.findById(startSignId);
+            if (startSign == null) {
+                return Result.failure(ResultCodeEnum.NO_DATA);
+            }
             List<StudentSignInfo> lists = signService.selectSigned(startSignId);
+            for (StudentSignInfo info : lists) {
+                info.setDistance(getDistance(info.getLongitude(), info.getLatitude(), startSign.getLongitude(), startSign.getLatitude()));
+            }
             return Result.success(lists);
         } catch (Exception e) {
             e.printStackTrace();
